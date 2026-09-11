@@ -1,0 +1,100 @@
+"""Gráficos en SVG, emitidos como texto desde Python.
+
+Van inline en el HTML, así que heredan el CSS del documento: el gráfico y la
+página son literalmente el mismo sistema visual, y no hay ningún recurso externo
+que falle cuando el evaluador abra el adjunto sin conexión.
+
+Solo hay dos formas de gráfico porque solo hay dos cosas que mostrar: una
+comparación de tamaños de efecto con su incertidumbre, y una comparación de dos
+tasas. Todo lo demás cabe en una frase.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class EffectRow:
+    """Una fila del forest plot: un efecto con su intervalo."""
+
+    label: str
+    diff_pp: float
+    ci_low_pp: float
+    ci_high_pp: float
+    n_ai: str
+    n_human: str
+
+
+def _x(value: float, lo: float, hi: float, left: float, width: float) -> float:
+    return left + (value - lo) / (hi - lo) * width
+
+
+def forest(rows: list[EffectRow], width: int = 520, row_height: int = 26) -> str:
+    """Diferencias en puntos porcentuales con IC95. El cero marcado es la referencia.
+
+    Es el gráfico correcto para esta muestra: muestra la magnitud y la
+    incertidumbre a la vez, que es exactamente lo que un p-valor esconde.
+    """
+    label_width, pad = 210, 16
+    plot_left = label_width + pad
+    plot_width = width - plot_left - 46
+    height = row_height * len(rows) + 34
+
+    span = max(abs(r.ci_low_pp) for r in rows), max(abs(r.ci_high_pp) for r in rows)
+    limit = max(max(span), 20)
+    limit = min(100, 10 * (int(limit / 10) + 1))
+    lo, hi = -limit, limit
+
+    out = [f'<svg class="forest" viewBox="0 0 {width} {height}" role="img">']
+    zero = _x(0, lo, hi, plot_left, plot_width)
+
+    # rejilla: solo cero y los extremos. Más líneas no añaden información.
+    for value in (lo, 0, hi):
+        x = _x(value, lo, hi, plot_left, plot_width)
+        cls = "axis-zero" if value == 0 else "axis-tick"
+        out.append(f'<line class="{cls}" x1="{x:.1f}" y1="8" x2="{x:.1f}" y2="{height - 26}"/>')
+        out.append(f'<text class="axis-label" x="{x:.1f}" y="{height - 12}">{value:+.0f}</text>')
+    out.append(
+        f'<text class="axis-title" x="{zero:.1f}" y="{height - 1}">'
+        f"diferencia IA − humano (puntos porcentuales)</text>"
+    )
+
+    for index, row in enumerate(rows):
+        y = 20 + index * row_height
+        x_low = _x(max(row.ci_low_pp, lo), lo, hi, plot_left, plot_width)
+        x_high = _x(min(row.ci_high_pp, hi), lo, hi, plot_left, plot_width)
+        x_point = _x(row.diff_pp, lo, hi, plot_left, plot_width)
+        crosses = row.ci_low_pp <= 0 <= row.ci_high_pp
+        cls = "null" if crosses else ("pos" if row.diff_pp > 0 else "neg")
+
+        out.append(f'<text class="row-label" x="{label_width}" y="{y + 4}">{row.label}</text>')
+        out.append(f'<line class="ci {cls}" x1="{x_low:.1f}" y1="{y}" x2="{x_high:.1f}" y2="{y}"/>')
+        out.append(f'<circle class="pt {cls}" cx="{x_point:.1f}" cy="{y}" r="4"/>')
+        out.append(
+            f'<text class="row-value {cls}" x="{width - 4}" y="{y + 4}">{row.diff_pp:+.0f}</text>'
+        )
+
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+def paired_bars(
+    label_a: str, value_a: float, label_b: str, value_b: float, width: int = 250
+) -> str:
+    """Dos tasas enfrentadas. Eje desde cero, sin excepción."""
+    height, bar = 74, 22
+    scale = max(value_a, value_b, 1) * 1.12
+    out = [f'<svg class="bars" viewBox="0 0 {width} {height}" role="img">']
+    for index, (label, value, cls) in enumerate(
+        ((label_a, value_a, "ai"), (label_b, value_b, "human"))
+    ):
+        y = 6 + index * (bar + 12)
+        w = value / scale * (width - 108)
+        out.append(f'<text class="bar-label" x="0" y="{y + 15}">{label}</text>')
+        out.append(
+            f'<rect class="bar {cls}" x="62" y="{y}" width="{w:.1f}" height="{bar}" rx="2"/>'
+        )
+        out.append(f'<text class="bar-value" x="{68 + w:.1f}" y="{y + 15}">{value:.0f}%</text>')
+    out.append("</svg>")
+    return "\n".join(out)

@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "titulo": "Gestión de cobranza: agentes humanos frente a agentes de IA",
+    "cliente": "Creceré AI",
+    "fecha": "Septiembre 2026",
+    "autor": "Mauricio Salas"
+  },
+  "veredicto": "PRELIMINAR — pendiente de la familia de variables.",
+  "kpis": [
+    { "valor": "100", "etiqueta": "llamadas analizadas (50 + 50)" },
+    { "valor": "6,4 h", "etiqueta": "audio transcrito en local" },
+    { "valor": "29 pp", "etiqueta": "diferencia mínima detectable" },
+    { "valor": "0", "etiqueta": "llamadas descartadas" }
+  ],
+  "efectos": [
+    { "etiqueta": "Se presenta desde \"embargos y judicializaciones\"", "diff_pp": 76.0, "ci_low_pp": 61.0, "ci_high_pp": 86.0, "n_ia": "38/50", "n_humano": "0/50" },
+    { "etiqueta": "Amenaza con proceso legal concreto", "diff_pp": 48.0, "ci_low_pp": 32.0, "ci_high_pp": 62.0, "n_ia": "26/50", "n_humano": "2/50" },
+    { "etiqueta": "Se identifica como sistema automatizado", "diff_pp": 4.0, "ci_low_pp": -5.0, "ci_high_pp": 14.0, "n_ia": "3/50", "n_humano": "1/50" },
+    { "etiqueta": "Duración de la llamada (mediana)", "diff_pp": -6.0, "ci_low_pp": -26.0, "ci_high_pp": 15.0, "n_ia": "149 s", "n_humano": "171 s" }
+  ],
+  "hallazgos": [
+    { "claim": "Marcador de posición.", "why": "Se completa cuando cierre la extracción." }
+  ],
+  "hipotesis": [
+    { "texto": "La IA no acorta la llamada", "esperado": "sin diferencia", "estado": "se cumple" }
+  ],
+  "tabla": [
+    { "variable": "Duración (mediana)", "ia": "149 s", "humano": "171 s", "diff": "−22 s", "ic": "[−89, +87]" }
+  ],
+  "metodo": [
+    "Transcripción local con whisper.cpp large-v3-turbo. Ningún audio salió del equipo."
+  ],
+  "limitaciones": [
+    "Sin metadatos de campaña, fecha ni resultado de CRM: la comparación es un cuasi-experimento."
+  ],
+  "cierre": "Documento en construcción."
+}

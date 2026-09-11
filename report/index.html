@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestión de cobranza: agentes humanos frente a agentes de IA</title>
+<style>
+  /* Geometría: A4 con 12 mm de margen. La caja útil es 186 x 273 mm; se trabaja
+     sobre 255 mm de alto para dejar aire y que nada quede al filo del corte. */
+  @page { size: A4; margin: 12mm; }
+  :root {
+    --ink:#16161a; --muted:#6b6b75; --line:#e2e0e6; --bg:#fff;
+    --ai:#7047EB; --human:#F26ECF; --null:#9a97a3;
+    --pos:#7047EB; --neg:#c2410c;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-scheme:light; }
+  body {
+    margin:0; background:#f4f3f6; color:var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size:9.6pt; line-height:1.38; font-variant-numeric: tabular-nums lining-nums;
+  }
+  /* Sin overflow:hidden a propósito. Si el contenido desborda, queremos que
+     fluya a una tercera página y que `make verify` lo cace, no que se recorte
+     en silencio y el PDF siga diciendo 2. */
+  .page {
+    width:186mm; height:255mm; padding:0; margin:8mm auto; background:var(--bg);
+    position:relative;
+  }
+  @media print {
+    body { background:#fff; }
+    .page { margin:0; width:auto; height:auto; break-after:page; }
+    .page:last-child { break-after:auto; }
+  }
+  h1 { font-size:19pt; line-height:1.08; letter-spacing:-.022em; margin:0 0 3mm; }
+  h2 { font-size:10.5pt; letter-spacing:.04em; text-transform:uppercase;
+       color:var(--muted); margin:0 0 2mm; font-weight:650; }
+  p { margin:0 0 2mm; }
+  .eyebrow { font-size:8pt; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .verdict { font-size:12.5pt; line-height:1.3; margin:0 0 4mm; }
+  .verdict strong { font-weight:680; }
+  header { border-bottom:1.5px solid var(--ink); padding-bottom:2.5mm; margin-bottom:4mm; }
+
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin-bottom:4.5mm; }
+  .kpi { border-top:2.5px solid var(--ai); padding-top:1.5mm; }
+  .kpi .v { font-size:17pt; font-weight:680; letter-spacing:-.03em; display:block; line-height:1.05; }
+  .kpi .l { font-size:8.2pt; color:var(--muted); display:block; margin-top:.8mm; }
+
+  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.findings li { counter-increment:f; padding:2mm 0 2mm 8mm; border-bottom:1px solid var(--line);
+                   position:relative; }
+  ol.findings li:last-child { border-bottom:0; }
+  ol.findings li::before { content:counter(f); position:absolute; left:0; top:2mm;
+    font-size:8pt; font-weight:700; color:var(--ai); border:1.2px solid var(--ai);
+    width:5mm; height:5mm; border-radius:50%; display:grid; place-items:center; }
+  ol.findings .claim { font-weight:620; }
+  ol.findings .why { color:var(--muted); }
+
+  table { width:100%; border-collapse:collapse; font-size:8.6pt; }
+  th { text-align:left; font-weight:620; color:var(--muted); font-size:7.8pt;
+       text-transform:uppercase; letter-spacing:.05em; padding:1.2mm 1.5mm; border-bottom:1px solid var(--ink); }
+  td { padding:1.4mm 1.5mm; border-bottom:1px solid var(--line); }
+  td.num { text-align:right; }
+  .tag { font-size:7.4pt; padding:.3mm 1.2mm; border-radius:2px; background:#f0eef5; color:var(--muted); }
+
+  svg.forest { width:100%; height:auto; }
+  .forest .axis-zero { stroke:var(--ink); stroke-width:1; }
+  .forest .axis-tick { stroke:var(--line); stroke-width:1; }
+  .forest .axis-label, .forest .axis-title { font-size:7.2px; fill:var(--muted); text-anchor:middle; }
+  .forest .row-label { font-size:8.4px; fill:var(--ink); text-anchor:end; }
+  .forest .row-value { font-size:8.4px; font-weight:650; text-anchor:end; }
+  .forest .ci { stroke-width:1.6; stroke-linecap:round; }
+  .forest .ci.pos, .forest .pt.pos, .forest .row-value.pos { stroke:var(--pos); fill:var(--pos); }
+  .forest .ci.neg, .forest .pt.neg, .forest .row-value.neg { stroke:var(--neg); fill:var(--neg); }
+  .forest .ci.null, .forest .pt.null, .forest .row-value.null { stroke:var(--null); fill:var(--null); }
+
+  .note { font-size:8pt; color:var(--muted); border-left:2px solid var(--line); padding-left:2.5mm; }
+  footer { position:absolute; bottom:0; left:0; right:0; font-size:7.6pt; color:var(--muted);
+           border-top:1px solid var(--line); padding-top:1.5mm; display:flex; justify-content:space-between; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+  section { margin-bottom:4.5mm; }
+</style>
+</head>
+<body>
+
+<div class="page" id="p1">
+  <header>
+    <div class="eyebrow">Creceré AI · Septiembre 2026</div>
+    <h1>Gestión de cobranza: agentes humanos frente a agentes de IA</h1>
+  </header>
+
+  <p class="verdict">PRELIMINAR — pendiente de la familia de variables.</p>
+
+  <div class="kpis">
+    <div class="kpi"><span class="v">100</span><span class="l">llamadas analizadas (50 + 50)</span></div><div class="kpi"><span class="v">6,4 h</span><span class="l">audio transcrito en local</span></div><div class="kpi"><span class="v">29 pp</span><span class="l">diferencia mínima detectable</span></div><div class="kpi"><span class="v">0</span><span class="l">llamadas descartadas</span></div>
+  </div>
+
+  <section>
+    <h2>Dónde difieren, y cuánto</h2>
+    <svg class="forest" viewBox="0 0 520 138" role="img">
+<line class="axis-tick" x1="226.0" y1="8" x2="226.0" y2="112"/>
+<text class="axis-label" x="226.0" y="126">-90</text>
+<line class="axis-zero" x1="350.0" y1="8" x2="350.0" y2="112"/>
+<text class="axis-label" x="350.0" y="126">+0</text>
+<line class="axis-tick" x1="474.0" y1="8" x2="474.0" y2="112"/>
+<text class="axis-label" x="474.0" y="126">+90</text>
+<text class="axis-title" x="350.0" y="137">diferencia IA − humano (puntos porcentuales)</text>
+<text class="row-label" x="210" y="24">Se presenta desde "embargos y judicializaciones"</text>
+<line class="ci pos" x1="434.0" y1="20" x2="468.5" y2="20"/>
+<circle class="pt pos" cx="454.7" cy="20" r="4"/>
+<text class="row-value pos" x="516" y="24">+76</text>
+<text class="row-label" x="210" y="50">Amenaza con proceso legal concreto</text>
+<line class="ci pos" x1="394.1" y1="46" x2="435.4" y2="46"/>
+<circle class="pt pos" cx="416.1" cy="46" r="4"/>
+<text class="row-value pos" x="516" y="50">+48</text>
+<text class="row-label" x="210" y="76">Se identifica como sistema automatizado</text>
+<line class="ci null" x1="343.1" y1="72" x2="369.3" y2="72"/>
+<circle class="pt null" cx="355.5" cy="72" r="4"/>
+<text class="row-value null" x="516" y="76">+4</text>
+<text class="row-label" x="210" y="102">Duración de la llamada (mediana)</text>
+<line class="ci null" x1="314.2" y1="98" x2="370.7" y2="98"/>
+<circle class="pt null" cx="341.7" cy="98" r="4"/>
+<text class="row-value null" x="516" y="102">-6</text>
+</svg>
+  </section>
+
+  <section>
+    <h2>Hallazgos</h2>
+    <ol class="findings">
+      
+      <li><span class="claim">Marcador de posición.</span> <span class="why">Se completa cuando cierre la extracción.</span></li>
+      
+    </ol>
+  </section>
+
+  <footer><span>Mauricio Salas</span><span>1 / 2</span></footer>
+</div>
+
+<div class="page" id="p2">
+  <header>
+    <div class="eyebrow">Evidencia y método</div>
+  </header>
+
+  <section>
+    <h2>Hipótesis declaradas antes de medir</h2>
+    <table>
+      <thead><tr><th>Hipótesis</th><th>Esperado</th><th>Resultado</th></tr></thead>
+      <tbody>
+      
+        <tr><td>La IA no acorta la llamada</td><td>sin diferencia</td><td><span class="tag">se cumple</span></td></tr>
+      
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Contraste completo</h2>
+    <table>
+      <thead><tr><th>Variable</th><th class="num">IA</th><th class="num">Humano</th><th class="num">Dif. (pp)</th><th class="num">IC 95%</th></tr></thead>
+      <tbody>
+      
+        <tr><td>Duración (mediana)</td><td class="num">149 s</td><td class="num">171 s</td>
+            <td class="num">−22 s</td><td class="num">[−89, +87]</td></tr>
+      
+      </tbody>
+    </table>
+  </section>
+
+  <div class="grid2">
+    <section>
+      <h2>Método</h2>
+      <p>Transcripción local con whisper.cpp large-v3-turbo. Ningún audio salió del equipo.</p>
+    </section>
+    <section>
+      <h2>Qué no se pudo medir</h2>
+      <p>Sin metadatos de campaña, fecha ni resultado de CRM: la comparación es un cuasi-experimento.</p>
+    </section>
+  </div>
+
+  <section>
+    <p class="note">Documento en construcción.</p>
+  </section>
+
+  <footer><span>Mauricio Salas</span><span>2 / 2</span></footer>
+</div>
+
+</body>
+</html>
