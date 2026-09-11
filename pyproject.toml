@@ -1,0 +1,30 @@
+[project]
+name = "crecere-humanos-vs-ia"
+version = "0.1.0"
+description = "Comparación de gestiones de cobranza humanas vs agentes de IA"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "scipy>=1.14",   # fisher_exact, mannwhitneyu, bootstrap, levene: todo lo estadístico
+    "jinja2>=3.1",   # el HTML se renderiza desde plantilla + results.json, nunca a mano
+]
+
+# Motores de transcripción: se instalan aparte para no lastrar el entorno base.
+#   uv sync --extra asr
+[project.optional-dependencies]
+asr = ["mlx-whisper>=0.4"]
+
+[dependency-groups]
+dev = ["ruff>=0.8", "pytest>=8.0"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,34 @@
+# ─── Datos con PII: nunca al control de versiones ───────────────────────
+# Grabaciones reales de gestión de cobranza. data/public/ SÍ se versiona:
+# contiene únicamente agregados y variables derivadas, sin texto de llamada.
+data/raw/
+data/interim/
+data/processed/
+
+# Un patrón por línea: git es line-based, "*.wav *.mp3" no ignora nada.
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.opus
+*.flac
+*.vtt
+*.srt
+
+# ─── Entorno ────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.ruff_cache/
+.pytest_cache/
+models/
+.cache/
+
+# ─── macOS / editor ─────────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+
+# ─── Harness local: no se publica el inventario de plugins/MCP ──────────
+.claude/settings.local.json
