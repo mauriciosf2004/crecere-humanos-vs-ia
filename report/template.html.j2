@@ -31,7 +31,7 @@
     .page { margin:0; width:auto; min-height:268mm; break-after:page; }
     .page:last-child { break-after:auto; }
   }
-  h1 { font-size:19pt; line-height:1.08; letter-spacing:-.022em; margin:0 0 3mm; }
+  h1 { text-wrap:balance; font-size:19pt; line-height:1.08; letter-spacing:-.022em; margin:0 0 3mm; }
   h2 { font-size:9.4pt; letter-spacing:.05em; text-transform:uppercase;
        color:var(--muted); margin:0 0 1.8mm; font-weight:650; }
   p { margin:0 0 1.8mm; }
@@ -77,6 +77,10 @@
   .forest .ci.neg, .forest .pt.neg, .forest .row-value.neg { stroke:var(--neg); fill:var(--neg); }
   .forest .ci.null, .forest .pt.null, .forest .row-value.null { stroke:var(--null); fill:var(--null); }
 
+  .forest circle.pt.tentative { fill:#fff; stroke-width:1.6; }
+  .forest line.ci.tentative { stroke-dasharray:3 2; }
+  /* tabla estrecha: con solo dos cifras por fila, a ancho completo quedaban lejos de su etiqueta */
+  table.compact { width:62%; }
   ul.levers { margin:0; padding-left:4mm; }
   ul.levers li { margin-bottom:1.1mm; }
   .note { font-size:8pt; color:var(--muted); border-left:2px solid var(--line); padding-left:2.5mm; }
@@ -103,6 +107,7 @@
   <section>
     <h2>Dónde difieren, y cuánto</h2>
     {{ forest_svg|safe }}
+    <p class="note">{{ forest_nota }}</p>
   </section>
 
   <section>
@@ -140,7 +145,7 @@
 
   <section>
     <h2>¿Eran las mismas carteras?</h2>
-    <table>
+    <table class="compact">
       <thead><tr><th></th><th class="num">IA</th><th class="num">Humano</th></tr></thead>
       <tbody>
       {% for c in composicion %}

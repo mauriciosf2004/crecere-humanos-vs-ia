@@ -29,8 +29,9 @@ def render() -> Path:
             diff_pp=e["diff_pp"],
             ci_low_pp=e["ci_low_pp"],
             ci_high_pp=e["ci_high_pp"],
-            n_ai=e.get("n_ia", ""),
-            n_human=e.get("n_humano", ""),
+            n_ai=e["n_ia"],
+            n_human=e["n_humano"],
+            tentative=e["tentativo"],
         )
         for e in results["efectos"]
     ]

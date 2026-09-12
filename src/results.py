@@ -127,21 +127,22 @@ def build() -> dict:
                 "etiqueta": "conductas difieren, con control por comparaciones múltiples",
             },
             {
-                "valor": f"{legal['k_ia']} / {legal['k_humano']}",
-                "etiqueta": f"abren desde «embargos y judicializaciones» (IA / humano, de {n})",
+                "valor": f"{legal['k_ia']} vs {legal['k_humano']}",
+                "etiqueta": f"abren desde «embargos y judicializaciones» (IA vs humano, de {n})",
             },
             {
-                "valor": f"{credit['k_ia']} / {credit['k_humano']}",
-                "etiqueta": "prometen limpiar el historial crediticio (IA / humano)",
+                "valor": f"{credit['k_ia']} vs {credit['k_humano']}",
+                "etiqueta": "prometen limpiar el historial crediticio (IA vs humano)",
             },
             {
-                "valor": f"{prior['k_ia']} / {prior['k_humano']}",
-                "etiqueta": "retoman un acuerdo previo (IA / humano): carteras distintas",
+                "valor": f"{prior['k_ia']} vs {prior['k_humano']}",
+                "etiqueta": "retoman un acuerdo previo (IA vs humano): carteras distintas",
             },
         ],
         "efectos": [
             {
                 "etiqueta": label(item),
+                "tentativo": composition_sensitive(item),
                 "diff_pp": item["diff_pp"],
                 "ci_low_pp": item["ci_low_pp"],
                 "ci_high_pp": item["ci_high_pp"],
@@ -150,6 +151,10 @@ def build() -> dict:
             }
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
+        "forest_nota": (
+            "Punto hueco y *: la diferencia deja de ser concluyente al comparar carteras "
+            "equivalentes."
+        ),
         "hallazgos": [
             {
                 "claim": (

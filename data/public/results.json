@@ -12,21 +12,22 @@
       "etiqueta": "conductas difieren, con control por comparaciones múltiples"
     },
     {
-      "valor": "41 / 1",
-      "etiqueta": "abren desde «embargos y judicializaciones» (IA / humano, de 50)"
+      "valor": "41 vs 1",
+      "etiqueta": "abren desde «embargos y judicializaciones» (IA vs humano, de 50)"
     },
     {
-      "valor": "3 / 23",
-      "etiqueta": "prometen limpiar el historial crediticio (IA / humano)"
+      "valor": "3 vs 23",
+      "etiqueta": "prometen limpiar el historial crediticio (IA vs humano)"
     },
     {
-      "valor": "4 / 32",
-      "etiqueta": "retoman un acuerdo previo (IA / humano): carteras distintas"
+      "valor": "4 vs 32",
+      "etiqueta": "retoman un acuerdo previo (IA vs humano): carteras distintas"
     }
   ],
   "efectos": [
     {
       "etiqueta": "Se presenta desde lo jurídico",
+      "tentativo": false,
       "diff_pp": 80.0,
       "ci_low_pp": 64.6,
       "ci_high_pp": 88.4,
@@ -35,6 +36,7 @@
     },
     {
       "etiqueta": "Dice que la oferta caduca hoy",
+      "tentativo": false,
       "diff_pp": 50.0,
       "ci_low_pp": 33.4,
       "ci_high_pp": 63.3,
@@ -43,6 +45,7 @@
     },
     {
       "etiqueta": "Promete limpiar el historial",
+      "tentativo": false,
       "diff_pp": -40.0,
       "ci_low_pp": -54.2,
       "ci_high_pp": -23.4,
@@ -51,6 +54,7 @@
     },
     {
       "etiqueta": "Amenaza con proceso legal",
+      "tentativo": false,
       "diff_pp": 38.0,
       "ci_low_pp": 22.2,
       "ci_high_pp": 52.1,
@@ -59,6 +63,7 @@
     },
     {
       "etiqueta": "Compromiso de pago calificado*",
+      "tentativo": true,
       "diff_pp": -28.0,
       "ci_low_pp": -44.2,
       "ci_high_pp": -9.2,
@@ -67,6 +72,7 @@
     },
     {
       "etiqueta": "Verifica identidad*",
+      "tentativo": true,
       "diff_pp": 26.0,
       "ci_low_pp": 12.5,
       "ci_high_pp": 39.8,
@@ -75,6 +81,7 @@
     },
     {
       "etiqueta": "Propuesta con cifras",
+      "tentativo": false,
       "diff_pp": -2.0,
       "ci_low_pp": -20.6,
       "ci_high_pp": 16.8,
@@ -83,6 +90,7 @@
     },
     {
       "etiqueta": "Ofrece cuotas o abono",
+      "tentativo": false,
       "diff_pp": 2.0,
       "ci_low_pp": -16.9,
       "ci_high_pp": 20.7,
@@ -90,6 +98,7 @@
       "n_humano": "22/50"
     }
   ],
+  "forest_nota": "Punto hueco y *: la diferencia deja de ser concluyente al comparar carteras equivalentes.",
   "hallazgos": [
     {
       "claim": "La IA abre 41 de cada 50 llamadas presentándose desde «embargos y judicializaciones»; los humanos, 1.",

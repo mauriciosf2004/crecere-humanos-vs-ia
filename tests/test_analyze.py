@@ -6,8 +6,17 @@ conclusión sin avisar.
 """
 
 import numpy as np
+import pytest
 
-from src.analyze import global_test, westfall_young
+from src.analyze import EXTRACTIONS, global_test, westfall_young
+
+# Las extracciones no se versionan (contienen texto de llamadas de deudores reales), así
+# que en un clon limpio este test no tiene datos contra los que comprobar. Se salta con el
+# motivo a la vista en vez de fallar: `make check` debe pasar sin los datos privados.
+needs_extractions = pytest.mark.skipif(
+    not any(EXTRACTIONS.glob("*/*.json")),
+    reason="requiere data/interim/extractions, que no se versiona",
+)
 
 
 def _rng():
@@ -48,6 +57,7 @@ def test_step_down_is_monotone_in_effect_order():
     assert np.all(np.diff(adjusted[order]) >= -1e-12)
 
 
+@needs_extractions
 def test_ordinal_commitment_counts_only_the_qualified_level():
     """El compromiso de pago es 0/1/2 y solo el 2 cuenta.
 

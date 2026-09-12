@@ -23,6 +23,7 @@ class EffectRow:
     ci_high_pp: float
     n_ai: str
     n_human: str
+    tentative: bool = False
 
 
 def _x(value: float, lo: float, hi: float, left: float, width: float) -> float:
@@ -33,7 +34,9 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 21) -> str
     """Diferencias en puntos porcentuales con IC95. El cero marcado es la referencia.
 
     Es el gráfico correcto para esta muestra: muestra la magnitud y la
-    incertidumbre a la vez, que es exactamente lo que un p-valor esconde.
+    incertidumbre a la vez, que es exactamente lo que un p-valor esconde. Las filas
+    tentativas —diferencias que no se sostienen al comparar carteras equivalentes—
+    llevan punto hueco y línea discontinua, para que no se lean igual de firmes.
     """
     label_width, pad = 210, 16
     plot_left = label_width + pad
@@ -66,10 +69,13 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 21) -> str
         x_point = _x(row.diff_pp, lo, hi, plot_left, plot_width)
         crosses = row.ci_low_pp <= 0 <= row.ci_high_pp
         cls = "null" if crosses else ("pos" if row.diff_pp > 0 else "neg")
+        mark = " tentative" if row.tentative else ""
 
         out.append(f'<text class="row-label" x="{label_width}" y="{y + 4}">{row.label}</text>')
-        out.append(f'<line class="ci {cls}" x1="{x_low:.1f}" y1="{y}" x2="{x_high:.1f}" y2="{y}"/>')
-        out.append(f'<circle class="pt {cls}" cx="{x_point:.1f}" cy="{y}" r="4"/>')
+        out.append(
+            f'<line class="ci {cls}{mark}" x1="{x_low:.1f}" y1="{y}" x2="{x_high:.1f}" y2="{y}"/>'
+        )
+        out.append(f'<circle class="pt {cls}{mark}" cx="{x_point:.1f}" cy="{y}" r="4"/>')
         out.append(
             f'<text class="row-value {cls}" x="{width - 4}" y="{y + 4}">{row.diff_pp:+.0f}</text>'
         )
