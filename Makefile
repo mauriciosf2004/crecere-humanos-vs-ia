@@ -22,8 +22,9 @@ lint: ## Formato y linting
 
 check: lint test ## Todo lo que debe pasar antes de un commit
 
-clean: ## Borra salidas derivadas (no toca data/raw)
-	rm -rf data/interim/* data/processed/* .pytest_cache .ruff_cache
+clean: ## Borra cachés de herramientas. NO toca data/: las transcripciones y
+       ## extracciones costaron 18 min de GPU y 4 USD, y no se versionan.
+	rm -rf .pytest_cache .ruff_cache report/index.html
 
 report: ## Renderiza report/index.html desde data/public/results.json
 	$(PY) python -m src.report

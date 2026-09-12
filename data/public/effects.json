@@ -15,7 +15,7 @@
       "ci_low_pp": 64.6,
       "ci_high_pp": 88.4,
       "p_raw": 8.904024527260562e-18,
-      "p_ajustado": 0.0
+      "p_ajustado": 9.999000099990002e-05
     },
     {
       "variable": "offer_expiry_claim",
@@ -29,7 +29,7 @@
       "ci_low_pp": 33.4,
       "ci_high_pp": 63.3,
       "p_raw": 2.2054545451825743e-08,
-      "p_ajustado": 0.0
+      "p_ajustado": 9.999000099990002e-05
     },
     {
       "variable": "situational_legal_pressure",
@@ -43,7 +43,7 @@
       "ci_low_pp": 22.2,
       "ci_high_pp": 52.1,
       "p_raw": 6.9994538061897515e-06,
-      "p_ajustado": 0.0004
+      "p_ajustado": 0.0005999400059994001
     },
     {
       "variable": "credit_benefit_promised",
@@ -57,7 +57,7 @@
       "ci_low_pp": -54.2,
       "ci_high_pp": -23.4,
       "p_raw": 6.498195474962444e-06,
-      "p_ajustado": 0.0001
+      "p_ajustado": 0.00029997000299970003
     },
     {
       "variable": "confidentiality_gate",
@@ -71,21 +71,21 @@
       "ci_low_pp": 12.5,
       "ci_high_pp": 39.8,
       "p_raw": 0.00038796407137255107,
-      "p_ajustado": 0.0082
+      "p_ajustado": 0.0136986301369863
     },
     {
       "variable": "qualified_payment_commitment",
       "etiqueta": "Obtiene compromiso de pago calificado",
       "hipotesis": "humano > IA",
-      "k_ia": 15,
+      "k_ia": 11,
       "n_ia": 50,
-      "k_humano": 38,
+      "k_humano": 25,
       "n_humano": 50,
-      "diff_pp": -46.0,
-      "ci_low_pp": -60.6,
-      "ci_high_pp": -26.8,
-      "p_raw": 7.398165459341142e-06,
-      "p_ajustado": 0.0
+      "diff_pp": -28.0,
+      "ci_low_pp": -44.2,
+      "ci_high_pp": -9.2,
+      "p_raw": 0.0063689678093197585,
+      "p_ajustado": 0.0136986301369863
     },
     {
       "variable": "quantified_proposal_stated",

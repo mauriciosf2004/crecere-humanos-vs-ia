@@ -82,9 +82,16 @@ def load_table() -> tuple[np.ndarray, np.ndarray, list[str]]:
     ]
     names = [name for name, _, _ in FAMILY]
 
+    # El compromiso de pago es ordinal (0 sin compromiso, 1 vago, 2 calificado) y la
+    # celda de la familia es solo el nivel 2. Colapsarlo con bool() contaría los
+    # compromisos vagos como calificados, que es justo la distinción que importa.
+    ORDINAL = {"qualified_payment_commitment": 2}
+
     def value(row: dict, key: str) -> int:
         cell = row.get(key)
         raw = cell.get("value") if isinstance(cell, dict) else cell
+        if key in ORDINAL:
+            return int(raw == ORDINAL[key])
         return int(bool(raw))
 
     matrix = np.array([[value(row, name) for name in names] for row in rows], dtype=float)
@@ -137,7 +144,9 @@ def westfall_young(
     # máximo sucesivo de derecha a izquierda: en el paso j solo compiten las que
     # quedan por debajo en el orden observado
     successive = np.maximum.accumulate(null[:, ::-1], axis=1)[:, ::-1]
-    adjusted = (successive >= observed[order]).mean(axis=0)
+    # (r+1)/(B+1): un p-valor por permutación no puede ser cero exacto, y publicarlo
+    # como 0,0000 invita a dudar del resto. Misma corrección que usa la compuerta.
+    adjusted = ((successive >= observed[order]).sum(axis=0) + 1) / (permutations + 1)
     adjusted = np.maximum.accumulate(adjusted)  # monotonía que exige el step-down
 
     out = np.empty(len(observed))

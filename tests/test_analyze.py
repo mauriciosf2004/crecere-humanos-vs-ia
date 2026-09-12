@@ -46,3 +46,41 @@ def test_step_down_is_monotone_in_effect_order():
     effects = np.abs(matrix[is_ai].mean(axis=0) - matrix[~is_ai].mean(axis=0))
     order = np.argsort(-effects)
     assert np.all(np.diff(adjusted[order]) >= -1e-12)
+
+
+def test_ordinal_commitment_counts_only_the_qualified_level():
+    """El compromiso de pago es 0/1/2 y solo el 2 cuenta.
+
+    Colapsarlo con bool() contaría los compromisos vagos como calificados, que es
+    exactamente la distinción que separa una promesa ejecutable de un "yo veo cómo
+    hago". Se fijan los tres niveles observados en el corpus.
+    """
+    import json
+    from collections import Counter
+
+    from src.analyze import EXTRACTIONS, FAMILY, load_table
+
+    levels = {}
+    for arm in ("humano", "ia"):
+        counter = Counter()
+        for path in sorted((EXTRACTIONS / arm).glob("*.json")):
+            cell = json.loads(path.read_text(encoding="utf-8"))["qualified_payment_commitment"]
+            counter[cell["value"] if isinstance(cell, dict) else cell] += 1
+        levels[arm] = counter
+
+    assert levels["humano"] == {0: 12, 1: 13, 2: 25}
+    assert levels["ia"] == {0: 35, 1: 4, 2: 11}
+
+    matrix, is_ai, _ = load_table()
+    column = matrix[:, [n for n, _, _ in FAMILY].index("qualified_payment_commitment")]
+    assert column[is_ai].sum() == 11  # no 15: los vagos no cuentan
+    assert column[~is_ai].sum() == 25  # no 38
+
+
+def test_permutation_pvalue_is_never_exactly_zero():
+    """(r+1)/(B+1): publicar p = 0,0000 invita a dudar del resto del análisis."""
+    matrix = np.vstack([np.ones((25, 4)), np.zeros((25, 4))])
+    is_ai = np.array([True] * 25 + [False] * 25)
+    adjusted = westfall_young(matrix, is_ai, _rng(), permutations=200)
+    assert adjusted.min() > 0
+    assert adjusted.min() == 1 / 201
