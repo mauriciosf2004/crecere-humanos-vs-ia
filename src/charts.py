@@ -4,9 +4,8 @@ Van inline en el HTML, así que heredan el CSS del documento: el gráfico y la
 página son literalmente el mismo sistema visual, y no hay ningún recurso externo
 que falle cuando el evaluador abra el adjunto sin conexión.
 
-Solo hay dos formas de gráfico porque solo hay dos cosas que mostrar: una
-comparación de tamaños de efecto con su incertidumbre, y una comparación de dos
-tasas. Todo lo demás cabe en una frase.
+Hay una sola forma de gráfico porque solo hay una cosa que mostrar: diferencias
+con su incertidumbre. Todo lo demás cabe en una frase o en una tabla.
 """
 
 from __future__ import annotations
@@ -30,7 +29,7 @@ def _x(value: float, lo: float, hi: float, left: float, width: float) -> float:
     return left + (value - lo) / (hi - lo) * width
 
 
-def forest(rows: list[EffectRow], width: int = 520, row_height: int = 26) -> str:
+def forest(rows: list[EffectRow], width: int = 520, row_height: int = 21) -> str:
     """Diferencias en puntos porcentuales con IC95. El cero marcado es la referencia.
 
     Es el gráfico correcto para esta muestra: muestra la magnitud y la
@@ -75,26 +74,5 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 26) -> str
             f'<text class="row-value {cls}" x="{width - 4}" y="{y + 4}">{row.diff_pp:+.0f}</text>'
         )
 
-    out.append("</svg>")
-    return "\n".join(out)
-
-
-def paired_bars(
-    label_a: str, value_a: float, label_b: str, value_b: float, width: int = 250
-) -> str:
-    """Dos tasas enfrentadas. Eje desde cero, sin excepción."""
-    height, bar = 74, 22
-    scale = max(value_a, value_b, 1) * 1.12
-    out = [f'<svg class="bars" viewBox="0 0 {width} {height}" role="img">']
-    for index, (label, value, cls) in enumerate(
-        ((label_a, value_a, "ai"), (label_b, value_b, "human"))
-    ):
-        y = 6 + index * (bar + 12)
-        w = value / scale * (width - 108)
-        out.append(f'<text class="bar-label" x="0" y="{y + 15}">{label}</text>')
-        out.append(
-            f'<rect class="bar {cls}" x="62" y="{y}" width="{w:.1f}" height="{bar}" rx="2"/>'
-        )
-        out.append(f'<text class="bar-value" x="{68 + w:.1f}" y="{y + 15}">{value:.0f}%</text>')
     out.append("</svg>")
     return "\n".join(out)

@@ -1,37 +1,240 @@
 {
   "meta": {
-    "titulo": "Gestión de cobranza: agentes humanos frente a agentes de IA",
-    "cliente": "Creceré AI",
+    "titulo": "Cobranza con agentes humanos y de IA: qué cambia en la gestión",
+    "cliente": "Creceré AI · Prueba técnica",
     "fecha": "Septiembre 2026",
     "autor": "Mauricio Salas"
   },
-  "veredicto": "PRELIMINAR — pendiente de la familia de variables.",
+  "veredicto": "<strong>Sí hay diferencias sustentables entre agentes humanos y de IA, y están en cómo se gestiona, no en cuánto dura la llamada.</strong> La IA encuadra la cobranza en lo jurídico y presiona con plazos; los gestores humanos prometen limpiar el historial crediticio. La brecha en compromisos de pago existe, pero no se puede atribuir al tipo de agente: las dos carteras eran distintas.",
   "kpis": [
-    { "valor": "100", "etiqueta": "llamadas analizadas (50 + 50)" },
-    { "valor": "6,4 h", "etiqueta": "audio transcrito en local" },
-    { "valor": "29 pp", "etiqueta": "diferencia mínima detectable" },
-    { "valor": "0", "etiqueta": "llamadas descartadas" }
+    {
+      "valor": "6 de 8",
+      "etiqueta": "conductas difieren, con control por comparaciones múltiples"
+    },
+    {
+      "valor": "41 / 1",
+      "etiqueta": "abren desde «embargos y judicializaciones» (IA / humano, de 50)"
+    },
+    {
+      "valor": "3 / 23",
+      "etiqueta": "prometen limpiar el historial crediticio (IA / humano)"
+    },
+    {
+      "valor": "4 / 32",
+      "etiqueta": "retoman un acuerdo previo (IA / humano): carteras distintas"
+    }
   ],
   "efectos": [
-    { "etiqueta": "Se presenta desde \"embargos y judicializaciones\"", "diff_pp": 76.0, "ci_low_pp": 61.0, "ci_high_pp": 86.0, "n_ia": "38/50", "n_humano": "0/50" },
-    { "etiqueta": "Amenaza con proceso legal concreto", "diff_pp": 48.0, "ci_low_pp": 32.0, "ci_high_pp": 62.0, "n_ia": "26/50", "n_humano": "2/50" },
-    { "etiqueta": "Se identifica como sistema automatizado", "diff_pp": 4.0, "ci_low_pp": -5.0, "ci_high_pp": 14.0, "n_ia": "3/50", "n_humano": "1/50" },
-    { "etiqueta": "Duración de la llamada (mediana)", "diff_pp": -6.0, "ci_low_pp": -26.0, "ci_high_pp": 15.0, "n_ia": "149 s", "n_humano": "171 s" }
+    {
+      "etiqueta": "Se presenta desde lo jurídico",
+      "diff_pp": 80.0,
+      "ci_low_pp": 64.6,
+      "ci_high_pp": 88.4,
+      "n_ia": "41/50",
+      "n_humano": "1/50"
+    },
+    {
+      "etiqueta": "Dice que la oferta caduca hoy",
+      "diff_pp": 50.0,
+      "ci_low_pp": 33.4,
+      "ci_high_pp": 63.3,
+      "n_ia": "27/50",
+      "n_humano": "2/50"
+    },
+    {
+      "etiqueta": "Promete limpiar el historial",
+      "diff_pp": -40.0,
+      "ci_low_pp": -54.2,
+      "ci_high_pp": -23.4,
+      "n_ia": "3/50",
+      "n_humano": "23/50"
+    },
+    {
+      "etiqueta": "Amenaza con proceso legal",
+      "diff_pp": 38.0,
+      "ci_low_pp": 22.2,
+      "ci_high_pp": 52.1,
+      "n_ia": "21/50",
+      "n_humano": "2/50"
+    },
+    {
+      "etiqueta": "Compromiso de pago calificado*",
+      "diff_pp": -28.0,
+      "ci_low_pp": -44.2,
+      "ci_high_pp": -9.2,
+      "n_ia": "11/50",
+      "n_humano": "25/50"
+    },
+    {
+      "etiqueta": "Verifica identidad*",
+      "diff_pp": 26.0,
+      "ci_low_pp": 12.5,
+      "ci_high_pp": 39.8,
+      "n_ia": "14/50",
+      "n_humano": "1/50"
+    },
+    {
+      "etiqueta": "Propuesta con cifras",
+      "diff_pp": -2.0,
+      "ci_low_pp": -20.6,
+      "ci_high_pp": 16.8,
+      "n_ia": "28/50",
+      "n_humano": "29/50"
+    },
+    {
+      "etiqueta": "Ofrece cuotas o abono",
+      "diff_pp": 2.0,
+      "ci_low_pp": -16.9,
+      "ci_high_pp": 20.7,
+      "n_ia": "23/50",
+      "n_humano": "22/50"
+    }
   ],
   "hallazgos": [
-    { "claim": "Marcador de posición.", "why": "Se completa cuando cierre la extracción." }
-  ],
-  "hipotesis": [
-    { "texto": "La IA no acorta la llamada", "esperado": "sin diferencia", "estado": "se cumple" }
+    {
+      "claim": "La IA abre 41 de cada 50 llamadas presentándose desde «embargos y judicializaciones»; los humanos, 1.",
+      "why": "Es la frase del guion de apertura y se mantiene al separar por cartera.",
+      "accion": "Revisar ese encuadre con el área de cumplimiento antes de escalar el canal."
+    },
+    {
+      "claim": "La IA afirma que la oferta caduca hoy en 27 de 50 llamadas; los humanos, en 2.",
+      "why": "Es urgencia de guion: sale en el mismo bloque que presenta el descuento.",
+      "accion": "Comprobar contra la matriz de condonaciones que el vencimiento sea real."
+    },
+    {
+      "claim": "Los humanos prometen limpiar el historial crediticio en 23 de 50 llamadas; la IA, en 3.",
+      "why": "Es el riesgo que trae el canal humano: una promesa que el gestor no controla.",
+      "accion": "Incluirla en el muestreo de calidad de los gestores humanos."
+    },
+    {
+      "claim": "La IA plantea un proceso legal si no se paga en 21 de 50 llamadas; los humanos, en 2.",
+      "why": "Dentro de la propia IA, las llamadas con amenaza no cierran más de forma concluyente (7/21 frente a 4/29, p = 0,17).",
+      "accion": "Probar una variante del guion sin amenaza."
+    },
+    {
+      "claim": "Los humanos obtienen compromisos de pago calificados en 25 de 50 llamadas; la IA, en 11.",
+      "why": "No es comparable: 32 llamadas humanas retomaban un acuerdo ya hecho, frente a 4 de la IA. Al separar por ese factor la diferencia deja de ser concluyente.",
+      "accion": "Asignar cuentas al azar entre canales para medir conversión."
+    }
   ],
   "tabla": [
-    { "variable": "Duración (mediana)", "ia": "149 s", "humano": "171 s", "diff": "−22 s", "ic": "[−89, +87]" }
+    {
+      "variable": "Se presenta desde lo jurídico",
+      "esperado": "IA ≫ humano",
+      "ia": "41/50",
+      "humano": "1/50",
+      "diff": "+80 [+65, +88]",
+      "p": "< 0,001",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Dice que la oferta caduca hoy",
+      "esperado": "IA ≫ humano",
+      "ia": "27/50",
+      "humano": "2/50",
+      "diff": "+50 [+33, +63]",
+      "p": "< 0,001",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Amenaza con proceso legal",
+      "esperado": "IA ≫ humano",
+      "ia": "21/50",
+      "humano": "2/50",
+      "diff": "+38 [+22, +52]",
+      "p": "< 0,001",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Promete limpiar el historial",
+      "esperado": "humano ≫ IA",
+      "ia": "3/50",
+      "humano": "23/50",
+      "diff": "−40 [−54, −23]",
+      "p": "< 0,001",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Verifica identidad*",
+      "esperado": "IA > humano",
+      "ia": "14/50",
+      "humano": "1/50",
+      "diff": "+26 [+12, +40]",
+      "p": "0,014",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Compromiso de pago calificado*",
+      "esperado": "humano > IA",
+      "ia": "11/50",
+      "humano": "25/50",
+      "diff": "−28 [−44, −9]",
+      "p": "0,014",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Propuesta con cifras",
+      "esperado": "sin diferencia",
+      "ia": "28/50",
+      "humano": "29/50",
+      "diff": "−2 [−21, +17]",
+      "p": "1,00",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    },
+    {
+      "variable": "Ofrece cuotas o abono",
+      "esperado": "sin diferencia",
+      "ia": "23/50",
+      "humano": "22/50",
+      "diff": "+2 [−17, +21]",
+      "p": "1,00",
+      "estado": "coincide",
+      "estado_clase": "ok"
+    }
+  ],
+  "composicion": [
+    {
+      "etiqueta": "Retoma un acuerdo de pago previo",
+      "ia": "4/50",
+      "humano": "32/50"
+    },
+    {
+      "etiqueta": "Habla con el titular de la deuda",
+      "ia": "22/50",
+      "humano": "44/50"
+    }
+  ],
+  "composicion_nota": "Los humanos retomaban acuerdos ya pactados; la IA abría gestiones nuevas. Al estratificar por esa diferencia, el encuadre y las promesas se mantienen; lo marcado con * deja de ser concluyente. En 19 llamadas de IA no se puede determinar quién contesta, frente a 3 humanas: esa fila es orientativa.",
+  "palancas": [
+    {
+      "titulo": "Asignar cuentas al azar entre canales.",
+      "detalle": "Es la única forma de medir conversión sin que decida la cartera. Con 50 llamadas por brazo solo se detectan diferencias de 29 puntos o más."
+    },
+    {
+      "titulo": "Una variante del guion de IA sin amenaza legal.",
+      "detalle": "Si convierte igual, se retira un riesgo sin coste; hoy no hay evidencia de que la amenaza compre compromisos."
+    },
+    {
+      "titulo": "La promesa sobre centrales, al control de calidad humano.",
+      "detalle": "Aparece en 23 de 50 llamadas humanas y su cumplimiento depende de la fuente, no de quien llama."
+    }
   ],
   "metodo": [
-    "Transcripción local con whisper.cpp large-v3-turbo. Ningún audio salió del equipo."
+    "Transcripción en local con whisper.cpp: ningún audio salió del equipo. Un modelo de lenguaje aplicó a cada llamada ocho preguntas cerradas con cita textual obligatoria; 262 de 273 respuestas afirmativas citan una frase que existe literalmente en la transcripción.",
+    "Contraste en dos niveles: un test global por permutación sobre las ocho conductas (p < 0,001) y, al rechazar, Westfall-Young para saber cuáles difieren con el error por familia al 5 %. Intervalos de Newcombe.",
+    "Las hipótesis se declararon antes de medir, con su signo. Dos predecían que no habría diferencia, y las dos se cumplieron."
   ],
   "limitaciones": [
-    "Sin metadatos de campaña, fecha ni resultado de CRM: la comparación es un cuasi-experimento."
+    "Sin campaña, fecha ni resultado de CRM: el compromiso de pago es verbal, no un pago, y la contactabilidad no se puede medir.",
+    "No se separaron hablantes: el error de la diarización era distinto en voz humana y sintética y habría favorecido a la IA. Por eso no hay métricas de latencia ni de reparto del habla.",
+    "Con 50 llamadas por brazo, diferencias menores a 29 puntos no se distinguen del ruido."
   ],
-  "cierre": "Documento en construcción."
+  "cierre": "La duración tampoco separa a los canales: mediana de 149 s en IA y 171 s en humanos (p = 0,32). Lo que cambia entre ellos es qué se dice, no cuánto se habla."
 }

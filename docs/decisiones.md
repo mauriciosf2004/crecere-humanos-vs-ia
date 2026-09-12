@@ -76,7 +76,11 @@ Se simuló la ganancia antes de elegir. Con desenlaces independientes, Westfall-
 idéntico a Holm. Con correlación de 0,7 —el escenario real, porque varias variables miden
 partes del mismo guion— gana unos **5 puntos de potencia**.
 
-Se adoptó sabiendo cuánto compra. Bonferroni sobre esta familia habría hundido la potencia
+Se adoptó sabiendo cuánto compra.
+
+Se verificó además sobre la correlación real del corpus, reconstruida por cópula gaussiana:
+en 600 réplicas bajo nulo completo, el error por familia de Westfall-Young es 0,042 [IC95
+0,028–0,061] y el del procedimiento con compuerta, 0,025 [0,015–0,041]. Bonferroni sobre esta familia habría hundido la potencia
 individual sin comprar ninguna garantía adicional.
 
 ## 7. Un test global como compuerta, en vez de una métrica primaria única
@@ -85,8 +89,9 @@ La alternativa ortodoxa era declarar una métrica primaria antes de ver los dato
 resto como exploratorio. Se descartó por una razón práctica: obliga a apostar por una variable
 cuando lo que se quería era explorar la familia entera.
 
-El test global no exige saber qué variable importa —pregunta si los perfiles difieren— y al
-actuar de compuerta mantiene el error por familia en el 5 %. La arquitectura replica el orden
+El test global no exige saber qué variable importa —pregunta si los perfiles difieren—.
+El error por familia no lo controla la compuerta sino Westfall-Young, que lo mantiene en el 5 %
+por sí solo. La arquitectura replica el orden
 de la pregunta del encargo: primero si existen diferencias, después cuáles.
 
 Se verificó por simulación que ninguno de los dos enfoques domina: el test global gana cuando
@@ -94,9 +99,14 @@ la diferencia está repartida entre muchas variables (29 % frente a 20 % de pote
 escenario de ocho efectos pequeños) y pierde cuando está concentrada en una sola (63 % frente
 a 92 %). Se eligió con ese mapa delante.
 
+La rúbrica y el esquema rotulan todavía el compromiso de pago como «métrica primaria». Son el
+instrumento tal como se ejecutó y no se editan a posteriori: la huella de la rúbrica forma parte
+de la caché de extracción, y cambiarla invalidaría las cien anotaciones. El rótulo es anterior a
+esta decisión.
+
 ## 8. Ocho variables, ni más ni menos
 
-Veintiocho candidatas, ocho supervivientes. Los motivos de descarte, por frecuencia:
+Cuarenta y siete candidatas, ocho en la familia. Los motivos de descarte, por frecuencia:
 
 - **Artefacto de medición.** Dependían de la prosodia, de la segmentación del transcriptor o de
   la calidad de la voz sintética. Ejemplo: la adherencia a guion medida por n-gramas repetidos.
@@ -110,7 +120,7 @@ Veintiocho candidatas, ocho supervivientes. Los motivos de descarte, por frecuen
 - **Base insuficiente.** Un solo caso en 100 llamadas. Es el caso de que el deudor verbalice que
   cree hablar con una máquina: la mejor cita del corpus y la peor variable posible.
 
-El detalle de las veinte descartadas está en el historial del diseño de la rúbrica.
+La lista completa, agrupada por motivo, está en `docs/variables-descartadas.md`.
 
 ## 9. Pasar el texto por stdin y no como argumento
 
@@ -120,3 +130,52 @@ opción desconocida y salía sin escribir nada.
 
 Era el único caso del corpus, pero habría reaparecido con cualquier transcripción que empiece
 por guion. Se corrigió pasando el texto por la entrada estándar.
+
+## 10. Los dos brazos no atacaron la misma cartera
+
+Sin metadatos no había forma de comprobar el balance entre brazos, así que se midió desde el
+audio. La señal más limpia es si la llamada **retoma un acuerdo de pago ya existente**: se detecta
+por una frase concreta del agente —una frase que retoma el monto y las cuotas ya pactadas— y no por
+ausencia.
+
+| | IA | Humano |
+|---|---|---|
+| Retoma un acuerdo previo | 4/50 | 32/50 |
+
+Los humanos estaban, en su mayoría, dando seguimiento a acuerdos; la IA, abriendo gestiones
+nuevas. Se comprobó que es la cartera y no el guion: en ninguna de las 46 llamadas de IA sin
+acuerdo previo aparece una referencia a uno anterior, ni en boca del agente ni del deudor.
+
+Al estratificar por esa variable (Mantel-Haenszel, dos estratos):
+
+- Las cuatro diferencias de encuadre y de promesa **se mantienen** (p < 0,001 en las cuatro).
+- La verificación de identidad **se debilita** (p = 0,08).
+- La diferencia en **compromisos de pago no se puede separar de la composición** (p = 0,13). En
+  el único estrato con llamadas suficientes de ambos brazos —gestiones nuevas— la brecha baja a
+  17 puntos (IA 10/46, humano 7/18). El estrato de acuerdo previo tiene 4 llamadas de IA: no hay
+  con qué comparar.
+
+Por eso la brecha comercial se presenta como observada pero **no atribuible al tipo de agente**,
+y la conclusión que se sostiene es la de conducta.
+
+No se estratificó por "habla con el titular" (IA 22/50, humano 44/50): en 19 llamadas de IA el
+interlocutor no se puede determinar, frente a 3 humanas, y esa indeterminación se define por
+ausencia de confirmación, que es justo el tipo de variable que se descartó en el §1.
+
+## 11. Validar sin escuchar: el anclaje de citas
+
+Escuchar las llamadas contra lo anotado es el siguiente paso de la validación. Antes de eso se puede
+comprobar una parte por máquina: la rúbrica obliga a citar literalmente la frase que justifica cada
+respuesta afirmativa, así que basta con buscar esa frase en la transcripción que leyó el modelo.
+
+De 273 respuestas afirmativas, **262 citan una frase que aparece
+literalmente** (96 %). De las 11 restantes, 10 están en las variables
+comerciales —compromiso de pago, propuesta con cifras y cuotas— y la otra en la caducidad de la oferta. Las tres diferencias
+de encuadre y de promesa —presentación jurídica, amenaza legal y promesa crediticia— están
+ancladas al 100 %.
+
+Anclada no significa bien interpretada, pero descarta la invención, que es el fallo que más daño
+haría. Y dice dónde escuchar: las citas no ancladas y los positivos de las celdas raras —los que
+sostienen la dirección de un efecto— forman la hoja de escucha, que vive en `data/interim/` porque
+contiene texto de las llamadas.
+

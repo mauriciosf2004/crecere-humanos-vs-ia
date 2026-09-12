@@ -50,7 +50,8 @@ Ocho, binarias, extraídas de la transcripción con cita textual obligatoria. So
 rúbrica de anotación y la familia del contraste, y por eso el tamaño está acotado: menos de
 seis desaprovecha el diseño, más de doce diluye el test global.
 
-Se evaluaron y descartaron catorce candidatas más. Los motivos están en `docs/decisiones.md`;
+Se evaluaron cuarenta y siete candidatas: ocho forman la familia, tres se conservan como contexto
+y treinta y cinco se descartaron. Los motivos están en `docs/decisiones.md`;
 el más repetido fue el constructo ambiguo. Ejemplo real: un primer intento contaba "del área de
 embargos y judicializaciones" como amenaza al deudor, cuando es el nombre del departamento en
 el guion de presentación. Son cosas distintas y ahora se miden por separado.
@@ -86,9 +87,9 @@ de asintótica.
 
 **Dos niveles, en el orden de la pregunta.** Primero un test global sobre el perfil completo de
 las ocho variables, que responde "¿existen diferencias?" con un solo p-valor y sin multiplicidad.
-Solo si ese test rechaza se desciende a la familia, con Westfall-Young step-down. Como el primer
-nivel actúa de compuerta, el error por familia del procedimiento completo queda en el 5 % sin
-corregir nada más.
+Solo si ese test rechaza se desciende a la familia, con Westfall-Young step-down. Westfall-Young controla
+por sí mismo el error por familia al 5 %. La compuerta no añade control de error: ordena la
+respuesta, y si el perfil conjunto no difiriera evitaría interpretar variables sueltas.
 
 Se eligió Westfall-Young y no Bonferroni ni Holm porque aprovecha la correlación entre
 variables, que aquí es alta —varias miden partes del mismo guion—. La ganancia se simuló antes

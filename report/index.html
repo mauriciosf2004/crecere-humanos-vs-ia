@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Gestión de cobranza: agentes humanos frente a agentes de IA</title>
+<title>Cobranza con agentes humanos y de IA: qué cambia en la gestión</title>
 <style>
   /* Geometría: A4 con 12 mm de margen. La caja útil es 186 x 273 mm; se trabaja
      sobre 255 mm de alto para dejar aire y que nada quede al filo del corte. */
@@ -19,48 +19,52 @@
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size:9.6pt; line-height:1.38; font-variant-numeric: tabular-nums lining-nums;
   }
-  /* Sin overflow:hidden a propósito. Si el contenido desborda, queremos que
-     fluya a una tercera página y que `make verify` lo cace, no que se recorte
-     en silencio y el PDF siga diciendo 2. */
+  /* Sin overflow:hidden y con el pie en el flujo normal, a propósito: si el contenido
+     desborda, fluye a una tercera página y `make verify` lo caza, en vez de recortarse o
+     de quedar tapado por un pie posicionado encima. */
   .page {
-    width:186mm; height:255mm; padding:0; margin:8mm auto; background:var(--bg);
-    position:relative;
+    width:186mm; min-height:255mm; padding:0; margin:8mm auto; background:var(--bg);
+    display:flex; flex-direction:column;
   }
   @media print {
     body { background:#fff; }
-    .page { margin:0; width:auto; height:auto; break-after:page; }
+    .page { margin:0; width:auto; min-height:268mm; break-after:page; }
     .page:last-child { break-after:auto; }
   }
   h1 { font-size:19pt; line-height:1.08; letter-spacing:-.022em; margin:0 0 3mm; }
-  h2 { font-size:10.5pt; letter-spacing:.04em; text-transform:uppercase;
-       color:var(--muted); margin:0 0 2mm; font-weight:650; }
-  p { margin:0 0 2mm; }
+  h2 { font-size:9.4pt; letter-spacing:.05em; text-transform:uppercase;
+       color:var(--muted); margin:0 0 1.8mm; font-weight:650; }
+  p { margin:0 0 1.8mm; }
   .eyebrow { font-size:8pt; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
-  .verdict { font-size:12.5pt; line-height:1.3; margin:0 0 4mm; }
+  .verdict { font-size:11pt; line-height:1.3; margin:0 0 4mm; }
   .verdict strong { font-weight:680; }
   header { border-bottom:1.5px solid var(--ink); padding-bottom:2.5mm; margin-bottom:4mm; }
 
-  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin-bottom:4.5mm; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin-bottom:4mm; }
   .kpi { border-top:2.5px solid var(--ai); padding-top:1.5mm; }
-  .kpi .v { font-size:17pt; font-weight:680; letter-spacing:-.03em; display:block; line-height:1.05; }
-  .kpi .l { font-size:8.2pt; color:var(--muted); display:block; margin-top:.8mm; }
+  .kpi .v { font-size:15pt; font-weight:680; letter-spacing:-.03em; display:block; line-height:1.05; }
+  .kpi .l { font-size:8pt; color:var(--muted); display:block; margin-top:.8mm; }
 
   ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
-  ol.findings li { counter-increment:f; padding:2mm 0 2mm 8mm; border-bottom:1px solid var(--line);
+  ol.findings li { counter-increment:f; padding:1.3mm 0 1.3mm 8mm; border-bottom:1px solid var(--line);
                    position:relative; }
   ol.findings li:last-child { border-bottom:0; }
-  ol.findings li::before { content:counter(f); position:absolute; left:0; top:2mm;
+  ol.findings li::before { content:counter(f); position:absolute; left:0; top:1.4mm;
     font-size:8pt; font-weight:700; color:var(--ai); border:1.2px solid var(--ai);
     width:5mm; height:5mm; border-radius:50%; display:grid; place-items:center; }
   ol.findings .claim { font-weight:620; }
   ol.findings .why { color:var(--muted); }
+  ol.findings .action { display:block; margin-top:.6mm; font-size:8.8pt; color:var(--ai); }
 
-  table { width:100%; border-collapse:collapse; font-size:8.6pt; }
-  th { text-align:left; font-weight:620; color:var(--muted); font-size:7.8pt;
-       text-transform:uppercase; letter-spacing:.05em; padding:1.2mm 1.5mm; border-bottom:1px solid var(--ink); }
-  td { padding:1.4mm 1.5mm; border-bottom:1px solid var(--line); }
-  td.num { text-align:right; }
-  .tag { font-size:7.4pt; padding:.3mm 1.2mm; border-radius:2px; background:#f0eef5; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:8.4pt; }
+  th { text-align:left; font-weight:620; color:var(--muted); font-size:7.6pt;
+       text-transform:uppercase; letter-spacing:.05em; padding:1.1mm 1.4mm; border-bottom:1px solid var(--ink); }
+  td { padding:1.2mm 1.4mm; border-bottom:1px solid var(--line); vertical-align:top; }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  .tag { font-size:7.4pt; padding:.3mm 1.2mm; border-radius:2px; background:#f0eef5; color:var(--muted);
+         white-space:nowrap; }
+  .tag.ok { background:#e8f3ee; color:#2f6f53; }
+  .tag.ko { background:#fbeee6; color:#9a3412; }
 
   svg.forest { width:100%; height:auto; }
   .forest .axis-zero { stroke:var(--ink); stroke-width:1; }
@@ -73,53 +77,71 @@
   .forest .ci.neg, .forest .pt.neg, .forest .row-value.neg { stroke:var(--neg); fill:var(--neg); }
   .forest .ci.null, .forest .pt.null, .forest .row-value.null { stroke:var(--null); fill:var(--null); }
 
+  ul.levers { margin:0; padding-left:4mm; }
+  ul.levers li { margin-bottom:1.1mm; }
   .note { font-size:8pt; color:var(--muted); border-left:2px solid var(--line); padding-left:2.5mm; }
-  footer { position:absolute; bottom:0; left:0; right:0; font-size:7.6pt; color:var(--muted);
+  footer { margin-top:auto; font-size:7.6pt; color:var(--muted);
            border-top:1px solid var(--line); padding-top:1.5mm; display:flex; justify-content:space-between; }
   .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
-  section { margin-bottom:4.5mm; }
+  section { margin-bottom:4mm; }
 </style>
 </head>
 <body>
 
 <div class="page" id="p1">
   <header>
-    <div class="eyebrow">Creceré AI · Septiembre 2026</div>
-    <h1>Gestión de cobranza: agentes humanos frente a agentes de IA</h1>
+    <div class="eyebrow">Creceré AI · Prueba técnica · Septiembre 2026</div>
+    <h1>Cobranza con agentes humanos y de IA: qué cambia en la gestión</h1>
   </header>
 
-  <p class="verdict">PRELIMINAR — pendiente de la familia de variables.</p>
+  <p class="verdict"><strong>Sí hay diferencias sustentables entre agentes humanos y de IA, y están en cómo se gestiona, no en cuánto dura la llamada.</strong> La IA encuadra la cobranza en lo jurídico y presiona con plazos; los gestores humanos prometen limpiar el historial crediticio. La brecha en compromisos de pago existe, pero no se puede atribuir al tipo de agente: las dos carteras eran distintas.</p>
 
   <div class="kpis">
-    <div class="kpi"><span class="v">100</span><span class="l">llamadas analizadas (50 + 50)</span></div><div class="kpi"><span class="v">6,4 h</span><span class="l">audio transcrito en local</span></div><div class="kpi"><span class="v">29 pp</span><span class="l">diferencia mínima detectable</span></div><div class="kpi"><span class="v">0</span><span class="l">llamadas descartadas</span></div>
+    <div class="kpi"><span class="v">6 de 8</span><span class="l">conductas difieren, con control por comparaciones múltiples</span></div><div class="kpi"><span class="v">41 / 1</span><span class="l">abren desde «embargos y judicializaciones» (IA / humano, de 50)</span></div><div class="kpi"><span class="v">3 / 23</span><span class="l">prometen limpiar el historial crediticio (IA / humano)</span></div><div class="kpi"><span class="v">4 / 32</span><span class="l">retoman un acuerdo previo (IA / humano): carteras distintas</span></div>
   </div>
 
   <section>
     <h2>Dónde difieren, y cuánto</h2>
-    <svg class="forest" viewBox="0 0 520 138" role="img">
-<line class="axis-tick" x1="226.0" y1="8" x2="226.0" y2="112"/>
-<text class="axis-label" x="226.0" y="126">-90</text>
-<line class="axis-zero" x1="350.0" y1="8" x2="350.0" y2="112"/>
-<text class="axis-label" x="350.0" y="126">+0</text>
-<line class="axis-tick" x1="474.0" y1="8" x2="474.0" y2="112"/>
-<text class="axis-label" x="474.0" y="126">+90</text>
-<text class="axis-title" x="350.0" y="137">diferencia IA − humano (puntos porcentuales)</text>
-<text class="row-label" x="210" y="24">Se presenta desde "embargos y judicializaciones"</text>
-<line class="ci pos" x1="434.0" y1="20" x2="468.5" y2="20"/>
-<circle class="pt pos" cx="454.7" cy="20" r="4"/>
-<text class="row-value pos" x="516" y="24">+76</text>
-<text class="row-label" x="210" y="50">Amenaza con proceso legal concreto</text>
-<line class="ci pos" x1="394.1" y1="46" x2="435.4" y2="46"/>
-<circle class="pt pos" cx="416.1" cy="46" r="4"/>
-<text class="row-value pos" x="516" y="50">+48</text>
-<text class="row-label" x="210" y="76">Se identifica como sistema automatizado</text>
-<line class="ci null" x1="343.1" y1="72" x2="369.3" y2="72"/>
-<circle class="pt null" cx="355.5" cy="72" r="4"/>
-<text class="row-value null" x="516" y="76">+4</text>
-<text class="row-label" x="210" y="102">Duración de la llamada (mediana)</text>
-<line class="ci null" x1="314.2" y1="98" x2="370.7" y2="98"/>
-<circle class="pt null" cx="341.7" cy="98" r="4"/>
-<text class="row-value null" x="516" y="102">-6</text>
+    <svg class="forest" viewBox="0 0 520 202" role="img">
+<line class="axis-tick" x1="226.0" y1="8" x2="226.0" y2="176"/>
+<text class="axis-label" x="226.0" y="190">-90</text>
+<line class="axis-zero" x1="350.0" y1="8" x2="350.0" y2="176"/>
+<text class="axis-label" x="350.0" y="190">+0</text>
+<line class="axis-tick" x1="474.0" y1="8" x2="474.0" y2="176"/>
+<text class="axis-label" x="474.0" y="190">+90</text>
+<text class="axis-title" x="350.0" y="201">diferencia IA − humano (puntos porcentuales)</text>
+<text class="row-label" x="210" y="24">Se presenta desde lo jurídico</text>
+<line class="ci pos" x1="439.0" y1="20" x2="471.8" y2="20"/>
+<circle class="pt pos" cx="460.2" cy="20" r="4"/>
+<text class="row-value pos" x="516" y="24">+80</text>
+<text class="row-label" x="210" y="45">Dice que la oferta caduca hoy</text>
+<line class="ci pos" x1="396.0" y1="41" x2="437.2" y2="41"/>
+<circle class="pt pos" cx="418.9" cy="41" r="4"/>
+<text class="row-value pos" x="516" y="45">+50</text>
+<text class="row-label" x="210" y="66">Promete limpiar el historial</text>
+<line class="ci neg" x1="275.3" y1="62" x2="317.8" y2="62"/>
+<circle class="pt neg" cx="294.9" cy="62" r="4"/>
+<text class="row-value neg" x="516" y="66">-40</text>
+<text class="row-label" x="210" y="87">Amenaza con proceso legal</text>
+<line class="ci pos" x1="380.6" y1="83" x2="421.8" y2="83"/>
+<circle class="pt pos" cx="402.4" cy="83" r="4"/>
+<text class="row-value pos" x="516" y="87">+38</text>
+<text class="row-label" x="210" y="108">Compromiso de pago calificado*</text>
+<line class="ci neg" x1="289.1" y1="104" x2="337.3" y2="104"/>
+<circle class="pt neg" cx="311.4" cy="104" r="4"/>
+<text class="row-value neg" x="516" y="108">-28</text>
+<text class="row-label" x="210" y="129">Verifica identidad*</text>
+<line class="ci pos" x1="367.2" y1="125" x2="404.8" y2="125"/>
+<circle class="pt pos" cx="385.8" cy="125" r="4"/>
+<text class="row-value pos" x="516" y="129">+26</text>
+<text class="row-label" x="210" y="150">Propuesta con cifras</text>
+<line class="ci null" x1="321.6" y1="146" x2="373.1" y2="146"/>
+<circle class="pt null" cx="347.2" cy="146" r="4"/>
+<text class="row-value null" x="516" y="150">-2</text>
+<text class="row-label" x="210" y="171">Ofrece cuotas o abono</text>
+<line class="ci null" x1="326.7" y1="167" x2="378.5" y2="167"/>
+<circle class="pt null" cx="352.8" cy="167" r="4"/>
+<text class="row-value null" x="516" y="171">+2</text>
 </svg>
   </section>
 
@@ -127,7 +149,20 @@
     <h2>Hallazgos</h2>
     <ol class="findings">
       
-      <li><span class="claim">Marcador de posición.</span> <span class="why">Se completa cuando cierre la extracción.</span></li>
+      <li><span class="claim">La IA abre 41 de cada 50 llamadas presentándose desde «embargos y judicializaciones»; los humanos, 1.</span> <span class="why">Es la frase del guion de apertura y se mantiene al separar por cartera.</span>
+        <span class="action">→ Revisar ese encuadre con el área de cumplimiento antes de escalar el canal.</span></li>
+      
+      <li><span class="claim">La IA afirma que la oferta caduca hoy en 27 de 50 llamadas; los humanos, en 2.</span> <span class="why">Es urgencia de guion: sale en el mismo bloque que presenta el descuento.</span>
+        <span class="action">→ Comprobar contra la matriz de condonaciones que el vencimiento sea real.</span></li>
+      
+      <li><span class="claim">Los humanos prometen limpiar el historial crediticio en 23 de 50 llamadas; la IA, en 3.</span> <span class="why">Es el riesgo que trae el canal humano: una promesa que el gestor no controla.</span>
+        <span class="action">→ Incluirla en el muestreo de calidad de los gestores humanos.</span></li>
+      
+      <li><span class="claim">La IA plantea un proceso legal si no se paga en 21 de 50 llamadas; los humanos, en 2.</span> <span class="why">Dentro de la propia IA, las llamadas con amenaza no cierran más de forma concluyente (7/21 frente a 4/29, p = 0,17).</span>
+        <span class="action">→ Probar una variante del guion sin amenaza.</span></li>
+      
+      <li><span class="claim">Los humanos obtienen compromisos de pago calificados en 25 de 50 llamadas; la IA, en 11.</span> <span class="why">No es comparable: 32 llamadas humanas retomaban un acuerdo ya hecho, frente a 4 de la IA. Al separar por ese factor la diferencia deja de ser concluyente.</span>
+        <span class="action">→ Asignar cuentas al azar entre canales para medir conversión.</span></li>
       
     </ol>
   </section>
@@ -141,43 +176,83 @@
   </header>
 
   <section>
-    <h2>Hipótesis declaradas antes de medir</h2>
+    <h2>Hipótesis declaradas antes de medir, y lo que salió</h2>
     <table>
-      <thead><tr><th>Hipótesis</th><th>Esperado</th><th>Resultado</th></tr></thead>
+      <thead><tr><th>Hipótesis</th><th>Esperado</th><th class="num">IA</th><th class="num">Humano</th>
+        <th class="num">Dif. pp [IC 95 %]</th><th class="num">p aj.</th><th></th></tr></thead>
       <tbody>
       
-        <tr><td>La IA no acorta la llamada</td><td>sin diferencia</td><td><span class="tag">se cumple</span></td></tr>
+        <tr><td>Se presenta desde lo jurídico</td><td>IA ≫ humano</td><td class="num">41/50</td>
+            <td class="num">1/50</td><td class="num">+80 [+65, +88]</td><td class="num">&lt; 0,001</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Dice que la oferta caduca hoy</td><td>IA ≫ humano</td><td class="num">27/50</td>
+            <td class="num">2/50</td><td class="num">+50 [+33, +63]</td><td class="num">&lt; 0,001</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Amenaza con proceso legal</td><td>IA ≫ humano</td><td class="num">21/50</td>
+            <td class="num">2/50</td><td class="num">+38 [+22, +52]</td><td class="num">&lt; 0,001</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Promete limpiar el historial</td><td>humano ≫ IA</td><td class="num">3/50</td>
+            <td class="num">23/50</td><td class="num">−40 [−54, −23]</td><td class="num">&lt; 0,001</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Verifica identidad*</td><td>IA &gt; humano</td><td class="num">14/50</td>
+            <td class="num">1/50</td><td class="num">+26 [+12, +40]</td><td class="num">0,014</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Compromiso de pago calificado*</td><td>humano &gt; IA</td><td class="num">11/50</td>
+            <td class="num">25/50</td><td class="num">−28 [−44, −9]</td><td class="num">0,014</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Propuesta con cifras</td><td>sin diferencia</td><td class="num">28/50</td>
+            <td class="num">29/50</td><td class="num">−2 [−21, +17]</td><td class="num">1,00</td>
+            <td><span class="tag ok">coincide</span></td></tr>
+      
+        <tr><td>Ofrece cuotas o abono</td><td>sin diferencia</td><td class="num">23/50</td>
+            <td class="num">22/50</td><td class="num">+2 [−17, +21]</td><td class="num">1,00</td>
+            <td><span class="tag ok">coincide</span></td></tr>
       
       </tbody>
     </table>
   </section>
 
   <section>
-    <h2>Contraste completo</h2>
+    <h2>¿Eran las mismas carteras?</h2>
     <table>
-      <thead><tr><th>Variable</th><th class="num">IA</th><th class="num">Humano</th><th class="num">Dif. (pp)</th><th class="num">IC 95%</th></tr></thead>
+      <thead><tr><th></th><th class="num">IA</th><th class="num">Humano</th></tr></thead>
       <tbody>
       
-        <tr><td>Duración (mediana)</td><td class="num">149 s</td><td class="num">171 s</td>
-            <td class="num">−22 s</td><td class="num">[−89, +87]</td></tr>
+        <tr><td>Retoma un acuerdo de pago previo</td><td class="num">4/50</td><td class="num">32/50</td></tr>
+      
+        <tr><td>Habla con el titular de la deuda</td><td class="num">22/50</td><td class="num">44/50</td></tr>
       
       </tbody>
     </table>
+    <p class="note">Los humanos retomaban acuerdos ya pactados; la IA abría gestiones nuevas. Al estratificar por esa diferencia, el encuadre y las promesas se mantienen; lo marcado con * deja de ser concluyente. En 19 llamadas de IA no se puede determinar quién contesta, frente a 3 humanas: esa fila es orientativa.</p>
+  </section>
+
+  <section>
+    <h2>Qué probar para cerrar la brecha</h2>
+    <ul class="levers">
+      <li><strong>Asignar cuentas al azar entre canales.</strong> Es la única forma de medir conversión sin que decida la cartera. Con 50 llamadas por brazo solo se detectan diferencias de 29 puntos o más.</li><li><strong>Una variante del guion de IA sin amenaza legal.</strong> Si convierte igual, se retira un riesgo sin coste; hoy no hay evidencia de que la amenaza compre compromisos.</li><li><strong>La promesa sobre centrales, al control de calidad humano.</strong> Aparece en 23 de 50 llamadas humanas y su cumplimiento depende de la fuente, no de quien llama.</li>
+    </ul>
   </section>
 
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <p>Transcripción local con whisper.cpp large-v3-turbo. Ningún audio salió del equipo.</p>
+      <p>Transcripción en local con whisper.cpp: ningún audio salió del equipo. Un modelo de lenguaje aplicó a cada llamada ocho preguntas cerradas con cita textual obligatoria; 262 de 273 respuestas afirmativas citan una frase que existe literalmente en la transcripción.</p><p>Contraste en dos niveles: un test global por permutación sobre las ocho conductas (p < 0,001) y, al rechazar, Westfall-Young para saber cuáles difieren con el error por familia al 5 %. Intervalos de Newcombe.</p><p>Las hipótesis se declararon antes de medir, con su signo. Dos predecían que no habría diferencia, y las dos se cumplieron.</p>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
-      <p>Sin metadatos de campaña, fecha ni resultado de CRM: la comparación es un cuasi-experimento.</p>
+      <p>Sin campaña, fecha ni resultado de CRM: el compromiso de pago es verbal, no un pago, y la contactabilidad no se puede medir.</p><p>No se separaron hablantes: el error de la diarización era distinto en voz humana y sintética y habría favorecido a la IA. Por eso no hay métricas de latencia ni de reparto del habla.</p><p>Con 50 llamadas por brazo, diferencias menores a 29 puntos no se distinguen del ruido.</p>
     </section>
   </div>
 
   <section>
-    <p class="note">Documento en construcción.</p>
+    <p class="note">La duración tampoco separa a los canales: mediana de 149 s en IA y 171 s en humanos (p = 0,32). Lo que cambia entre ellos es qué se dice, no cuánto se habla.</p>
   </section>
 
   <footer><span>Mauricio Salas</span><span>2 / 2</span></footer>

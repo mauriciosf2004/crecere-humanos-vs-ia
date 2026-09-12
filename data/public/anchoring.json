@@ -1,0 +1,117 @@
+{
+  "por_variable": {
+    "legal_department_framing": {
+      "humano": {
+        "positivos": 1,
+        "con_cita": 1,
+        "anclados": 1
+      },
+      "ia": {
+        "positivos": 41,
+        "con_cita": 41,
+        "anclados": 41
+      }
+    },
+    "offer_expiry_claim": {
+      "humano": {
+        "positivos": 2,
+        "con_cita": 2,
+        "anclados": 1
+      },
+      "ia": {
+        "positivos": 27,
+        "con_cita": 27,
+        "anclados": 27
+      }
+    },
+    "situational_legal_pressure": {
+      "humano": {
+        "positivos": 2,
+        "con_cita": 2,
+        "anclados": 2
+      },
+      "ia": {
+        "positivos": 21,
+        "con_cita": 21,
+        "anclados": 21
+      }
+    },
+    "credit_benefit_promised": {
+      "humano": {
+        "positivos": 23,
+        "con_cita": 23,
+        "anclados": 23
+      },
+      "ia": {
+        "positivos": 3,
+        "con_cita": 3,
+        "anclados": 3
+      }
+    },
+    "confidentiality_gate": {
+      "humano": {
+        "positivos": 1,
+        "con_cita": 1,
+        "anclados": 1
+      },
+      "ia": {
+        "positivos": 14,
+        "con_cita": 14,
+        "anclados": 14
+      }
+    },
+    "qualified_payment_commitment": {
+      "humano": {
+        "positivos": 25,
+        "con_cita": 25,
+        "anclados": 22
+      },
+      "ia": {
+        "positivos": 11,
+        "con_cita": 11,
+        "anclados": 8
+      }
+    },
+    "quantified_proposal_stated": {
+      "humano": {
+        "positivos": 29,
+        "con_cita": 29,
+        "anclados": 28
+      },
+      "ia": {
+        "positivos": 28,
+        "con_cita": 28,
+        "anclados": 26
+      }
+    },
+    "installment_or_partial_offer": {
+      "humano": {
+        "positivos": 22,
+        "con_cita": 22,
+        "anclados": 22
+      },
+      "ia": {
+        "positivos": 23,
+        "con_cita": 23,
+        "anclados": 22
+      }
+    }
+  },
+  "por_brazo": {
+    "humano": {
+      "positivos": 105,
+      "con_cita": 105,
+      "anclados": 100
+    },
+    "ia": {
+      "positivos": 168,
+      "con_cita": 168,
+      "anclados": 162
+    }
+  },
+  "total": {
+    "positivos": 273,
+    "con_cita": 273,
+    "anclados": 262
+  }
+}

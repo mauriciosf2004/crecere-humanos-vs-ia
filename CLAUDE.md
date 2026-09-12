@@ -29,8 +29,12 @@ El repo es local y sin remoto. No se publica.
 n=50/50 con Fisher exacto, α=0,05: **MDE ≈ 29 pp**. Potencia 30→40 % = **13 %**; 30→50 % = **46 %**.
 Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
 → Los titulares se apoyan en **tamaños de efecto con IC**, no en p-valores.
-→ **Una** métrica primaria declarada antes de mirar datos; el resto es **exploratorio** y se rotula.
-→ Duración ya dio nulo: p=0,319, Cliff's δ=0,116. Es un hallazgo, no un fracaso.
+→ Inferencia en dos niveles: test global por permutación como compuerta, y Westfall-Young
+  step-down sobre la familia de 8, que controla el FWER por sí solo. Lo que queda fuera de la
+  familia es **exploratorio** y se rotula.
+→ Duración: nulo (Mann-Whitney p=0,319; Cliff's δ IA−humano = −0,116). Es un hallazgo, no un fracaso.
+→ **Los brazos no comparten cartera**: el humano retoma un acuerdo previo en 32/50, la IA en 4/50.
+  Las diferencias de conducta sobreviven al estratificar; la de compromisos de pago no.
 
 ## Reglas de trabajo
 - Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.
