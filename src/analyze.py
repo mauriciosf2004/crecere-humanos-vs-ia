@@ -177,8 +177,57 @@ def analyse() -> tuple[float, list[Contrast]]:
     return p_global, contrasts
 
 
+def export(p_global: float, contrasts: list[Contrast]) -> None:
+    """Escribe la tabla desidentificada y los efectos que consume el informe.
+
+    Solo salen variables derivadas: ni una palabra del texto de la llamada. Es lo
+    que permite versionar el resultado sin publicar datos de deudores reales.
+    """
+    PUBLIC.mkdir(parents=True, exist_ok=True)
+
+    matrix, is_ai, ids = load_table()
+    header = "call_id,arm," + ",".join(name for name, _, _ in FAMILY)
+    lines = [header]
+    for index, call in enumerate(ids):
+        arm = "ia" if is_ai[index] else "humano"
+        values = ",".join(str(int(v)) for v in matrix[index])
+        lines.append(f"{call},{arm},{values}")
+    (PUBLIC / "features.csv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    (PUBLIC / "effects.json").write_text(
+        json.dumps(
+            {
+                "p_global": p_global,
+                "permutations": PERMUTATIONS,
+                "seed": SEED,
+                "contrastes": [
+                    {
+                        "variable": c.name,
+                        "etiqueta": c.label,
+                        "hipotesis": c.hypothesis,
+                        "k_ia": c.k_ai,
+                        "n_ia": c.n_ai,
+                        "k_humano": c.k_human,
+                        "n_humano": c.n_human,
+                        "diff_pp": round(c.diff_pp, 1),
+                        "ci_low_pp": round(c.ci_low_pp, 1),
+                        "ci_high_pp": round(c.ci_high_pp, 1),
+                        "p_raw": c.p_raw,
+                        "p_ajustado": c.p_adjusted,
+                    }
+                    for c in contrasts
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+
 def main() -> None:
     p_global, contrasts = analyse()
+    export(p_global, contrasts)
     print(f"Nivel 1 · test global por permutación: p = {p_global:.5f}")
     print("  la compuerta abre\n" if p_global < 0.05 else "  la compuerta NO abre\n")
     print(f"{'variable':<32}{'IA':>8}{'humano':>9}{'dif pp':>9}{'IC 95%':>17}{'p aj.':>9}")

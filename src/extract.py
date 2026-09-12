@@ -63,6 +63,10 @@ def clean(segments: list[dict]) -> str:
 def _ask(text: str, rubric: str, schema: str, turns: int) -> dict | None:
     """Una invocación del CLI. Devuelve la fila validada, o None ante cualquier fallo.
 
+    El texto va por stdin y no como argumento posicional: hay transcripciones que
+    empiezan por guion ("-Aló.") y el CLI las interpretaba como una opción
+    desconocida, fallando con stdout vacío.
+
     Nada de lo que devuelve el subproceso se da por bueno: puede salir con error,
     escribir algo que no es JSON, o terminar por agotar turnos sin haber llamado a
     la herramienta de salida estructurada. Los tres casos se tratan igual.
@@ -72,7 +76,6 @@ def _ask(text: str, rubric: str, schema: str, turns: int) -> dict | None:
             [
                 "claude",
                 "-p",
-                text,
                 "--safe-mode",
                 "--tools",
                 "",
@@ -90,7 +93,7 @@ def _ask(text: str, rubric: str, schema: str, turns: int) -> dict | None:
             capture_output=True,
             text=True,
             env={**os.environ, "MAX_THINKING_TOKENS": "0"},
-            stdin=subprocess.DEVNULL,
+            input=text,  # por stdin: ver la nota del docstring
             timeout=180,
         )
         payload = json.loads(result.stdout)
