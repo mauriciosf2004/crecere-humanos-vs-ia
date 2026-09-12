@@ -95,6 +95,30 @@
         "con_cita": 23,
         "anclados": 22
       }
+    },
+    "prior_agreement_followup": {
+      "humano": {
+        "positivos": 32,
+        "con_cita": 32,
+        "anclados": 32
+      },
+      "ia": {
+        "positivos": 4,
+        "con_cita": 4,
+        "anclados": 4
+      }
+    },
+    "effective_contact": {
+      "humano": {
+        "positivos": 44,
+        "con_cita": 44,
+        "anclados": 43
+      },
+      "ia": {
+        "positivos": 22,
+        "con_cita": 22,
+        "anclados": 22
+      }
     }
   },
   "por_brazo": {
@@ -113,5 +137,10 @@
     "positivos": 273,
     "con_cita": 273,
     "anclados": 262
+  },
+  "total_contexto": {
+    "positivos": 102,
+    "con_cita": 102,
+    "anclados": 101
   }
 }

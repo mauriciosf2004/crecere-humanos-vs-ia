@@ -6,7 +6,13 @@ silencioso cambiaría una conclusión del reporte sin que nadie lo note.
 
 import numpy as np
 
-from src.stats import cliffs_delta, compare_proportions, fisher_power, hodges_lehmann
+from src.stats import (
+    cliffs_delta,
+    compare_proportions,
+    fisher_power,
+    hodges_lehmann,
+    sample_size_per_arm,
+)
 
 
 def test_fisher_matches_known_value():
@@ -35,3 +41,15 @@ def test_power_is_low_for_small_differences():
 def test_confidence_interval_contains_difference():
     result = compare_proportions(20, 50, 10, 50)
     assert result.ci_low_pp < result.diff_pp < result.ci_high_pp
+
+
+def test_sample_size_matches_cohen_table():
+    """Cohen (1988), tabla 6.4.1: h = 0,20, alfa 0,05 bilateral y potencia 0,80 dan 392."""
+    base = 0.5
+    target = np.sin(np.pi / 4 + 0.1) ** 2  # desde 0,5, esta tasa da h = 0,20 exacto
+    assert 390 <= sample_size_per_arm(base, target - base) <= 394
+
+
+def test_planning_is_less_conservative_than_exact_fisher():
+    """Para el umbral que Fisher exacto sitúa en 50 por brazo, la aproximación pide menos."""
+    assert sample_size_per_arm(0.30, 0.29) <= 50

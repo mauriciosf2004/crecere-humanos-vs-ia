@@ -8,6 +8,9 @@ Anclada no significa correcta —una cita literal puede estar mal interpretada�
 descarta la invención, que es el modo de fallo que más daño haría. No sustituye
 escuchar: dice dónde hay que escuchar.
 
+Se anclan las ocho variables de la familia y también las dos de contexto, porque el
+argumento de que los brazos no son comparables descansa entero sobre ellas.
+
 Escribe data/public/anchoring.json con conteos, sin una palabra de las citas.
 """
 
@@ -30,6 +33,11 @@ ARMS = ("humano", "ia")
 ELLIPSIS = re.compile(r"\.\.\.|…")
 MIN_WORDS = 3  # un fragmento más corto coincide por azar
 
+# Qué cuenta como positivo en las variables de contexto, que no son binarias.
+CONTEXT_POSITIVE = {"prior_agreement_followup": True, "effective_contact": "titular"}
+FAMILY_NAMES = [name for name, _, _ in FAMILY]
+COUNTS = ("positivos", "con_cita", "anclados")
+
 
 def normalize(text: str) -> str:
     """Minúsculas, sin tildes ni puntuación, con los espacios colapsados."""
@@ -51,6 +59,14 @@ def is_anchored(quote: str, transcript: str) -> bool:
     return bool(meaningful) and all(f" {f} " in haystack for f in meaningful)
 
 
+def _is_positive(row: dict, name: str) -> bool:
+    if name in CONTEXT_POSITIVE:
+        value = row.get(name)
+        raw = value.get("value") if isinstance(value, dict) else value
+        return raw == CONTEXT_POSITIVE[name]
+    return bool(cell(row, name))
+
+
 def _quotes(row: dict, name: str) -> list[str]:
     value = row.get(name)
     if not isinstance(value, dict):
@@ -58,19 +74,21 @@ def _quotes(row: dict, name: str) -> list[str]:
     return [text for key, text in value.items() if key.startswith("quote") and text]
 
 
+def _sum(counts: dict, names: list[str], arms: tuple[str, ...] = ARMS) -> dict:
+    return {k: sum(counts[name][arm][k] for name in names for arm in arms) for k in COUNTS}
+
+
 def audit() -> dict:
     """Conteos por variable y por brazo: positivos, con cita, y con cita anclada."""
-    counts = {
-        name: {arm: {"positivos": 0, "con_cita": 0, "anclados": 0} for arm in ARMS}
-        for name, _, _ in FAMILY
-    }
+    names = FAMILY_NAMES + list(CONTEXT_POSITIVE)
+    counts = {name: {arm: dict.fromkeys(COUNTS, 0) for arm in ARMS} for name in names}
     for arm in ARMS:
         for path in sorted((EXTRACTIONS / arm).glob("*.json")):
             row = json.loads(path.read_text(encoding="utf-8"))
             segments = json.loads((TRANSCRIPTS / arm / path.name).read_text(encoding="utf-8"))
             transcript = clean(segments.get("transcription", []))
-            for name, _, _ in FAMILY:
-                if not cell(row, name):
+            for name in names:
+                if not _is_positive(row, name):
                     continue
                 bucket = counts[name][arm]
                 bucket["positivos"] += 1
@@ -81,17 +99,11 @@ def audit() -> dict:
                 if all(is_anchored(q, transcript) for q in quotes):
                     bucket["anclados"] += 1
 
-    def total(select) -> dict:
-        keys = ("positivos", "con_cita", "anclados")
-        return {k: sum(select(name)[k] for name, _, _ in FAMILY) for k in keys}
-
     return {
         "por_variable": counts,
-        "por_brazo": {arm: total(lambda name, a=arm: counts[name][a]) for arm in ARMS},
-        "total": {
-            k: sum(counts[name][arm][k] for name, _, _ in FAMILY for arm in ARMS)
-            for k in ("positivos", "con_cita", "anclados")
-        },
+        "por_brazo": {arm: _sum(counts, FAMILY_NAMES, (arm,)) for arm in ARMS},
+        "total": _sum(counts, FAMILY_NAMES),
+        "total_contexto": _sum(counts, list(CONTEXT_POSITIVE)),
     }
 
 
@@ -101,10 +113,12 @@ def main() -> None:
     (PUBLIC / "anchoring.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    t = result["total"]
-    print(f"Positivos {t['positivos']} · con cita {t['con_cita']} · anclados {t['anclados']}")
-    for arm, b in result["por_brazo"].items():
-        print(f"  {arm:<7} {b['anclados']}/{b['positivos']} positivos anclados")
+    for title, key in (("Familia", "total"), ("Contexto", "total_contexto")):
+        t = result[key]
+        print(
+            f"{title}: positivos {t['positivos']} · con cita {t['con_cita']} · anclados "
+            f"{t['anclados']}"
+        )
 
 
 if __name__ == "__main__":

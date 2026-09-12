@@ -3,10 +3,11 @@
 Prueba técnica para Creceré AI. Cien llamadas —50 de gestores humanos y 50 de un agente de IA—
 convertidas en datos para responder una pregunta: ¿hay diferencias sustentables en cómo gestionan?
 
-**Respuesta corta.** Sí, y están en qué se dice, no en cuánto dura la llamada. La IA encuadra la
-cobranza en lo jurídico y presiona con plazos; los gestores humanos prometen limpiar el historial
-crediticio. La diferencia en compromisos de pago existe, pero no es atribuible al tipo de agente:
-los dos brazos trabajaban carteras distintas.
+**Respuesta corta.** Sí, pero dicen cómo cobra cada canal, no cuál cobra mejor. La IA se presenta
+como área jurídica y afirma que la oferta vence hoy; en las llamadas humanas se prometen
+beneficios sobre el historial crediticio. Qué canal consigue más compromisos de pago no se puede
+saber con estas grabaciones: los humanos retomaban sobre todo acuerdos ya pactados y la IA abría
+gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al azar.
 
 ## Por dónde empezar
 
@@ -24,7 +25,7 @@ los dos brazos trabajaban carteras distintas.
 | Inventario | `make inventory` | formato y duración de cada audio | audios |
 | Transcripción | `make transcribe` | whisper.cpp en local, unos 18 min | audios, `whisper-cli`, modelo `ggml-large-v3-turbo` |
 | Extracción | `make extract` | ocho preguntas cerradas con cita obligatoria, unos 4 USD | transcripciones, CLI de Claude Code |
-| Contraste | `make analyze` | test global, Westfall-Young y estratificación por cartera | extracciones |
+| Contraste | `make analyze` | test global, Westfall-Young y estratificación por tipo de gestión | extracciones |
 | Anclaje | `make anchoring` | comprueba que cada cita existe en la transcripción | extracciones |
 | Informe | `make report` | arma `results.json` y renderiza el HTML | `data/public/` |
 | Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas | Chrome, `pdfinfo` |

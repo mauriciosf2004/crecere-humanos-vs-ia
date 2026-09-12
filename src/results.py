@@ -1,10 +1,11 @@
 """Arma data/public/results.json: las cifras del análisis y la prosa que las rodea.
 
-Cada número del informe se lee aquí de effects.json o anchoring.json y se inserta
-en una frase; ninguno se escribe a mano. La redacción, en cambio, es fija y descansa
-en supuestos sobre los datos —que la duración no difiere, que la brecha comercial no
-sobrevive a estratificar—. Esos supuestos se comprueban antes de escribir: si el
-análisis dejara de sostener una frase, el armado falla en vez de publicarla.
+Cada número del informe se lee aquí de effects.json, anchoring.json o del esquema de la
+rúbrica, y se inserta en una frase; ninguno se escribe a mano. La redacción, en cambio,
+es fija y descansa en supuestos sobre los datos: que el encuadre jurídico se sostiene
+dentro de cada tipo de gestión y la brecha comercial no, por ejemplo. Esos supuestos se
+comprueban antes de escribir. Si el análisis dejara de sostener una frase, el armado
+falla en vez de publicarla.
 """
 
 from __future__ import annotations
@@ -12,20 +13,34 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from src.charts import signed
+
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
+SCHEMA = ROOT / "src" / "schema.json"
 ALPHA = 0.05
+NBSP = "\u00a0"
 
-# Etiquetas cortas para el gráfico y la tabla, donde la frase completa no cabe.
+# Etiquetas cortas para el gráfico y la tabla. Dicen lo que mide la rúbrica y nada más:
+# una versión más vistosa, como "promete limpiar el historial", afirmaría algo no medido.
 SHORT = {
-    "legal_department_framing": "Se presenta desde lo jurídico",
-    "offer_expiry_claim": "Dice que la oferta caduca hoy",
-    "situational_legal_pressure": "Amenaza con proceso legal",
-    "credit_benefit_promised": "Promete limpiar el historial",
-    "confidentiality_gate": "Verifica identidad",
-    "qualified_payment_commitment": "Compromiso de pago calificado",
+    "legal_department_framing": "Se presenta como área jurídica",
+    "offer_expiry_claim": "Dice que la oferta vence hoy",
+    "situational_legal_pressure": "Plantea un proceso legal",
+    "credit_benefit_promised": "Promete beneficio crediticio",
+    "confidentiality_gate": "Confidencialidad o identidad",
+    "qualified_payment_commitment": "Compromiso con fecha y monto",
     "quantified_proposal_stated": "Propuesta con cifras",
     "installment_or_partial_offer": "Ofrece cuotas o abono",
+}
+
+# Las hipótesis se registraron con símbolos; en el informe se leen en palabras.
+EXPECTED = {
+    "IA ≫ humano": "mucho más en IA",
+    "IA > humano": "más en IA",
+    "humano ≫ IA": "mucho más en humanos",
+    "humano > IA": "más en humanos",
+    "sin diferencia": "sin diferencia",
 }
 
 
@@ -34,9 +49,26 @@ def _require(condition: bool, sentence: str) -> None:
         raise ValueError(f"El análisis ya no sostiene esta frase del informe: {sentence}")
 
 
-def signed(value: float) -> str:
-    """+80 o −28, con el signo menos tipográfico."""
-    return f"{value:+.0f}".replace("-", "−")
+def _typeset(value):
+    """Espacios de no separación donde un salto de línea partiría una cifra.
+
+    «95 %», «p < 0,001» o «p = 0,319» se leen como una unidad, y en un informe impreso
+    no deben quedar repartidos entre dos líneas.
+    """
+    if isinstance(value, dict):
+        return {key: _typeset(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_typeset(item) for item in value]
+    if not isinstance(value, str):
+        return value
+    for loose, tight in (
+        (" %", f"{NBSP}%"),
+        ("p < ", f"p{NBSP}<{NBSP}"),
+        ("p = ", f"p{NBSP}={NBSP}"),
+        ("< 0,", f"<{NBSP}0,"),
+    ):
+        value = value.replace(loose, tight)
+    return value
 
 
 def interval(item: dict) -> str:
@@ -45,10 +77,8 @@ def interval(item: dict) -> str:
 
 
 def p_value(p: float) -> str:
-    """Formato es-CO con tantos decimales como informan: 0,32 · 0,014 · < 0,001."""
-    if p < 0.001:
-        return "< 0,001"
-    return f"{p:.{2 if p >= 0.1 else 3}f}".replace(".", ",")
+    """Formato es-CO a tres decimales, con suelo en < 0,001."""
+    return "< 0,001" if p < 0.001 else f"{p:.3f}".replace(".", ",")
 
 
 def p_text(p: float) -> str:
@@ -68,7 +98,7 @@ def matches(item: dict) -> bool:
 
 
 def composition_sensitive(item: dict) -> bool:
-    """Difiere en el contraste, pero deja de ser concluyente al estratificar por cartera."""
+    """Difiere en el contraste, pero no al comparar llamadas del mismo tipo de gestión."""
     p_strat = item["estratificado"]["p_cmh"]
     return significant(item) and (p_strat is None or p_strat >= ALPHA)
 
@@ -77,15 +107,34 @@ def label(item: dict) -> str:
     return SHORT[item["variable"]] + ("*" if composition_sensitive(item) else "")
 
 
+def status(item: dict) -> tuple[str, str]:
+    """Texto y clase de la etiqueta de resultado en la tabla de hipótesis.
+
+    Un nulo previsto que sale nulo se rotula "no detectada", no "coincide": con esta
+    potencia no detectar una diferencia es fácil aunque exista.
+    """
+    if item["hipotesis"] == "sin diferencia":
+        return ("no detectada", "neutral") if not significant(item) else ("detectada", "ko")
+    if composition_sensitive(item):
+        return "no concluyente", "warn"
+    return ("coincide", "ok") if matches(item) else ("no coincide", "ko")
+
+
+def fraction(k: int, n: int) -> str:
+    return f"{k} de {n}"
+
+
 def build() -> dict:
     effects = json.loads((PUBLIC / "effects.json").read_text(encoding="utf-8"))
     anchoring = json.loads((PUBLIC / "anchoring.json").read_text(encoding="utf-8"))
+    questions = len(json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]) - 1
 
     contrasts = effects["contrastes"]
     by_name = {item["variable"]: item for item in contrasts}
     context = {item["variable"]: item for item in effects["composicion"]}
     within = {(i["conducta"], i["brazo"]): i for i in effects["exploratorio_intra_brazo"]}
-    duration, mde, anchors = effects["duracion"], effects["mde_pp"], anchoring["total"]
+    duration, mde, base = effects["duracion"], effects["mde_pp"], effects["mde_tasa_base"]
+    pilot = effects["piloto_n_por_brazo"]
 
     legal = by_name["legal_department_framing"]
     expiry = by_name["offer_expiry_claim"]
@@ -93,19 +142,44 @@ def build() -> dict:
     credit = by_name["credit_benefit_promised"]
     commitment = by_name["qualified_payment_commitment"]
     prior, contact = context["prior_agreement_followup"], context["effective_contact"]
-    threat_in_ai = within[("situational_legal_pressure", "ia")]
-    differing = [item for item in contrasts if significant(item)]
-    predicted_nulls = [item for item in contrasts if item["hipotesis"] == "sin diferencia"]
+    threat_ai = within[("situational_legal_pressure", "ia")]
+    expiry_ai = within[("offer_expiry_claim", "ia")]
+    robust = [i for i in contrasts if significant(i) and not composition_sensitive(i)]
+    nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
+    null_bound = max(max(abs(i["ci_low_pp"]), abs(i["ci_high_pp"])) for i in nulls)
     n = legal["n_ia"]
 
+    def anchored(name: str) -> tuple[int, int]:
+        arms = anchoring["por_variable"][name].values()
+        return sum(a["anclados"] for a in arms), sum(a["positivos"] for a in arms)
+
+    measured = [i for i in contrasts if anchored(i["variable"])[1] >= 10]
+    weakest = min(measured, key=lambda i: anchored(i["variable"])[0] / anchored(i["variable"])[1])
+    weak_ok, weak_total = anchored(weakest["variable"])
+    family_anchor, context_anchor = anchoring["total"], anchoring["total_contexto"]
+    undetermined = prior["indeterminado_ia"] + prior["indeterminado_humano"]
+
     _require(effects["p_global"] < ALPHA, "hay diferencias sustentables")
-    _require(duration["p_mann_whitney"] >= ALPHA, "la duración no difiere")
     for item in (legal, expiry, threat, credit):
-        _require(matches(item), f"{SHORT[item['variable']]} difiere en el sentido declarado")
-    _require(composition_sensitive(commitment), "la brecha comercial no es atribuible al agente")
+        _require(
+            matches(item) and not composition_sensitive(item),
+            f"«{SHORT[item['variable']]}» se sostiene dentro de cada tipo de gestión",
+        )
+    _require(composition_sensitive(commitment), "no se sabe qué canal consigue más compromisos")
     _require(prior["k_humano"] > prior["k_ia"], "los humanos retoman más acuerdos previos")
-    _require(threat_in_ai["p"] >= ALPHA, "la amenaza no se asocia al cierre dentro de la IA")
-    _require(all(matches(item) for item in predicted_nulls), "las dos nulas se cumplieron")
+    _require(not any(significant(i) for i in nulls), "no se detectó diferencia en las nulas")
+    _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
+    _require(
+        threat_ai["diff_pp"] > 0 and expiry_ai["diff_pp"] > 0,
+        "dentro de la IA, amenaza y vencimiento acompañan a algo más de cierres",
+    )
+
+    if undetermined == 1:
+        undetermined_note = " Una llamada sin determinar cuenta como gestión nueva."
+    elif undetermined:
+        undetermined_note = f" {undetermined} llamadas sin determinar cuentan como gestión nueva."
+    else:
+        undetermined_note = ""
 
     return {
         "meta": {
@@ -115,28 +189,27 @@ def build() -> dict:
             "autor": "Mauricio Salas",
         },
         "veredicto": (
-            "<strong>Sí hay diferencias sustentables entre agentes humanos y de IA, y están en "
-            "cómo se gestiona, no en cuánto dura la llamada.</strong> La IA encuadra la cobranza "
-            "en lo jurídico y presiona con plazos; los gestores humanos prometen limpiar el "
-            "historial crediticio. La brecha en compromisos de pago existe, pero no se puede "
-            "atribuir al tipo de agente: las dos carteras eran distintas."
+            "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra "
+            "cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica y "
+            "afirma que la oferta vence hoy; en las llamadas humanas se prometen beneficios "
+            "crediticios. Ambas prácticas merecen revisión de cumplimiento."
         ),
         "kpis": [
             {
-                "valor": f"{len(differing)} de {len(contrasts)}",
-                "etiqueta": "conductas difieren, con control por comparaciones múltiples",
+                "valor": f"{len(robust)} de {len(contrasts)}",
+                "etiqueta": "diferencias se sostienen dentro del mismo tipo de gestión",
             },
             {
                 "valor": f"{legal['k_ia']} vs {legal['k_humano']}",
-                "etiqueta": f"abren desde «embargos y judicializaciones» (IA vs humano, de {n})",
+                "etiqueta": f"se presentan como área jurídica (IA vs humano, de {n})",
             },
             {
                 "valor": f"{credit['k_ia']} vs {credit['k_humano']}",
-                "etiqueta": "prometen limpiar el historial crediticio (IA vs humano)",
+                "etiqueta": f"prometen beneficio crediticio (IA vs humano, de {n})",
             },
             {
                 "valor": f"{prior['k_ia']} vs {prior['k_humano']}",
-                "etiqueta": "retoman un acuerdo previo (IA vs humano): carteras distintas",
+                "etiqueta": f"retoman un acuerdo previo (IA vs humano, de {n})",
             },
         ],
         "efectos": [
@@ -152,76 +225,69 @@ def build() -> dict:
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
         "forest_nota": (
-            "Punto hueco y *: la diferencia deja de ser concluyente al comparar carteras "
-            "equivalentes."
+            "Morado: más en IA · naranja: más en humanos · gris: sin diferencia detectada · "
+            "línea: intervalo de confianza del 95 %. Punto hueco y *: no concluyente al comparar "
+            "llamadas del mismo tipo de gestión."
         ),
         "hallazgos": [
             {
                 "claim": (
-                    f"La IA abre {legal['k_ia']} de cada {n} llamadas presentándose desde "
-                    f"«embargos y judicializaciones»; los humanos, {legal['k_humano']}."
+                    "La IA se presenta como área jurídica o de embargos en "
+                    f"{fraction(legal['k_ia'], n)} llamadas; los humanos, en {legal['k_humano']}."
                 ),
-                "why": "Es la frase del guion de apertura y se mantiene al separar por cartera.",
+                "why": "Se mantiene al comparar llamadas del mismo tipo de gestión.",
+                "accion": "Revisar ese encuadre con cumplimiento antes de escalar el canal.",
+            },
+            {
+                "claim": (
+                    f"La IA afirma que la oferta vence hoy en {fraction(expiry['k_ia'], n)} "
+                    f"llamadas; los humanos, en {expiry['k_humano']}."
+                ),
+                "why": "Crea urgencia, y con estas grabaciones no se sabe si el plazo es real.",
+                "accion": "Contrastar cada vencimiento con la matriz de condonaciones.",
+            },
+            {
+                "claim": (
+                    f"En {fraction(credit['k_humano'], n)} llamadas humanas se promete un "
+                    f"beneficio en el historial crediticio; en la IA, en {credit['k_ia']}."
+                ),
+                "why": (
+                    "Se midió que se ofrezca, no que sea cierto: depende de la entidad, no del "
+                    "gestor."
+                ),
+                "accion": "Incluir qué se promete en el muestreo de calidad de los gestores.",
+            },
+            {
+                "claim": (
+                    "La IA plantea un proceso legal si no se paga en "
+                    f"{fraction(threat['k_ia'], n)} llamadas; los humanos, en {threat['k_humano']}."
+                ),
+                "why": "No es el nombre del área: es la consecuencia que se anuncia al deudor.",
+                "accion": "Medir en el piloto si retirarla cambia la conversión.",
+            },
+            {
+                "claim": "No se puede decir qué canal consigue más compromisos de pago.",
+                "why": (
+                    f"Los humanos los obtienen en {commitment['k_humano']} de {n} llamadas y la IA "
+                    f"en {commitment['k_ia']}, pero {prior['k_humano']} llamadas humanas retomaban "
+                    f"un acuerdo ya hecho, frente a {prior['k_ia']} de la IA."
+                ),
                 "accion": (
-                    "Revisar ese encuadre con el área de cumplimiento antes de escalar el canal."
+                    f"Asignar cuentas al azar entre canales: unas {pilot['10']} por canal para "
+                    "detectar 10 puntos porcentuales."
                 ),
-            },
-            {
-                "claim": (
-                    f"La IA afirma que la oferta caduca hoy en {expiry['k_ia']} de {n} llamadas; "
-                    f"los humanos, en {expiry['k_humano']}."
-                ),
-                "why": "Es urgencia de guion: sale en el mismo bloque que presenta el descuento.",
-                "accion": (
-                    "Comprobar contra la matriz de condonaciones que el vencimiento sea real."
-                ),
-            },
-            {
-                "claim": (
-                    f"Los humanos prometen limpiar el historial crediticio en {credit['k_humano']} "
-                    f"de {n} llamadas; la IA, en {credit['k_ia']}."
-                ),
-                "why": (
-                    "Es el riesgo que trae el canal humano: una promesa que el gestor no controla."
-                ),
-                "accion": "Incluirla en el muestreo de calidad de los gestores humanos.",
-            },
-            {
-                "claim": (
-                    f"La IA plantea un proceso legal si no se paga en {threat['k_ia']} de {n} "
-                    f"llamadas; los humanos, en {threat['k_humano']}."
-                ),
-                "why": (
-                    "Dentro de la propia IA, las llamadas con amenaza no cierran más de forma "
-                    f"concluyente ({threat_in_ai['k_con']}/{threat_in_ai['n_con']} frente a "
-                    f"{threat_in_ai['k_sin']}/{threat_in_ai['n_sin']}, "
-                    f"{p_text(threat_in_ai['p'])})."
-                ),
-                "accion": "Probar una variante del guion sin amenaza.",
-            },
-            {
-                "claim": (
-                    f"Los humanos obtienen compromisos de pago calificados en "
-                    f"{commitment['k_humano']} de {n} llamadas; la IA, en {commitment['k_ia']}."
-                ),
-                "why": (
-                    f"No es comparable: {prior['k_humano']} llamadas humanas retomaban un acuerdo "
-                    f"ya hecho, frente a {prior['k_ia']} de la IA. Al separar por ese factor la "
-                    "diferencia deja de ser concluyente."
-                ),
-                "accion": "Asignar cuentas al azar entre canales para medir conversión.",
             },
         ],
         "tabla": [
             {
                 "variable": label(item),
-                "esperado": item["hipotesis"],
+                "esperado": EXPECTED[item["hipotesis"]],
                 "ia": f"{item['k_ia']}/{item['n_ia']}",
                 "humano": f"{item['k_humano']}/{item['n_humano']}",
                 "diff": interval(item),
                 "p": p_value(item["p_ajustado"]),
-                "estado": "coincide" if matches(item) else "no coincide",
-                "estado_clase": "ok" if matches(item) else "ko",
+                "estado": status(item)[0],
+                "estado_clase": status(item)[1],
             }
             for item in contrasts
         ],
@@ -234,78 +300,85 @@ def build() -> dict:
             for item in effects["composicion"]
         ],
         "composicion_nota": (
-            "Los humanos retomaban acuerdos ya pactados; la IA abría gestiones nuevas. Al "
-            "estratificar por esa diferencia, el encuadre y las promesas se mantienen; lo marcado "
-            f"con * deja de ser concluyente. En {contact['indeterminado_ia']} llamadas de IA no se "
-            f"puede determinar quién contesta, frente a {contact['indeterminado_humano']} humanas: "
-            "esa fila es orientativa."
+            "Los humanos retomaban sobre todo acuerdos ya pactados; la IA abría gestiones nuevas. "
+            f"Se detecta por lo dicho en la llamada, no por datos de cartera.{undetermined_note} "
+            f"En {contact['indeterminado_ia']} llamadas de IA no se sabe quién contesta "
+            f"({contact['indeterminado_humano']} humanas): esa fila es orientativa. "
+            f"{context_anchor['anclados']} de {context_anchor['positivos']} citas de estas "
+            "señales están literalmente en la transcripción."
         ),
         "palancas": [
             {
-                "titulo": "Asignar cuentas al azar entre canales.",
+                "titulo": "Un piloto con asignación al azar.",
                 "detalle": (
-                    "Es la única forma de medir conversión sin que decida la cartera. Con "
-                    f"{n} llamadas por brazo solo se detectan diferencias de {mde:.0f} puntos o "
-                    "más."
+                    "Es la única forma de saber qué canal convierte más sin que decida el tipo de "
+                    f"gestión. Desde una tasa del {base * 100:.0f} %, detectar 10 puntos "
+                    f"porcentuales exige unas {pilot['10']} cuentas por canal; 15 puntos, unas "
+                    f"{pilot['15']}."
                 ),
             },
             {
-                "titulo": "Una variante del guion de IA sin amenaza legal.",
+                "titulo": "Dentro del piloto, una variante de la IA sin presión.",
                 "detalle": (
-                    "Si convierte igual, se retira un riesgo sin coste; hoy no hay evidencia de "
-                    "que "
-                    "la amenaza compre compromisos."
-                ),
-            },
-            {
-                "titulo": "La promesa sobre centrales, al control de calidad humano.",
-                "detalle": (
-                    f"Aparece en {credit['k_humano']} de {n} llamadas humanas y su cumplimiento "
-                    "depende de la fuente, no de quien llama."
+                    "En la IA, las llamadas con amenaza o con vencimiento cierran algo más "
+                    f"({threat_ai['k_con']} de {threat_ai['n_con']} frente a "
+                    f"{threat_ai['k_sin']} de {threat_ai['n_sin']}; {expiry_ai['k_con']} de "
+                    f"{expiry_ai['n_con']} frente a {expiry_ai['k_sin']} de {expiry_ai['n_sin']}), "
+                    "pero es exploratorio y no separa causa de efecto: retirarlas puede costar "
+                    "conversión, y hay que medirlo."
                 ),
             },
         ],
         "metodo": [
             (
-                "Transcripción en local con whisper.cpp: ningún audio salió del equipo. Un modelo "
-                "de lenguaje aplicó a cada llamada ocho preguntas cerradas con cita textual "
-                f"obligatoria; {anchors['anclados']} de {anchors['positivos']} respuestas "
-                "afirmativas citan una frase que existe literalmente en la transcripción."
+                "Transcripción en local con whisper.cpp. Un modelo de lenguaje respondió "
+                f"{questions} preguntas cerradas por llamada, citando la frase que justifica "
+                f"cada respuesta: {family_anchor['anclados']} de {family_anchor['positivos']} "
+                "afirmativas citan una frase que existe en la transcripción. Descarta "
+                "invenciones, no errores de lectura; la más débil, "
+                f"«{SHORT[weakest['variable']]}», "
+                f"{weak_ok} de {weak_total}."
             ),
             (
-                "Contraste en dos niveles: un test global por permutación sobre las ocho conductas "
-                f"({p_text(effects['p_global'])}) y, al rechazar, Westfall-Young para saber cuáles "
-                "difieren con el error por familia al 5 %. Intervalos de Newcombe."
+                "Test global por permutación sobre las ocho conductas "
+                f"({p_text(effects['p_global'])}) y, al rechazar, Westfall-Young para corregir por "
+                "las ocho comparaciones. Intervalos de Newcombe al 95 %."
             ),
             (
-                "Las hipótesis se declararon antes de medir, con su signo. Dos predecían que no "
-                "habría diferencia, y las dos se cumplieron."
+                "Hipótesis declaradas antes de medir. En las dos que predecían ausencia de "
+                "diferencia no se detectó ninguna, pero no se descartan brechas de hasta "
+                f"{signed(null_bound).lstrip('+')} puntos."
             ),
         ],
         "limitaciones": [
             (
-                "Sin campaña, fecha ni resultado de CRM: el compromiso de pago es verbal, no un "
-                "pago, y la contactabilidad no se puede medir."
+                "Sin campaña, fecha ni CRM: el compromiso es verbal, no un pago, y no se sabe "
+                "cuántas llamadas no conectan."
             ),
             (
-                "No se separaron hablantes: el error de la diarización era distinto en voz humana "
-                "y sintética y habría favorecido a la IA. Por eso no hay métricas de latencia ni "
-                "de reparto del habla."
+                f"Sin identificador de gestor: las {n} humanas pueden venir de pocas personas. "
+                f"Tampoco se sabe cómo se eligieron las {2 * n}."
             ),
-            f"Con {n} llamadas por brazo, diferencias menores a {mde:.0f} puntos no se distinguen "
-            "del ruido.",
+            (
+                "Sin separar hablantes: la diarización fallaba distinto en voz humana y "
+                "sintética y habría favorecido a la IA; por eso no hay latencia ni reparto del "
+                "habla."
+            ),
+            (
+                f"Con {n} llamadas por canal, una diferencia menor a {mde:.0f} puntos porcentuales "
+                f"(desde una tasa del {base * 100:.0f} %) probablemente pasaría inadvertida."
+            ),
         ],
         "cierre": (
-            f"La duración tampoco separa a los canales: mediana de "
-            f"{duration['mediana_ia_s']:.0f} s en IA y {duration['mediana_humano_s']:.0f} s en "
-            f"humanos ({p_text(duration['p_mann_whitney'])}). Lo que cambia entre ellos es qué "
-            "se dice, no cuánto se habla."
+            f"La mediana de duración es de {duration['mediana_ia_s']:.0f} s en IA y "
+            f"{duration['mediana_humano_s']:.0f} s en humanos; con {n} llamadas por canal la "
+            f"diferencia no es concluyente ({p_text(duration['p_mann_whitney'])})."
         ),
     }
 
 
 def main() -> None:
-    results = build()
+    results = _typeset(build())
     path = PUBLIC / "results.json"
     path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"{path.relative_to(ROOT)} · {len(results['hallazgos'])} hallazgos")

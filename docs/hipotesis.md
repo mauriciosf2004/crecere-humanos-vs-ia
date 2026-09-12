@@ -58,9 +58,10 @@ el guion de presentación. Son cosas distintas y ahora se miden por separado.
 
 ## 4. Las hipótesis
 
-Declaradas con signo y magnitud antes de medir. Dos apuestan contra la IA, una a su favor, y
-dos predicen que **no** habrá diferencia: acertar un nulo previsto es más difícil de conseguir
-por azar que encontrar un efecto, y por eso están aquí.
+Declaradas con signo y magnitud antes de medir. Cuatro son desfavorables a la IA y dos favorables, y dos predicen que **no** habrá diferencia.
+Estas dos no confirman nada por sí solas —con esta potencia es fácil no detectar una
+diferencia que existe—, pero funcionan como controles negativos: si el instrumento marcara
+distinto a los dos brazos por sistema, aparecería una diferencia donde no se esperaba ninguna.
 
 | # | Hipótesis | Esperado |
 |---|---|---|

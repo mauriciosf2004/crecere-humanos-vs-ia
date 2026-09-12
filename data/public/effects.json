@@ -4,6 +4,10 @@
   "seed": 20260915,
   "mde_pp": 29.0,
   "mde_tasa_base": 0.3,
+  "piloto_n_por_brazo": {
+    "10": 356,
+    "15": 162
+  },
   "contrastes": [
     {
       "variable": "legal_department_framing",

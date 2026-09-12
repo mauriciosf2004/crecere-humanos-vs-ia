@@ -174,6 +174,10 @@ comerciales —compromiso de pago, propuesta con cifras y cuotas— y la otra en
 de encuadre y de promesa —presentación jurídica, amenaza legal y promesa crediticia— están
 ancladas al 100 %.
 
+Las dos variables de contexto —si la llamada retoma un acuerdo previo y quién contesta— se
+anclan igual, porque el argumento de que los dos brazos no son comparables descansa entero
+sobre ellas: 101 de 102 citas aparecen literalmente.
+
 Anclada no significa bien interpretada, pero descarta la invención, que es el fallo que más daño
 haría. Y dice dónde escuchar: las citas no ancladas y los positivos de las celdas raras —los que
 sostienen la dirección de un efecto— forman la hoja de escucha, que vive en `data/interim/` porque

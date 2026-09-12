@@ -133,3 +133,16 @@ def minimum_detectable_effect(
         else:
             high = mid
     return 100 * (high - baseline)
+
+
+def sample_size_per_arm(base: float, delta: float, alpha: float = 0.05, power: float = 0.80) -> int:
+    """Llamadas por brazo para detectar un aumento de `delta` sobre una tasa `base`.
+
+    Es para planificar el piloto, no para analizar: usa la aproximación normal sobre la
+    transformación arcoseno (h de Cohen), que es el estándar de planificación. Fisher
+    exacto, con el que se analizaría después, es algo más conservador, así que el número
+    que devuelve es un mínimo.
+    """
+    h = abs(2 * np.arcsin(np.sqrt(base + delta)) - 2 * np.arcsin(np.sqrt(base)))
+    z = stats.norm.ppf(1 - alpha / 2) + stats.norm.ppf(power)
+    return int(np.ceil(2 * (z / h) ** 2))

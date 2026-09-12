@@ -39,6 +39,7 @@ from src.stats import (
     compare_proportions,
     hodges_lehmann,
     minimum_detectable_effect,
+    sample_size_per_arm,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -48,6 +49,7 @@ PUBLIC = ROOT / "data" / "public"
 PERMUTATIONS = 10_000
 SEED = 20260915
 MIN_CELL = 4  # por debajo, una tasa condicionada no significa nada
+PLANNING_BASE = 0.30  # tasa de referencia para el umbral detectable y el piloto
 
 # La familia, en el orden en que se declaró antes de medir. El texto es la etiqueta
 # que ve el lector del informe; la hipótesis es la que se registró de antemano.
@@ -396,8 +398,11 @@ def export(p_global: float, contrasts: list[Contrast]) -> None:
         "p_global": p_global,
         "permutations": PERMUTATIONS,
         "seed": SEED,
-        "mde_pp": round(minimum_detectable_effect(0.30, n_ai, n_human), 1),
-        "mde_tasa_base": 0.30,
+        "mde_pp": round(minimum_detectable_effect(PLANNING_BASE, n_ai, n_human), 1),
+        "mde_tasa_base": PLANNING_BASE,
+        "piloto_n_por_brazo": {
+            str(delta): sample_size_per_arm(PLANNING_BASE, delta / 100) for delta in (10, 15)
+        },
         "contrastes": [
             {
                 "variable": c.name,
