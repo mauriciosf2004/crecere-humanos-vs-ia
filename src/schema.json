@@ -1,0 +1,331 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crecere.local/schema/call_extraction.json",
+  "title": "call_extraction",
+  "description": "Una fila por llamada. 8 desenlaces de la familia + 2 covariables + 1 descriptivo.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "call_id",
+    "effective_contact",
+    "prior_agreement_followup",
+    "automation_disclosure",
+    "legal_department_framing",
+    "situational_legal_pressure",
+    "offer_expiry_claim",
+    "credit_benefit_promised",
+    "confidentiality_gate",
+    "quantified_proposal_stated",
+    "installment_or_partial_offer",
+    "qualified_payment_commitment"
+  ],
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "UUID del audio. No contiene informacion del brazo."
+    },
+    "effective_contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "COVARIABLE. Con quien se sostuvo la conversacion.",
+      "properties": {
+        "value": {
+          "enum": [
+            "titular",
+            "tercero",
+            "no_determinable"
+          ]
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400
+        }
+      }
+    },
+    "prior_agreement_followup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "COVARIABLE. El agente alude a un acuerdo pactado antes de esta llamada.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "automation_disclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "DESCRIPTIVO, fuera de la familia. El agente declara ser un sistema automatizado.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "legal_department_framing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/cumplimiento. Marco juridico en la presentacion o el motivo de la llamada.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "situational_legal_pressure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/conducta. Consecuencia juridica condicionada al no pago.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "offer_expiry_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/cumplimiento. La oferta o el descuento caduca hoy o se pierde si no confirma.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "credit_benefit_promised": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/cumplimiento. Beneficio sobre el historial crediticio ofrecido como razon para pagar.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "confidentiality_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/conducta. El agente invoca confidencialidad o verificacion de identidad.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "quantified_proposal_stated": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/comercial. El agente enuncia valor en cifras Y fecha resoluble.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "installment_or_partial_offer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "description": "FAMILIA/conducta. El agente ofrece cuotas, plan de pagos o abono parcial.",
+      "properties": {
+        "value": {
+          "enum": [
+            true,
+            false,
+            null
+          ],
+          "description": "true / false / null si no se puede determinar"
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400,
+          "description": "Cita literal que sustenta value=true; null en cualquier otro caso"
+        }
+      }
+    },
+    "qualified_payment_commitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote_terms",
+        "quote_acceptance"
+      ],
+      "description": "FAMILIA/comercial. PRIMARIA. 0 sin compromiso, 1 vago, 2 calificado. La celda de la familia es (value==2).",
+      "properties": {
+        "value": {
+          "enum": [
+            0,
+            1,
+            2,
+            null
+          ]
+        },
+        "quote_terms": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400
+        },
+        "quote_acceptance": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400
+        }
+      }
+    }
+  }
+}
