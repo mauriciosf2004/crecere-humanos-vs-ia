@@ -25,6 +25,7 @@ class EffectRow:
     n_ai: str
     n_human: str
     tentative: bool = False
+    significant: bool | None = None  # si se omite, se decide por el intervalo
 
 
 def signed(value: float) -> str:
@@ -78,8 +79,14 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 21) -> str
         x_low = _x(max(row.ci_low_pp, lo), lo, hi, plot_left, plot_width)
         x_high = _x(min(row.ci_high_pp, hi), lo, hi, plot_left, plot_width)
         x_point = _x(row.diff_pp, lo, hi, plot_left, plot_width)
-        crosses = row.ci_low_pp <= 0 <= row.ci_high_pp
-        cls = "null" if crosses else ("pos" if row.diff_pp > 0 else "neg")
+        # El color sigue a la significancia ajustada cuando se conoce: el intervalo es por
+        # comparación y puede excluir el cero en una diferencia que, corregida por la
+        # familia, no es concluyente. Pintarla de color contradiría a la tabla.
+        if row.significant is None:
+            detected = not (row.ci_low_pp <= 0 <= row.ci_high_pp)
+        else:
+            detected = row.significant
+        cls = "null" if not detected else ("pos" if row.diff_pp > 0 else "neg")
         mark = " tentative" if row.tentative else ""
 
         out.append(f'<text class="row-label" x="{label_width}" y="{y + 4}">{row.label}</text>')

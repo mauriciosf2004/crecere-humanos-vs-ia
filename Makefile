@@ -29,11 +29,11 @@ extract: ## Aplica la rúbrica a cada transcripción con Claude Code (~4 USD, ca
 annotate: ## Vota por mayoría las anotaciones del panel de tres agentes
 	$(PY) python -m src.annotate
 
-analyze: ## Contrasta la familia y escribe data/public/effects.json
-	$(PY) python -m src.analyze
+analyze: ## Contrasta la familia sobre el consenso del panel y escribe data/public/effects.json
+	$(PY) python -m src.analyze --source consenso
 
-anchoring: ## Comprueba que cada positivo cita una frase presente en la transcripción
-	$(PY) python -m src.anchoring
+anchoring: ## Comprueba que cada positivo del consenso cita una frase de las transcripciones
+	$(PY) python -m src.anchoring --source consenso
 
 report: ## Arma results.json y renderiza report/index.html desde data/public/
 	$(PY) python -m src.results

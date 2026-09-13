@@ -8,19 +8,19 @@
   "veredicto": "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica y afirma que la oferta vence hoy; en las llamadas humanas se prometen beneficios crediticios. Ambas prácticas merecen revisión de cumplimiento.",
   "kpis": [
     {
-      "valor": "4 de 8",
+      "valor": "5 de 8",
       "etiqueta": "diferencias se sostienen dentro del mismo tipo de gestión"
     },
     {
-      "valor": "41 vs 1",
+      "valor": "43 vs 1",
       "etiqueta": "se presentan como área jurídica (IA vs humano, de 50)"
     },
     {
-      "valor": "3 vs 23",
+      "valor": "3 vs 22",
       "etiqueta": "prometen beneficio crediticio (IA vs humano, de 50)"
     },
     {
-      "valor": "4 vs 32",
+      "valor": "0 vs 26",
       "etiqueta": "retoman un acuerdo previo (IA vs humano, de 50)"
     }
   ],
@@ -28,33 +28,27 @@
     {
       "etiqueta": "Se presenta como área jurídica",
       "tentativo": false,
-      "diff_pp": 80.0,
-      "ci_low_pp": 64.6,
-      "ci_high_pp": 88.4,
-      "n_ia": "41/50",
+      "significativo": true,
+      "diff_pp": 84.0,
+      "ci_low_pp": 69.1,
+      "ci_high_pp": 91.2,
+      "n_ia": "43/50",
       "n_humano": "1/50"
     },
     {
       "etiqueta": "Dice que la oferta vence hoy",
       "tentativo": false,
-      "diff_pp": 50.0,
-      "ci_low_pp": 33.4,
-      "ci_high_pp": 63.3,
+      "significativo": true,
+      "diff_pp": 52.0,
+      "ci_low_pp": 36.0,
+      "ci_high_pp": 65.1,
       "n_ia": "27/50",
-      "n_humano": "2/50"
-    },
-    {
-      "etiqueta": "Promete beneficio crediticio",
-      "tentativo": false,
-      "diff_pp": -40.0,
-      "ci_low_pp": -54.2,
-      "ci_high_pp": -23.4,
-      "n_ia": "3/50",
-      "n_humano": "23/50"
+      "n_humano": "1/50"
     },
     {
       "etiqueta": "Plantea un proceso legal",
       "tentativo": false,
+      "significativo": true,
       "diff_pp": 38.0,
       "ci_low_pp": 22.2,
       "ci_high_pp": 52.1,
@@ -62,17 +56,19 @@
       "n_humano": "2/50"
     },
     {
-      "etiqueta": "Compromiso con fecha y monto*",
-      "tentativo": true,
-      "diff_pp": -28.0,
-      "ci_low_pp": -44.2,
-      "ci_high_pp": -9.2,
-      "n_ia": "11/50",
-      "n_humano": "25/50"
+      "etiqueta": "Promete beneficio crediticio",
+      "tentativo": false,
+      "significativo": true,
+      "diff_pp": -38.0,
+      "ci_low_pp": -52.2,
+      "ci_high_pp": -21.6,
+      "n_ia": "3/50",
+      "n_humano": "22/50"
     },
     {
-      "etiqueta": "Confidencialidad o identidad*",
-      "tentativo": true,
+      "etiqueta": "Confidencialidad o identidad",
+      "tentativo": false,
+      "significativo": true,
       "diff_pp": 26.0,
       "ci_low_pp": 12.5,
       "ci_high_pp": 39.8,
@@ -82,36 +78,48 @@
     {
       "etiqueta": "Propuesta con cifras",
       "tentativo": false,
-      "diff_pp": -2.0,
-      "ci_low_pp": -20.6,
-      "ci_high_pp": 16.8,
-      "n_ia": "28/50",
+      "significativo": false,
+      "diff_pp": -20.0,
+      "ci_low_pp": -37.5,
+      "ci_high_pp": -0.5,
+      "n_ia": "19/50",
       "n_humano": "29/50"
+    },
+    {
+      "etiqueta": "Compromiso con fecha y monto",
+      "tentativo": false,
+      "significativo": false,
+      "diff_pp": -16.0,
+      "ci_low_pp": -32.1,
+      "ci_high_pp": 1.2,
+      "n_ia": "9/50",
+      "n_humano": "17/50"
     },
     {
       "etiqueta": "Ofrece cuotas o abono",
       "tentativo": false,
-      "diff_pp": 2.0,
-      "ci_low_pp": -16.9,
-      "ci_high_pp": 20.7,
-      "n_ia": "23/50",
-      "n_humano": "22/50"
+      "significativo": false,
+      "diff_pp": 6.0,
+      "ci_low_pp": -12.9,
+      "ci_high_pp": 24.3,
+      "n_ia": "22/50",
+      "n_humano": "19/50"
     }
   ],
-  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: sin diferencia detectada · línea: intervalo de confianza del 95 %. Punto hueco y *: no concluyente al comparar llamadas del mismo tipo de gestión.",
+  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: sin diferencia detectada · línea: intervalo de confianza del 95 %.",
   "hallazgos": [
     {
-      "claim": "La IA se presenta como área jurídica o de embargos en 41 de 50 llamadas; los humanos, en 1.",
+      "claim": "La IA se presenta como área jurídica o de embargos en 43 de 50 llamadas; los humanos, en 1.",
       "why": "Se mantiene al comparar llamadas del mismo tipo de gestión.",
       "accion": "Revisar ese encuadre con cumplimiento antes de escalar el canal."
     },
     {
-      "claim": "La IA afirma que la oferta vence hoy en 27 de 50 llamadas; los humanos, en 2.",
+      "claim": "La IA afirma que la oferta vence hoy en 27 de 50 llamadas; los humanos, en 1.",
       "why": "Crea urgencia, y con estas grabaciones no se sabe si el plazo es real.",
       "accion": "Contrastar cada vencimiento con la matriz de condonaciones."
     },
     {
-      "claim": "En 23 de 50 llamadas humanas se promete un beneficio en el historial crediticio; en la IA, en 3.",
+      "claim": "En 22 de 50 llamadas humanas se promete un beneficio en el historial crediticio; en la IA, en 3.",
       "why": "Se midió que se ofrezca, no que sea cierto: depende de la entidad, no del gestor.",
       "accion": "Incluir qué se promete en el muestreo de calidad de los gestores."
     },
@@ -122,7 +130,7 @@
     },
     {
       "claim": "No se puede decir qué canal consigue más compromisos de pago.",
-      "why": "Los humanos los obtienen en 25 de 50 llamadas y la IA en 11, pero 32 llamadas humanas retomaban un acuerdo ya hecho, frente a 4 de la IA.",
+      "why": "Los humanos los obtienen en 17 de 50 llamadas y la IA en 9: la diferencia no es concluyente, y además 26 llamadas humanas retomaban un acuerdo ya hecho, frente a ninguna de la IA.",
       "accion": "Asignar cuentas al azar entre canales: unas 356 por canal para detectar 10 puntos porcentuales."
     }
   ],
@@ -130,9 +138,9 @@
     {
       "variable": "Se presenta como área jurídica",
       "esperado": "mucho más en IA",
-      "ia": "41/50",
+      "ia": "43/50",
       "humano": "1/50",
-      "diff": "+80 [+65, +88]",
+      "diff": "+84 [+69, +91]",
       "p": "< 0,001",
       "estado": "coincide",
       "estado_clase": "ok"
@@ -141,8 +149,8 @@
       "variable": "Dice que la oferta vence hoy",
       "esperado": "mucho más en IA",
       "ia": "27/50",
-      "humano": "2/50",
-      "diff": "+50 [+33, +63]",
+      "humano": "1/50",
+      "diff": "+52 [+36, +65]",
       "p": "< 0,001",
       "estado": "coincide",
       "estado_clase": "ok"
@@ -161,49 +169,49 @@
       "variable": "Promete beneficio crediticio",
       "esperado": "mucho más en humanos",
       "ia": "3/50",
-      "humano": "23/50",
-      "diff": "−40 [−54, −23]",
+      "humano": "22/50",
+      "diff": "−38 [−52, −22]",
       "p": "< 0,001",
       "estado": "coincide",
       "estado_clase": "ok"
     },
     {
-      "variable": "Confidencialidad o identidad*",
+      "variable": "Confidencialidad o identidad",
       "esperado": "más en IA",
       "ia": "14/50",
       "humano": "1/50",
       "diff": "+26 [+13, +40]",
-      "p": "0,014",
-      "estado": "no concluyente",
-      "estado_clase": "warn"
+      "p": "0,024",
+      "estado": "coincide",
+      "estado_clase": "ok"
     },
     {
-      "variable": "Compromiso con fecha y monto*",
+      "variable": "Compromiso con fecha y monto",
       "esperado": "más en humanos",
-      "ia": "11/50",
-      "humano": "25/50",
-      "diff": "−28 [−44, −9]",
-      "p": "0,014",
-      "estado": "no concluyente",
-      "estado_clase": "warn"
+      "ia": "9/50",
+      "humano": "17/50",
+      "diff": "−16 [−32, +1]",
+      "p": "0,196",
+      "estado": "no detectada",
+      "estado_clase": "neutral"
     },
     {
       "variable": "Propuesta con cifras",
       "esperado": "sin diferencia",
-      "ia": "28/50",
+      "ia": "19/50",
       "humano": "29/50",
-      "diff": "−2 [−21, +17]",
-      "p": "1,000",
+      "diff": "−20 [−38, −1]",
+      "p": "0,125",
       "estado": "no detectada",
       "estado_clase": "neutral"
     },
     {
       "variable": "Ofrece cuotas o abono",
       "esperado": "sin diferencia",
-      "ia": "23/50",
-      "humano": "22/50",
-      "diff": "+2 [−17, +21]",
-      "p": "1,000",
+      "ia": "22/50",
+      "humano": "19/50",
+      "diff": "+6 [−13, +24]",
+      "p": "0,692",
       "estado": "no detectada",
       "estado_clase": "neutral"
     }
@@ -211,36 +219,37 @@
   "composicion": [
     {
       "etiqueta": "Retoma un acuerdo de pago previo",
-      "ia": "4/50",
-      "humano": "32/50"
+      "ia": "0/50",
+      "humano": "26/50"
     },
     {
       "etiqueta": "Habla con el titular de la deuda",
-      "ia": "22/50",
-      "humano": "44/50"
+      "ia": "31/50",
+      "humano": "46/50"
     }
   ],
-  "composicion_nota": "Los humanos retomaban sobre todo acuerdos ya pactados; la IA abría gestiones nuevas. Se detecta por lo dicho en la llamada, no por datos de cartera. Una llamada sin determinar cuenta como gestión nueva. En 19 llamadas de IA no se sabe quién contesta (3 humanas): esa fila es orientativa. 101 de 102 citas de estas señales están literalmente en la transcripción.",
+  "composicion_nota": "Los humanos retomaban sobre todo acuerdos ya pactados; ninguna llamada de IA lo hacía, así que comparar dentro del mismo tipo de gestión equivale a comparar gestiones nuevas. Se detecta por lo dicho en la llamada, no por datos de cartera. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana).",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
-      "detalle": "Es la única forma de saber qué canal convierte más sin que decida el tipo de gestión. Desde una tasa del 30 %, detectar 10 puntos porcentuales exige unas 356 cuentas por canal; 15 puntos, unas 162."
+      "detalle": "La única forma de medir conversión sin que decida el tipo de gestión: desde una tasa del 30 %, detectar 10 puntos exige unas 356 cuentas por canal, y 15 puntos, unas 162."
     },
     {
       "titulo": "Dentro del piloto, una variante de la IA sin presión.",
-      "detalle": "En la IA, las llamadas con amenaza o con vencimiento cierran algo más (7 de 21 frente a 4 de 29; 9 de 27 frente a 2 de 23), pero es exploratorio y no separa causa de efecto: retirarlas puede costar conversión, y hay que medirlo."
+      "detalle": "En la IA, las llamadas con amenaza o con vencimiento cierran algo más (5 de 21 frente a 4 de 29; 7 de 27 frente a 2 de 23): es exploratorio y no separa causa de efecto, así que retirarlas hay que medirlo."
     }
   ],
   "metodo": [
-    "Transcripción en local con whisper.cpp. Un modelo de lenguaje respondió 11 preguntas cerradas por llamada, citando la frase que justifica cada respuesta: 262 de 273 afirmativas citan una frase que existe en la transcripción. Descarta invenciones, no errores de lectura; la más débil, «Compromiso con fecha y monto», 30 de 36.",
-    "Test global por permutación sobre las ocho conductas (p < 0,001) y, al rechazar, Westfall-Young para corregir por las ocho comparaciones. Intervalos de Newcombe al 95 %.",
-    "Hipótesis declaradas antes de medir. En las dos que predecían ausencia de diferencia no se detectó ninguna, pero no se descartan brechas de hasta 21 puntos."
+    "Dos transcripciones locales (whisper.cpp) por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de al menos dos, y 1.042 de 1.100 fueron unánimes. 249 de 250 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.",
+    "Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos y 11 de IA donde el panel ve 17 y 9.",
+    "Test global por permutación (p < 0,001) y Westfall-Young para las ocho comparaciones; intervalos de Newcombe al 95 %. En las dos hipótesis de ausencia de diferencia no se detectó ninguna, sin descartar brechas de hasta 38 puntos."
   ],
   "limitaciones": [
+    "Los intervalos no se ajustan por las ocho comparaciones y los p-valores sí: uno puede no tocar el cero sin que la diferencia sea concluyente.",
     "Sin campaña, fecha ni CRM: el compromiso es verbal, no un pago, y no se sabe cuántas llamadas no conectan.",
     "Sin identificador de gestor: las 50 humanas pueden venir de pocas personas. Tampoco se sabe cómo se eligieron las 100.",
-    "Sin separar hablantes: la diarización fallaba distinto en voz humana y sintética y habría favorecido a la IA; por eso no hay latencia ni reparto del habla.",
+    "Sin separar hablantes: la diarización fallaba distinto en voz humana y sintética, así que no hay latencia ni reparto del habla.",
     "Con 50 llamadas por canal, una diferencia menor a 29 puntos porcentuales (desde una tasa del 30 %) probablemente pasaría inadvertida."
   ],
-  "cierre": "La mediana de duración es de 149 s en IA y 171 s en humanos; con 50 llamadas por canal la diferencia no es concluyente (p = 0,319)."
+  "cierre": "Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319)."
 }

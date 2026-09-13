@@ -17,6 +17,7 @@ Audio ya censurado en origen. Mono → **la diarización no es gratis**.
 | `data/raw/{humano,ia}/` | audios originales | **NO** |
 | `data/interim/` | transcripciones, anotaciones crudas | **NO** |
 | `data/processed/` | tablas con texto de llamada | **NO** |
+| `data/interim/{annotations,consensus}/` | votos del panel y su consenso | **NO** |
 | `data/public/` | variables derivadas, sin texto | **SÍ** |
 | `report/index.html` | entregable 1 | SÍ |
 
@@ -33,8 +34,11 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
   step-down sobre la familia de 8, que controla el FWER por sí solo. Lo que queda fuera de la
   familia es **exploratorio** y se rotula.
 → Duración: nulo (Mann-Whitney p=0,319; Cliff's δ IA−humano = −0,116). Es un hallazgo, no un fracaso.
-→ **Los brazos no comparten cartera**: el humano retoma un acuerdo previo en 32/50, la IA en 4/50.
-  Las diferencias de conducta sobreviven al estratificar; la de compromisos de pago no.
+→ **Los datos del análisis son el consenso de un panel de tres anotadores ciegos** (Sonnet + 2 Opus),
+  no la extracción de una pasada, que sobrestimaba los compromisos humanos (25 → 17).
+→ **Los brazos no comparten cartera**: el humano retoma un acuerdo previo en 26/50, la IA en 0/50.
+  Las cinco diferencias de encuadre y promesa sobreviven al estratificar; los compromisos de pago
+  no difieren (9 vs 17, p aj. 0,20).
 
 ## Reglas de trabajo
 - Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.

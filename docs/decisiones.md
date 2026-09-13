@@ -133,6 +133,9 @@ por guion. Se corrigió pasando el texto por la entrada estándar.
 
 ## 10. Los dos brazos no atacaron la misma cartera
 
+> Cifras de la extracción original, de un solo modelo. Con el panel de tres anotadores la
+> composición se vuelve más nítida y cambia la lectura del compromiso de pago: ver el §13.
+
 Sin metadatos no había forma de comprobar el balance entre brazos, así que se midió desde el
 audio. La señal más limpia es si la llamada **retoma un acuerdo de pago ya existente**: se detecta
 por una frase concreta del agente —una frase que retoma el monto y las cuotas ya pactadas— y no por
@@ -164,6 +167,8 @@ ausencia de confirmación, que es justo el tipo de variable que se descartó en 
 
 ## 11. Validar sin escuchar: el anclaje de citas
 
+> Cifras de la extracción original. Con el panel, 249 de 250 afirmativas anclan: ver el §13.
+
 Escuchar las llamadas contra lo anotado es el siguiente paso de la validación. Antes de eso se puede
 comprobar una parte por máquina: la rúbrica obliga a citar literalmente la frase que justifica cada
 respuesta afirmativa, así que basta con buscar esa frase en la transcripción que leyó el modelo.
@@ -182,4 +187,68 @@ Anclada no significa bien interpretada, pero descarta la invención, que es el f
 haría. Y dice dónde escuchar: las citas no ancladas y los positivos de las celdas raras —los que
 sostienen la dirección de un efecto— forman la hoja de escucha, que vive en `data/interim/` porque
 contiene texto de las llamadas.
+
+## 12. Una segunda transcripción, con otro modelo
+
+La primera transcripción usó whisper large-v3-turbo. Para no depender de un solo transcriptor, las
+100 llamadas se volvieron a transcribir con large-v3 completo, en local y con la misma
+configuración, y los anotadores del panel reciben las dos versiones.
+
+Comparando las dos palabra a palabra, tras la misma limpieza:
+
+| | Humano | IA |
+|---|---|---|
+| Coincidencia mediana entre transcriptores | 0,886 | 0,924 |
+| Llamadas con fórmulas alucinadas (turbo) | 14 de 50 | 1 de 50 |
+| Llamadas con fórmulas alucinadas (large-v3) | 4 de 50 | 0 de 50 |
+
+Tres consecuencias. La primera: **el error de transcripción también es diferencial por brazo** —las
+dos versiones coinciden menos en las llamadas humanas (Mann-Whitney p = 0,0003)—, como ya lo era el
+de la separación de hablantes.
+
+La segunda: large-v3 inventa mucho menos texto en los silencios, que es donde la voz humana deja más
+huecos.
+
+La tercera, y la que decide el diseño: **ninguno de los dos transcriptores domina.** Los cortes
+graves —una versión con menos de la mitad de palabras que la otra— son pocos, uno en cada sentido y
+los dos en llamadas humanas: large-v3 dejó 5 palabras donde turbo tenía 196, y turbo 27 donde
+large-v3 tenía 60. Dos casos no hacen un patrón, pero bastan para ver que cada transcriptor pierde
+trozos que el otro conserva, y que elegir uno habría sido elegir qué errores aceptar. Por eso los
+anotadores reciben las dos lecturas.
+
+## 13. Tres anotadores en lugar de uno
+
+La extracción original fue una sola pasada de un solo modelo. Para no depender de ella, las 100
+llamadas las anotaron tres agentes internos por separado —un clasificador con Sonnet, un auditor y un
+reauditor con Opus—, sin ver lo que respondieron los otros ni saber de qué brazo era cada llamada, y
+cada celda se quedó con la respuesta de al menos dos de tres. Las instrucciones literales están en
+`docs/panel-de-anotacion.md`.
+
+- De 1.100 celdas, **1.042 salieron unánimes**, 55 con dos votos de tres y 3 sin mayoría.
+- La ceguera se verificó en los registros de los 300 agentes: ninguno abrió nada fuera de la rúbrica
+  y la carpeta de su llamada.
+- 249 de 250 respuestas afirmativas citan una frase que existe en las transcripciones, frente a 262
+  de 273 en la pasada única.
+
+**La pasada única tenía un sesgo, y en una sola dirección.** Donde más cambió fue el compromiso de
+pago: el panel bajó de calificado a vago 8 compromisos humanos y 2 de IA, y no subió ninguno a
+calificado. En los casos unánimes, los tres anotadores ven la misma fecha y el mismo monto que vio la
+extracción; lo que no aceptan como aceptación es un asentimiento vago —un «ya veré» o un simple «de acuerdo»— ni un número de cuota como monto.
+
+| | Extracción (un modelo) | Panel (tres) |
+|---|---|---|
+| Compromisos calificados, IA / humano | 11 / 25 | 9 / 17 |
+| Retoma un acuerdo previo, IA / humano | 4 / 32 | 0 / 26 |
+| Propuesta con cifras, IA / humano | 28 / 29 | 19 / 29 |
+
+**Qué cambia en las conclusiones.** Las diferencias de encuadre y de promesa no se mueven:
+presentación jurídica 43 frente a 1, oferta que vence hoy 27 frente a 1, amenaza legal 21 frente a
+2, promesa crediticia 3 frente a 22. La verificación de identidad (14 frente a 1) pasa a sostenerse
+también dentro del mismo tipo de gestión. En cambio, **la diferencia en compromisos de pago deja de
+ser significativa incluso antes de estratificar**: 9 frente a 17, −16 puntos, IC95 [−32, +1]. Con la
+extracción original parecía una brecha que la cartera explicaba; con el panel ni siquiera se detecta.
+
+La composición de las carteras, en cambio, se vuelve más nítida: con el panel ninguna llamada de IA
+retoma un acuerdo previo, frente a 26 humanas. La comparación estratificada es, en la práctica, la
+de las gestiones nuevas.
 

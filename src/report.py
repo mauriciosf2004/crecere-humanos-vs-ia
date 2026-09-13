@@ -32,6 +32,7 @@ def render() -> Path:
             n_ai=e["n_ia"],
             n_human=e["n_humano"],
             tentative=e["tentativo"],
+            significant=e["significativo"],
         )
         for e in results["efectos"]
     ]

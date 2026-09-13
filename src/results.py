@@ -11,6 +11,7 @@ falla en vez de publicarla.
 from __future__ import annotations
 
 import json
+from collections import Counter
 from pathlib import Path
 
 from src.charts import signed
@@ -71,6 +72,11 @@ def _typeset(value):
     return value
 
 
+def thousands(n: int) -> str:
+    """1042 → 1.042: separador de miles es-CO, igual que en los documentos."""
+    return f"{n:,}".replace(",", ".")
+
+
 def interval(item: dict) -> str:
     low, high = signed(item["ci_low_pp"]), signed(item["ci_high_pp"])
     return f"{signed(item['diff_pp'])} [{low}, {high}]"
@@ -110,11 +116,12 @@ def label(item: dict) -> str:
 def status(item: dict) -> tuple[str, str]:
     """Texto y clase de la etiqueta de resultado en la tabla de hipótesis.
 
-    Un nulo previsto que sale nulo se rotula "no detectada", no "coincide": con esta
-    potencia no detectar una diferencia es fácil aunque exista.
+    Una diferencia que no se detecta se rotula "no detectada", tanto si se esperaba nula
+    como si se esperaba en una dirección: con esta potencia no detectar es fácil aunque la
+    diferencia exista. "No coincide" queda para lo que sale en el sentido contrario.
     """
-    if item["hipotesis"] == "sin diferencia":
-        return ("no detectada", "neutral") if not significant(item) else ("detectada", "ko")
+    if not significant(item):
+        return "no detectada", "neutral"
     if composition_sensitive(item):
         return "no concluyente", "warn"
     return ("coincide", "ok") if matches(item) else ("no coincide", "ko")
@@ -127,6 +134,7 @@ def fraction(k: int, n: int) -> str:
 def build() -> dict:
     effects = json.loads((PUBLIC / "effects.json").read_text(encoding="utf-8"))
     anchoring = json.loads((PUBLIC / "anchoring.json").read_text(encoding="utf-8"))
+    agreement = json.loads((PUBLIC / "agreement.json").read_text(encoding="utf-8"))
     questions = len(json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]) - 1
 
     contrasts = effects["contrastes"]
@@ -159,13 +167,27 @@ def build() -> dict:
     family_anchor, context_anchor = anchoring["total"], anchoring["total_contexto"]
     undetermined = prior["indeterminado_ia"] + prior["indeterminado_humano"]
 
+    panel_models = Counter(agreement["panel"].values())
+    panel_text = " y ".join(
+        f"{'uno' if k == 1 else 'dos' if k == 2 else k} con {model.capitalize()}"
+        for model, k in sorted(panel_models.items(), key=lambda x: x[1])
+    )
+    cells = agreement["resumen"]["celdas"]
+    unanimous, total_cells = cells.get("3/3", 0), sum(cells.values())
+    single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
+    tentative = any(composition_sensitive(i) for i in contrasts)
+
     _require(effects["p_global"] < ALPHA, "hay diferencias sustentables")
     for item in (legal, expiry, threat, credit):
         _require(
             matches(item) and not composition_sensitive(item),
             f"«{SHORT[item['variable']]}» se sostiene dentro de cada tipo de gestión",
         )
-    _require(composition_sensitive(commitment), "no se sabe qué canal consigue más compromisos")
+    _require(not significant(commitment), "la diferencia en compromisos no es concluyente")
+    _require(
+        single_pass["extraccion"]["humano"] > single_pass["consenso"]["humano"],
+        "la pasada única sobrestimaba los compromisos humanos",
+    )
     _require(prior["k_humano"] > prior["k_ia"], "los humanos retoman más acuerdos previos")
     _require(not any(significant(i) for i in nulls), "no se detectó diferencia en las nulas")
     _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
@@ -216,6 +238,7 @@ def build() -> dict:
             {
                 "etiqueta": label(item),
                 "tentativo": composition_sensitive(item),
+                "significativo": significant(item),
                 "diff_pp": item["diff_pp"],
                 "ci_low_pp": item["ci_low_pp"],
                 "ci_high_pp": item["ci_high_pp"],
@@ -226,8 +249,12 @@ def build() -> dict:
         ],
         "forest_nota": (
             "Morado: más en IA · naranja: más en humanos · gris: sin diferencia detectada · "
-            "línea: intervalo de confianza del 95 %. Punto hueco y *: no concluyente al comparar "
-            "llamadas del mismo tipo de gestión."
+            "línea: intervalo de confianza del 95 %."
+            + (
+                " Punto hueco y *: no concluyente al comparar llamadas del mismo tipo de gestión."
+                if tentative
+                else ""
+            )
         ),
         "hallazgos": [
             {
@@ -269,8 +296,11 @@ def build() -> dict:
                 "claim": "No se puede decir qué canal consigue más compromisos de pago.",
                 "why": (
                     f"Los humanos los obtienen en {commitment['k_humano']} de {n} llamadas y la IA "
-                    f"en {commitment['k_ia']}, pero {prior['k_humano']} llamadas humanas retomaban "
-                    f"un acuerdo ya hecho, frente a {prior['k_ia']} de la IA."
+                    "en "
+                    f"{commitment['k_ia']}: la diferencia no es concluyente, y además "
+                    f"{prior['k_humano']} llamadas humanas retomaban un acuerdo ya hecho, frente a "
+                    + ("ninguna" if prior["k_ia"] == 0 else str(prior["k_ia"]))
+                    + " de la IA."
                 ),
                 "accion": (
                     f"Asignar cuentas al azar entre canales: unas {pilot['10']} por canal para "
@@ -300,21 +330,26 @@ def build() -> dict:
             for item in effects["composicion"]
         ],
         "composicion_nota": (
-            "Los humanos retomaban sobre todo acuerdos ya pactados; la IA abría gestiones nuevas. "
-            f"Se detecta por lo dicho en la llamada, no por datos de cartera.{undetermined_note} "
-            f"En {contact['indeterminado_ia']} llamadas de IA no se sabe quién contesta "
-            f"({contact['indeterminado_humano']} humanas): esa fila es orientativa. "
-            f"{context_anchor['anclados']} de {context_anchor['positivos']} citas de estas "
-            "señales están literalmente en la transcripción."
+            "Los humanos retomaban sobre todo acuerdos ya pactados"
+            + (
+                "; ninguna llamada de IA lo hacía, así que comparar dentro del mismo tipo de "
+                "gestión equivale a comparar gestiones nuevas. "
+                if prior["k_ia"] == 0
+                else f"; la IA, en {prior['k_ia']} llamadas. "
+            )
+            + "Se detecta por lo dicho en la llamada, no por datos de cartera."
+            + f"{undetermined_note} En {contact['indeterminado_ia']} llamadas de IA no se sabe "
+            + f"quién contesta ({contact['indeterminado_humano']} "
+            + ("humana)." if contact["indeterminado_humano"] == 1 else "humanas).")
         ),
         "palancas": [
             {
                 "titulo": "Un piloto con asignación al azar.",
                 "detalle": (
-                    "Es la única forma de saber qué canal convierte más sin que decida el tipo de "
-                    f"gestión. Desde una tasa del {base * 100:.0f} %, detectar 10 puntos "
-                    f"porcentuales exige unas {pilot['10']} cuentas por canal; 15 puntos, unas "
-                    f"{pilot['15']}."
+                    "La única forma de medir conversión sin que decida el tipo de gestión: desde "
+                    "una "
+                    f"tasa del {base * 100:.0f} %, detectar 10 puntos exige unas {pilot['10']} "
+                    f"cuentas por canal, y 15 puntos, unas {pilot['15']}."
                 ),
             },
             {
@@ -323,34 +358,41 @@ def build() -> dict:
                     "En la IA, las llamadas con amenaza o con vencimiento cierran algo más "
                     f"({threat_ai['k_con']} de {threat_ai['n_con']} frente a "
                     f"{threat_ai['k_sin']} de {threat_ai['n_sin']}; {expiry_ai['k_con']} de "
-                    f"{expiry_ai['n_con']} frente a {expiry_ai['k_sin']} de {expiry_ai['n_sin']}), "
-                    "pero es exploratorio y no separa causa de efecto: retirarlas puede costar "
-                    "conversión, y hay que medirlo."
+                    f"{expiry_ai['n_con']} frente a {expiry_ai['k_sin']} de {expiry_ai['n_sin']}): "
+                    "es exploratorio y no separa causa de efecto, así que retirarlas hay que "
+                    "medirlo."
                 ),
             },
         ],
         "metodo": [
             (
-                "Transcripción en local con whisper.cpp. Un modelo de lenguaje respondió "
-                f"{questions} preguntas cerradas por llamada, citando la frase que justifica "
-                f"cada respuesta: {family_anchor['anclados']} de {family_anchor['positivos']} "
-                "afirmativas citan una frase que existe en la transcripción. Descarta "
-                "invenciones, no errores de lectura; la más débil, "
-                f"«{SHORT[weakest['variable']]}», "
-                f"{weak_ok} de {weak_total}."
+                "Dos transcripciones locales (whisper.cpp) por llamada. Tres agentes ciegos "
+                f"—{panel_text}— respondieron por separado {questions} preguntas cerradas; cada "
+                f"celda es la respuesta de al menos dos, y {thousands(unanimous)} de "
+                f"{thousands(total_cells)} fueron "
+                f"unánimes. {family_anchor['anclados']} de {family_anchor['positivos']} "
+                f"afirmativas y {context_anchor['anclados']} de {context_anchor['positivos']} de "
+                "contexto citan frases que existen en las transcripciones."
             ),
             (
-                "Test global por permutación sobre las ocho conductas "
-                f"({p_text(effects['p_global'])}) y, al rechazar, Westfall-Young para corregir por "
-                "las ocho comparaciones. Intervalos de Newcombe al 95 %."
+                "Una pasada con un solo modelo aceptaba asentimientos vagos: veía "
+                f"{single_pass['extraccion']['humano']} compromisos humanos y "
+                f"{single_pass['extraccion']['ia']} de IA donde el panel ve "
+                f"{single_pass['consenso']['humano']} y {single_pass['consenso']['ia']}."
             ),
             (
-                "Hipótesis declaradas antes de medir. En las dos que predecían ausencia de "
-                "diferencia no se detectó ninguna, pero no se descartan brechas de hasta "
+                f"Test global por permutación ({p_text(effects['p_global'])}) y Westfall-Young "
+                "para "
+                "las ocho comparaciones; intervalos de Newcombe al 95 %. En las dos hipótesis de "
+                "ausencia de diferencia no se detectó ninguna, sin descartar brechas de hasta "
                 f"{signed(null_bound).lstrip('+')} puntos."
             ),
         ],
         "limitaciones": [
+            (
+                "Los intervalos no se ajustan por las ocho comparaciones y los p-valores sí: uno "
+                "puede no tocar el cero sin que la diferencia sea concluyente."
+            ),
             (
                 "Sin campaña, fecha ni CRM: el compromiso es verbal, no un pago, y no se sabe "
                 "cuántas llamadas no conectan."
@@ -360,9 +402,8 @@ def build() -> dict:
                 f"Tampoco se sabe cómo se eligieron las {2 * n}."
             ),
             (
-                "Sin separar hablantes: la diarización fallaba distinto en voz humana y "
-                "sintética y habría favorecido a la IA; por eso no hay latencia ni reparto del "
-                "habla."
+                "Sin separar hablantes: la diarización fallaba distinto en voz humana y sintética, "
+                "así que no hay latencia ni reparto del habla."
             ),
             (
                 f"Con {n} llamadas por canal, una diferencia menor a {mde:.0f} puntos porcentuales "
@@ -370,9 +411,9 @@ def build() -> dict:
             ),
         ],
         "cierre": (
-            f"La mediana de duración es de {duration['mediana_ia_s']:.0f} s en IA y "
-            f"{duration['mediana_humano_s']:.0f} s en humanos; con {n} llamadas por canal la "
-            f"diferencia no es concluyente ({p_text(duration['p_mann_whitney'])})."
+            f"Duración mediana: {duration['mediana_ia_s']:.0f} s en IA y "
+            f"{duration['mediana_humano_s']:.0f} s en humanos, sin diferencia concluyente "
+            f"({p_text(duration['p_mann_whitney'])})."
         ),
     }
 

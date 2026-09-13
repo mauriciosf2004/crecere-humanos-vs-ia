@@ -1,4 +1,5 @@
 {
+  "fuente": "consensus",
   "por_variable": {
     "legal_department_framing": {
       "humano": {
@@ -7,15 +8,15 @@
         "anclados": 1
       },
       "ia": {
-        "positivos": 41,
-        "con_cita": 41,
-        "anclados": 41
+        "positivos": 43,
+        "con_cita": 43,
+        "anclados": 43
       }
     },
     "offer_expiry_claim": {
       "humano": {
-        "positivos": 2,
-        "con_cita": 2,
+        "positivos": 1,
+        "con_cita": 1,
         "anclados": 1
       },
       "ia": {
@@ -38,9 +39,9 @@
     },
     "credit_benefit_promised": {
       "humano": {
-        "positivos": 23,
-        "con_cita": 23,
-        "anclados": 23
+        "positivos": 22,
+        "con_cita": 22,
+        "anclados": 22
       },
       "ia": {
         "positivos": 3,
@@ -62,85 +63,85 @@
     },
     "qualified_payment_commitment": {
       "humano": {
-        "positivos": 25,
-        "con_cita": 25,
-        "anclados": 22
+        "positivos": 17,
+        "con_cita": 17,
+        "anclados": 17
       },
       "ia": {
-        "positivos": 11,
-        "con_cita": 11,
-        "anclados": 8
+        "positivos": 9,
+        "con_cita": 9,
+        "anclados": 9
       }
     },
     "quantified_proposal_stated": {
       "humano": {
         "positivos": 29,
         "con_cita": 29,
-        "anclados": 28
+        "anclados": 29
       },
       "ia": {
-        "positivos": 28,
-        "con_cita": 28,
-        "anclados": 26
+        "positivos": 19,
+        "con_cita": 19,
+        "anclados": 18
       }
     },
     "installment_or_partial_offer": {
       "humano": {
-        "positivos": 22,
-        "con_cita": 22,
-        "anclados": 22
+        "positivos": 19,
+        "con_cita": 19,
+        "anclados": 19
       },
       "ia": {
-        "positivos": 23,
-        "con_cita": 23,
+        "positivos": 22,
+        "con_cita": 22,
         "anclados": 22
       }
     },
     "prior_agreement_followup": {
       "humano": {
-        "positivos": 32,
-        "con_cita": 32,
-        "anclados": 32
+        "positivos": 26,
+        "con_cita": 26,
+        "anclados": 26
       },
       "ia": {
-        "positivos": 4,
-        "con_cita": 4,
-        "anclados": 4
+        "positivos": 0,
+        "con_cita": 0,
+        "anclados": 0
       }
     },
     "effective_contact": {
       "humano": {
-        "positivos": 44,
-        "con_cita": 44,
-        "anclados": 43
+        "positivos": 46,
+        "con_cita": 46,
+        "anclados": 46
       },
       "ia": {
-        "positivos": 22,
-        "con_cita": 22,
-        "anclados": 22
+        "positivos": 31,
+        "con_cita": 31,
+        "anclados": 31
       }
     }
   },
   "por_brazo": {
     "humano": {
-      "positivos": 105,
-      "con_cita": 105,
-      "anclados": 100
+      "positivos": 92,
+      "con_cita": 92,
+      "anclados": 92
     },
     "ia": {
-      "positivos": 168,
-      "con_cita": 168,
-      "anclados": 162
+      "positivos": 158,
+      "con_cita": 158,
+      "anclados": 157
     }
   },
   "total": {
-    "positivos": 273,
-    "con_cita": 273,
-    "anclados": 262
+    "positivos": 250,
+    "con_cita": 250,
+    "anclados": 249
   },
   "total_contexto": {
-    "positivos": 102,
-    "con_cita": 102,
-    "anclados": 101
+    "positivos": 103,
+    "con_cita": 103,
+    "anclados": 103
   }
 }

@@ -169,6 +169,28 @@ def agreement_with_extraction(names: list[str]) -> dict:
     return table
 
 
+def family_positives() -> dict:
+    """Positivos de cada variable de la familia por brazo, en la extracción y en el consenso.
+
+    Es lo que permite decir en el informe cuánto cambió una cifra al pasar de un modelo a
+    tres, leyendo el número en vez de escribirlo.
+    """
+    from src.analyze import FAMILY, cell
+
+    counts = {}
+    for name, _, _ in FAMILY:
+        counts[name] = {}
+        for label, root in (("extraccion", EXTRACTIONS), ("consenso", CONSENSUS)):
+            counts[name][label] = {
+                arm: sum(
+                    cell(json.loads(p.read_text(encoding="utf-8")), name)
+                    for p in sorted((root / arm).glob("*.json"))
+                )
+                for arm in ("humano", "ia")
+            }
+    return counts
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Consenso del panel de anotadores.")
     parser.add_argument(
@@ -191,7 +213,12 @@ def main() -> None:
     PUBLIC.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "agreement.json").write_text(
         json.dumps(
-            {"panel": PANEL, "resumen": summary, "extraccion_vs_consenso": agreement},
+            {
+                "panel": PANEL,
+                "resumen": summary,
+                "extraccion_vs_consenso": agreement,
+                "positivos_familia": family_positives(),
+            },
             ensure_ascii=False,
             indent=2,
         ),

@@ -1,0 +1,144 @@
+{
+  "panel": {
+    "clasificador": "sonnet",
+    "auditor": "opus",
+    "reauditor": "opus"
+  },
+  "resumen": {
+    "llamadas_con_tres_votos": 100,
+    "llamadas_con_dos_votos": 0,
+    "celdas": {
+      "3/3": 1042,
+      "2/3": 55,
+      "1/3": 3
+    }
+  },
+  "extraccion_vs_consenso": {
+    "effective_contact": {
+      "coinciden": 88,
+      "total": 100
+    },
+    "prior_agreement_followup": {
+      "coinciden": 89,
+      "total": 100
+    },
+    "automation_disclosure": {
+      "coinciden": 98,
+      "total": 100
+    },
+    "legal_department_framing": {
+      "coinciden": 96,
+      "total": 100
+    },
+    "situational_legal_pressure": {
+      "coinciden": 98,
+      "total": 100
+    },
+    "offer_expiry_claim": {
+      "coinciden": 97,
+      "total": 100
+    },
+    "credit_benefit_promised": {
+      "coinciden": 97,
+      "total": 100
+    },
+    "confidentiality_gate": {
+      "coinciden": 96,
+      "total": 100
+    },
+    "quantified_proposal_stated": {
+      "coinciden": 86,
+      "total": 100
+    },
+    "installment_or_partial_offer": {
+      "coinciden": 93,
+      "total": 100
+    },
+    "qualified_payment_commitment": {
+      "coinciden": 86,
+      "total": 100
+    }
+  },
+  "positivos_familia": {
+    "legal_department_framing": {
+      "extraccion": {
+        "humano": 1,
+        "ia": 41
+      },
+      "consenso": {
+        "humano": 1,
+        "ia": 43
+      }
+    },
+    "offer_expiry_claim": {
+      "extraccion": {
+        "humano": 2,
+        "ia": 27
+      },
+      "consenso": {
+        "humano": 1,
+        "ia": 27
+      }
+    },
+    "situational_legal_pressure": {
+      "extraccion": {
+        "humano": 2,
+        "ia": 21
+      },
+      "consenso": {
+        "humano": 2,
+        "ia": 21
+      }
+    },
+    "credit_benefit_promised": {
+      "extraccion": {
+        "humano": 23,
+        "ia": 3
+      },
+      "consenso": {
+        "humano": 22,
+        "ia": 3
+      }
+    },
+    "confidentiality_gate": {
+      "extraccion": {
+        "humano": 1,
+        "ia": 14
+      },
+      "consenso": {
+        "humano": 1,
+        "ia": 14
+      }
+    },
+    "qualified_payment_commitment": {
+      "extraccion": {
+        "humano": 25,
+        "ia": 11
+      },
+      "consenso": {
+        "humano": 17,
+        "ia": 9
+      }
+    },
+    "quantified_proposal_stated": {
+      "extraccion": {
+        "humano": 29,
+        "ia": 28
+      },
+      "consenso": {
+        "humano": 29,
+        "ia": 19
+      }
+    },
+    "installment_or_partial_offer": {
+      "extraccion": {
+        "humano": 22,
+        "ia": 23
+      },
+      "consenso": {
+        "humano": 19,
+        "ia": 22
+      }
+    }
+  }
+}
