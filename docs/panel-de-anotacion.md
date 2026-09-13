@@ -67,7 +67,10 @@ llamada en `data/interim/panel_input/`.
    lotes (2, 40 y 58 llamadas), con `args = { root, calls, schema }`.
 3. `python -m src.annotate --from-workflow <salida del workflow>` guarda cada respuesta y vota.
 
+Los ejemplos entre comillas de `src/rubric.md` son frases inventadas con la misma función que los
+que leyó el panel: ninguno reproduce lo dicho en una llamada.
+
 Después del voto se aplica una única regla determinista: en la propuesta con cifras, «hoy» cuenta
 como fecha, como dice la rúbrica. El panel no lo había aceptado cuando la fecha era el vencimiento de
-la oferta. Ver `docs/decisiones.md`, §13.
+la oferta. Ver `docs/decisiones.md`, §14.
 

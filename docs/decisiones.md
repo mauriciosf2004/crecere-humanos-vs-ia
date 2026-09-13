@@ -278,7 +278,7 @@ interpretación después de ver el resultado es justo el camino que abre falsos 
 La regla se aplica en código, después del voto (`apply_literal_date_rule` en `src/annotate.py`): si la
 celda no quedó afirmativa y alguna anotación de esa llamada —del panel o de la extracción— la marcó
 afirmativa con una cita que tiene un monto y «hoy», la celda pasa a afirmativa con esa cita. Es
-simétrica entre brazos; cambió 10 llamadas de IA y ninguna humana, y las 10 citas anclan.
+simétrica entre brazos; cambió 10 llamadas de IA y ninguna humana, y 9 de esas 10 citas anclan.
 
 | Propuesta con cifras | Antes | Después |
 |---|---|---|
