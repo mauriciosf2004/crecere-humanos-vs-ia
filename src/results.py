@@ -243,6 +243,7 @@ def build() -> dict:
             "cliente": "Creceré AI · Prueba técnica",
             "fecha": "Septiembre 2026",
             "autor": "Mauricio Salas",
+            "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia",
         },
         "veredicto": (
             "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra "

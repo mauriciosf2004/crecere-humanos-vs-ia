@@ -12,10 +12,10 @@ cada momento; esta tabla es la lectura vigente.
 
 | Commit | Qué cambió en la medición | Compromisos IA / humano | Diferencia | Lectura |
 |---|---|---|---|---|
-| `9da5050` | Extracción de un modelo, con el ordinal mal leído | 15 / 38 | −46 pp, significativa | Brecha a favor del humano |
-| `fe78371` | Solo cuenta el nivel calificado | 11 / 25 | −28 pp, p aj. 0,014 | Brecha a favor del humano |
-| `bff89d0` | Estratificación por acuerdo previo | 11 / 25 | p estratificado 0,13 | No atribuible al agente |
-| `6248731` | Consenso del panel de tres anotadores | 9 / 17 | −16 pp, p aj. 0,196 | No se detecta diferencia |
+| `cb0e273` | Extracción de un modelo, con el ordinal mal leído | 15 / 38 | −46 pp, significativa | Brecha a favor del humano |
+| `f6644f4` | Solo cuenta el nivel calificado | 11 / 25 | −28 pp, p aj. 0,014 | Brecha a favor del humano |
+| `74490c5` | Estratificación por acuerdo previo | 11 / 25 | p estratificado 0,13 | No atribuible al agente |
+| `d60b561` | Consenso del panel de tres anotadores | 9 / 17 | −16 pp, p aj. 0,196 | No se detecta diferencia |
 | §14 | Rúbrica literal para «hoy» en la propuesta con cifras | 9 / 17 | −16 pp, p aj. 0,295 | No se detecta diferencia |
 
 

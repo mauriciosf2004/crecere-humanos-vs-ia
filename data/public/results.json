@@ -3,7 +3,8 @@
     "titulo": "Cobranza con agentes humanos y de IA: qué cambia en la gestión",
     "cliente": "Creceré AI · Prueba técnica",
     "fecha": "Septiembre 2026",
-    "autor": "Mauricio Salas"
+    "autor": "Mauricio Salas",
+    "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
   "veredicto": "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Con criterio de cumplimiento, la IA casi no promete beneficios crediticios (6 % frente a 44 %); los humanos no se presentan como área jurídica (2 % frente a 86 %) ni presionan con el vencimiento de la oferta (2 % frente a 54 %). En compromisos de pago no hay ganador demostrable.",
   "kpis": [
