@@ -112,7 +112,7 @@ rigor.
 
 ## 6. Qué cambió respecto al primer registro
 
-El primer registro, del 10 de septiembre (commit `0567e3e`), tenía otras cinco hipótesis:
+El primer registro, del 10 de septiembre (commit `5a7d9f3`), tenía otras cinco hipótesis:
 
 | Primer registro | Qué pasó con ella |
 |---|---|
@@ -126,12 +126,12 @@ El primer registro, del 10 de septiembre (commit `0567e3e`), tenía otras cinco 
 
 | Momento | Commit | Qué había |
 |---|---|---|
-| 10-sep, 20:30 | `0567e3e` | El primer registro, con las cinco hipótesis de arriba |
+| 10-sep, 20:30 | `5a7d9f3` | El primer registro, con las cinco hipótesis de arriba |
 | 11-sep, antes de las 19:20 | — | Barridos léxicos exploratorios sobre las 100 transcripciones (`docs/variables-descartadas.md`) |
 | 11-sep, 19:20–19:27 | — | Extracción de las ocho variables en las 100 llamadas |
-| 11-sep, 19:23 | `36df2f0` | Rúbrica y lista de las ocho variables, cada una con su sentido esperado |
-| 11-sep, 19:27 | `cb0e273` | Primer contraste |
-| 12-sep, 08:52 | `f6644f4` | La tabla H1–H8 entra en este documento, con los mismos sentidos |
+| 11-sep, 19:23 | `757057d` | Rúbrica y lista de las ocho variables, cada una con su sentido esperado |
+| 11-sep, 19:27 | `b4cb6a4` | Primer contraste |
+| 12-sep, 08:52 | `ca26b46` | La tabla H1–H8 entra en este documento, con los mismos sentidos |
 
 El sentido esperado quedó escrito antes de ver cualquier resultado de la extracción, y no se tocó
 después; solo «nulo declarado» pasó a llamarse «sin diferencia». Pero se fijó **después de los
