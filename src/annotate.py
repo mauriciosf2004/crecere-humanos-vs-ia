@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -39,6 +40,13 @@ EXTRACTIONS = INTERIM / "extractions"
 PUBLIC = ROOT / "data" / "public"
 
 PANEL = {"clasificador": "sonnet", "auditor": "opus", "reauditor": "opus"}
+
+# La rúbrica cuenta «hoy» como fecha resoluble en la propuesta con cifras (src/rubric.md,
+# variable 10). El panel no la aceptó cuando la fecha era el vencimiento de la oferta
+# («vencería hoy mismo»). Se aplica la regla escrita antes de anotar, sin volver a anotar.
+LITERAL_DATE_FIELD = "quantified_proposal_stated"
+AMOUNT = re.compile(r"\d|\bmil\b|\bmill[oó]n", re.I)
+TODAY = re.compile(r"\bhoy\b", re.I)
 
 
 def fields() -> list[str]:
@@ -123,11 +131,33 @@ def vote(rows: list[dict], names: list[str]) -> dict:
     return consensus
 
 
+def apply_literal_date_rule(consensus: dict, sources: list[dict]) -> bool:
+    """Aplica la regla literal de fecha a la propuesta con cifras. Devuelve si cambió la celda.
+
+    Si la celda no quedó en True pero alguna anotación de la llamada —del panel o de la
+    extracción original— la marcó True citando un monto y «hoy», pasa a True con esa cita.
+    La regla es simétrica entre brazos, y la cita se sigue verificando en el anclaje.
+    """
+    if _value(consensus.get(LITERAL_DATE_FIELD)) is True:
+        return False
+    for source in sources:
+        candidate = source.get(LITERAL_DATE_FIELD)
+        quote = candidate.get("quote") if isinstance(candidate, dict) else None
+        if _value(candidate) is True and quote and AMOUNT.search(quote) and TODAY.search(quote):
+            consensus[LITERAL_DATE_FIELD] = {"value": True, "quote": quote}
+            consensus.setdefault("_ajustes", {})[LITERAL_DATE_FIELD] = (
+                "regla literal: «hoy» es fecha"
+            )
+            return True
+    return False
+
+
 def consolidate() -> dict:
     """Vota cada llamada con las anotaciones disponibles y escribe su consenso."""
     names = fields()
     calls = {(p.parent.name, p.stem) for p in ANNOTATIONS.glob("*/*/*.json")}
     agreement, complete, partial = Counter(), 0, 0
+    adjusted = Counter()
     for arm, stem in sorted(calls):
         rows = [
             json.loads(path.read_text(encoding="utf-8"))
@@ -139,6 +169,9 @@ def consolidate() -> dict:
         complete += len(rows) == len(PANEL)
         partial += len(rows) < len(PANEL)
         consensus = vote(rows, names)
+        original = EXTRACTIONS / arm / f"{stem}.json"
+        extra = [json.loads(original.read_text(encoding="utf-8"))] if original.exists() else []
+        adjusted[arm] += apply_literal_date_rule(consensus, rows + extra)
         target = CONSENSUS / arm / f"{stem}.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(consensus, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -147,6 +180,7 @@ def consolidate() -> dict:
         "llamadas_con_tres_votos": complete,
         "llamadas_con_dos_votos": partial,
         "celdas": dict(agreement),
+        "ajustes_regla_literal": dict(adjusted),
     }
 
 

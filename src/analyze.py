@@ -412,6 +412,13 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTION
                 ]
             )
 
+    # La comparación "dentro del mismo tipo de gestión" también se corrige por las ocho
+    # variables: Westfall-Young sobre las gestiones nuevas, que es el único estrato con los
+    # dos brazos.
+    new = np.array([not bool(_raw(row, "prior_agreement_followup")) for row in rows])
+    matrix, is_ai, _ = load_table(source)
+    adjusted_new = westfall_young(matrix[new], is_ai[new], np.random.default_rng(SEED + 1))
+
     n_ai, n_human = contrasts[0].n_ai, contrasts[0].n_human
     payload = {
         "p_global": p_global,
@@ -438,9 +445,10 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTION
                 "ci_high_pp": round(c.ci_high_pp, 1),
                 "p_raw": c.p_raw,
                 "p_ajustado": c.p_adjusted,
+                "p_ajustado_nuevas": float(adjusted_new[i]),
                 "estratificado": stratified(rows, c.name),
             }
-            for c in contrasts
+            for i, c in enumerate(contrasts)
         ],
         "composicion": composition(rows),
         "duracion": duration_contrast(),
@@ -456,7 +464,7 @@ def main() -> None:
     parser.add_argument(
         "--source",
         choices=("extraccion", "consenso"),
-        default="extraccion",
+        default="consenso",
         help="extracción original de un modelo, o consenso del panel de tres",
     )
     source = CONSENSUS if parser.parse_args().source == "consenso" else EXTRACTIONS

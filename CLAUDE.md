@@ -22,9 +22,12 @@ Audio ya censurado en origen. Mono → **la diarización no es gratis**.
 | `report/index.html` | entregable 1 | SÍ |
 
 ## Regla de PII
-Son deudores reales. **Nada que contenga voz o texto de llamada sale de `data/`.**
+Son deudores reales. **Nada que identifique a un deudor sale de `data/`**: ni voz, ni
+transcripciones, ni nombres, cédulas, teléfonos o montos de una llamada concreta. Las frases de guion
+del agente pueden citarse como ejemplo.
 `data/public/` se genera con una **whitelist de columnas**, nunca con una blacklist.
-El repo es local y sin remoto. No se publica.
+El repositorio se publica en GitHub porque el encargo lo exige. Antes de cada push se comprueba
+que no entre nada de `data/raw`, `data/interim` ni `data/processed`.
 
 ## Realidad estadística (calculada, no estimada)
 n=50/50 con Fisher exacto, α=0,05: **MDE ≈ 29 pp**. Potencia 30→40 % = **13 %**; 30→50 % = **46 %**.
@@ -37,8 +40,11 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
 → **Los datos del análisis son el consenso de un panel de tres anotadores ciegos** (Sonnet + 2 Opus),
   no la extracción de una pasada, que sobrestimaba los compromisos humanos (25 → 17).
 → **Los brazos no comparten cartera**: el humano retoma un acuerdo previo en 26/50, la IA en 0/50.
-  Las cinco diferencias de encuadre y promesa sobreviven al estratificar; los compromisos de pago
-  no difieren (9 vs 17, p aj. 0,20).
+  Cuatro diferencias de encuadre y promesa se sostienen entre gestiones nuevas, corrigiendo por
+  las 8; la de confidencialidad no (tentativa). Los compromisos de pago no difieren (9 vs 17).
+→ Propuesta con cifras: rúbrica literal, «hoy» es fecha (29 vs 29). Ver `docs/decisiones.md` §14.
+→ La hoja de escucha del lunes (`data/interim/hoja_escucha_compromisos.csv`) valida a oído las 14
+  celdas de compromiso sin unanimidad. Su recuento va a `docs/decisiones.md`.
 
 ## Reglas de trabajo
 - Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.

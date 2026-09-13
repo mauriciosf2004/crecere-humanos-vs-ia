@@ -59,3 +59,15 @@ llamada en `data/interim/panel_input/`.
 - **reauditor:** *Aplica la rúbrica exigiendo cada criterio al pie de la letra: marca un
   positivo solo si la transcripción cumple todas sus condiciones, y lee la llamada entera antes
   de marcar un negativo, porque la frase puede estar en cualquier punto.*
+
+## Cómo se ejecutó
+
+1. `python -m src.annotate --stage` copia las transcripciones limpias a `data/interim/panel_input/<uuid>/`.
+2. El script `workflows/panel-anotacion.js` se ejecutó con el tool Workflow de Claude Code, en tres
+   lotes (2, 40 y 58 llamadas), con `args = { root, calls, schema }`.
+3. `python -m src.annotate --from-workflow <salida del workflow>` guarda cada respuesta y vota.
+
+Después del voto se aplica una única regla determinista: en la propuesta con cifras, «hoy» cuenta
+como fecha, como dice la rúbrica. El panel no lo había aceptado cuando la fecha era el vencimiento de
+la oferta. Ver `docs/decisiones.md`, §13.
+

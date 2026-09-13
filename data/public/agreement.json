@@ -11,6 +11,10 @@
       "3/3": 1042,
       "2/3": 55,
       "1/3": 3
+    },
+    "ajustes_regla_literal": {
+      "humano": 0,
+      "ia": 10
     }
   },
   "extraccion_vs_consenso": {
@@ -47,7 +51,7 @@
       "total": 100
     },
     "quantified_proposal_stated": {
-      "coinciden": 86,
+      "coinciden": 96,
       "total": 100
     },
     "installment_or_partial_offer": {
@@ -127,7 +131,7 @@
       },
       "consenso": {
         "humano": 29,
-        "ia": 19
+        "ia": 29
       }
     },
     "installment_or_partial_offer": {

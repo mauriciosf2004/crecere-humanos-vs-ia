@@ -1,7 +1,9 @@
 # Preguntas, hipótesis y decisiones analíticas
 
-Registrado antes de medir. El orden importa: primero qué queríamos entender, después qué se
-podía construir con lo que había, y solo al final los contrastes.
+El sentido esperado de cada hipótesis se fijó en el código antes de ver la extracción, pero después
+de barridos exploratorios sobre las mismas llamadas; este documento lo recoge después. La sección 6
+da las fechas y cuenta qué cambió respecto al primer registro. El orden del documento es el
+del razonamiento: qué queríamos entender, qué se podía construir y cómo se contrastó.
 
 ## 1. Qué queremos entender
 
@@ -52,13 +54,14 @@ seis desaprovecha el diseño, más de doce diluye el test global.
 
 Se evaluaron cuarenta y siete candidatas: ocho forman la familia, tres se conservan como contexto
 y treinta y cinco se descartaron. Los motivos están en `docs/decisiones.md`;
-el más repetido fue el constructo ambiguo. Ejemplo real: un primer intento contaba "del área de
+el más repetido fue un denominador condicional o una base insuficiente, y el más instructivo, el
+constructo ambiguo. Ejemplo real: un primer intento contaba "del área de
 embargos y judicializaciones" como amenaza al deudor, cuando es el nombre del departamento en
 el guion de presentación. Son cosas distintas y ahora se miden por separado.
 
 ## 4. Las hipótesis
 
-Declaradas con signo y magnitud antes de medir. Cuatro son desfavorables a la IA y dos favorables, y dos predicen que **no** habrá diferencia.
+Fijadas con signo antes del contraste definitivo. Cuatro son desfavorables a la IA y dos favorables, y dos predicen que **no** habrá diferencia.
 Estas dos no confirman nada por sí solas —con esta potencia es fácil no detectar una
 diferencia que existe—, pero funcionan como controles negativos: si el instrumento marcara
 distinto a los dos brazos por sistema, aparecería una diferencia donde no se esperaba ninguna.
@@ -106,3 +109,37 @@ cuantitativa: se simuló la probabilidad de poder declarar equivalencia con n=50
 del **0,3 % con un margen de ±10 puntos** y **0 % con ±5**. Montar el aparato para no poder
 concluir nunca es peor que no montarlo; el intervalo de confianza comunica lo mismo sin fingir
 rigor.
+
+## 6. Qué cambió respecto al primer registro
+
+El primer registro, del 10 de septiembre (commit `22da411`), tenía otras cinco hipótesis:
+
+| Primer registro | Qué pasó con ella |
+|---|---|
+| La IA es más consistente: menor dispersión de conducta | Abandonada: medirla exigía turnos y separar hablantes, y la diarización se descartó |
+| El humano obtiene compromisos más concretos | Reformulada como compromiso de pago calificado (H6) |
+| La IA cumple mejor el guion de identificación | Reformulada como confidencialidad o verificación de identidad (H5) |
+| Ante una objeción, el humano recupera más | Abandonada: condicionada a que aparezca la objeción y dependiente de los turnos |
+| La IA no acorta la llamada | Se contrastó con la duración: no hay diferencia |
+
+**Cuándo se fijó cada cosa**, según el historial del repositorio:
+
+| Momento | Commit | Qué había |
+|---|---|---|
+| 10-sep, 20:30 | `22da411` | El primer registro, con las cinco hipótesis de arriba |
+| 11-sep, antes de las 19:20 | — | Barridos léxicos exploratorios sobre las 100 transcripciones (`docs/variables-descartadas.md`) |
+| 11-sep, 19:20–19:27 | — | Extracción de las ocho variables en las 100 llamadas |
+| 11-sep, 19:23 | `5fc8e12` | Rúbrica y lista de las ocho variables, cada una con su sentido esperado |
+| 11-sep, 19:27 | `9da5050` | Primer contraste |
+| 12-sep, 08:52 | `fe78371` | La tabla H1–H8 entra en este documento, con los mismos sentidos |
+
+El sentido esperado quedó escrito antes de ver cualquier resultado de la extracción, y no se tocó
+después; solo «nulo declarado» pasó a llamarse «sin diferencia». Pero se fijó **después de los
+barridos léxicos**, que ya habían mostrado, por ejemplo, el encuadre jurídico de la IA. La corrección
+de Westfall-Young protege de las ocho comparaciones de la familia, no de esa selección previa.
+
+Una cota conservadora: aunque se corrigiera por Bonferroni sobre las 47 candidatas exploradas
+(umbral 0,05 / 47 ≈ 0,001), las cinco diferencias de encuadre y promesa seguirían siendo
+significativas, con p de Fisher sin ajustar entre 2·10⁻¹⁹ y 4·10⁻⁴. La prueba de verdad sigue siendo
+el piloto que se propone, con datos nuevos.
+

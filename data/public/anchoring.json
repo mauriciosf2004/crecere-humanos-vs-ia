@@ -80,9 +80,9 @@
         "anclados": 29
       },
       "ia": {
-        "positivos": 19,
-        "con_cita": 19,
-        "anclados": 18
+        "positivos": 29,
+        "con_cita": 29,
+        "anclados": 27
       }
     },
     "installment_or_partial_offer": {
@@ -129,15 +129,15 @@
       "anclados": 92
     },
     "ia": {
-      "positivos": 158,
-      "con_cita": 158,
-      "anclados": 157
+      "positivos": 168,
+      "con_cita": 168,
+      "anclados": 166
     }
   },
   "total": {
-    "positivos": 250,
-    "con_cita": 250,
-    "anclados": 249
+    "positivos": 260,
+    "con_cita": 260,
+    "anclados": 258
   },
   "total_contexto": {
     "positivos": 103,

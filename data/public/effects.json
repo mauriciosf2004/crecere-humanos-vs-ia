@@ -72,6 +72,7 @@
       "ci_high_pp": 91.2,
       "p_raw": 2.0292789400535498e-19,
       "p_ajustado": 9.999000099990002e-05,
+      "p_ajustado_nuevas": 9.999000099990002e-05,
       "estratificado": {
         "estratos": [
           {
@@ -105,6 +106,7 @@
       "ci_high_pp": 65.1,
       "p_raw": 2.1968862257497485e-09,
       "p_ajustado": 9.999000099990002e-05,
+      "p_ajustado_nuevas": 9.999000099990002e-05,
       "estratificado": {
         "estratos": [
           {
@@ -137,7 +139,8 @@
       "ci_low_pp": 22.2,
       "ci_high_pp": 52.1,
       "p_raw": 6.9994538061897515e-06,
-      "p_ajustado": 0.00039996000399960006,
+      "p_ajustado": 0.00029997000299970003,
+      "p_ajustado_nuevas": 0.0052994700529947,
       "estratificado": {
         "estratos": [
           {
@@ -170,7 +173,8 @@
       "ci_low_pp": -52.2,
       "ci_high_pp": -21.6,
       "p_raw": 1.548786791526268e-05,
-      "p_ajustado": 0.00039996000399960006,
+      "p_ajustado": 0.00029997000299970003,
+      "p_ajustado_nuevas": 0.00029997000299970003,
       "estratificado": {
         "estratos": [
           {
@@ -203,7 +207,8 @@
       "ci_low_pp": 12.5,
       "ci_high_pp": 39.8,
       "p_raw": 0.00038796407137255107,
-      "p_ajustado": 0.023997600239976002,
+      "p_ajustado": 0.023297670232976703,
+      "p_ajustado_nuevas": 0.16478352164783522,
       "estratificado": {
         "estratos": [
           {
@@ -236,7 +241,8 @@
       "ci_low_pp": -32.1,
       "ci_high_pp": 1.2,
       "p_raw": 0.10954044613289907,
-      "p_ajustado": 0.19638036196380362,
+      "p_ajustado": 0.2946705329467053,
+      "p_ajustado_nuevas": 0.7535246475352465,
       "estratificado": {
         "estratos": [
           {
@@ -261,20 +267,21 @@
       "variable": "quantified_proposal_stated",
       "etiqueta": "Enuncia una propuesta con cifras",
       "hipotesis": "sin diferencia",
-      "k_ia": 19,
+      "k_ia": 29,
       "n_ia": 50,
       "k_humano": 29,
       "n_humano": 50,
-      "diff_pp": -20.0,
-      "ci_low_pp": -37.5,
-      "ci_high_pp": -0.5,
-      "p_raw": 0.07111133813412604,
-      "p_ajustado": 0.12498750124987501,
+      "diff_pp": 0.0,
+      "ci_low_pp": -18.7,
+      "ci_high_pp": 18.7,
+      "p_raw": 1.0,
+      "p_ajustado": 1.0,
+      "p_ajustado_nuevas": 0.4310568943105689,
       "estratificado": {
         "estratos": [
           {
             "estrato": "nuevo",
-            "k_ia": 19,
+            "k_ia": 29,
             "n_ia": 50,
             "k_humano": 10,
             "n_humano": 24
@@ -287,7 +294,7 @@
             "n_humano": 26
           }
         ],
-        "p_cmh": 0.9618812768663728
+        "p_cmh": 0.2884831525450815
       }
     },
     {
@@ -302,7 +309,8 @@
       "ci_low_pp": -12.9,
       "ci_high_pp": 24.3,
       "p_raw": 0.6845277333681987,
-      "p_ajustado": 0.6915308469153084,
+      "p_ajustado": 0.8458154184581542,
+      "p_ajustado_nuevas": 0.8041195880411959,
       "estratificado": {
         "estratos": [
           {
@@ -432,13 +440,13 @@
       "etiqueta": "Enuncia una propuesta con cifras",
       "brazo": "ia",
       "k_con": 9,
-      "n_con": 19,
+      "n_con": 29,
       "k_sin": 0,
-      "n_sin": 31,
-      "diff_pp": 47.4,
-      "ci_low_pp": 24.5,
-      "ci_high_pp": 68.3,
-      "p": 3.687106148528297e-05
+      "n_sin": 21,
+      "diff_pp": 31.0,
+      "ci_low_pp": 10.3,
+      "ci_high_pp": 49.2,
+      "p": 0.006469995593976404
     },
     {
       "conducta": "quantified_proposal_stated",

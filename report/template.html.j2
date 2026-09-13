@@ -83,6 +83,12 @@
   /* tabla estrecha: con solo dos cifras por fila, a ancho completo quedaban lejos de su etiqueta */
   table.compact { width:62%; }
   ul.levers { margin:0; padding-left:4mm; }
+  ul.bullets { margin:0; padding-left:3.5mm; }
+  ul.bullets li { margin-bottom:1mm; }
+  .kpi.null { border-top-color:var(--null); }
+  .kpi.null .v { color:var(--muted); }
+  /* el color de la cifra va en el relleno: con trazo, el texto sale contorneado */
+  .forest .row-value.pos, .forest .row-value.neg, .forest .row-value.null { stroke:none; }
   ul.levers li { margin-bottom:1.1mm; }
   .note { font-size:8pt; color:var(--muted); border-left:2px solid var(--line); padding-left:2.5mm; }
   footer { margin-top:auto; font-size:7.6pt; color:var(--muted);
@@ -102,7 +108,7 @@
   <p class="verdict">{{ veredicto|safe }}</p>
 
   <div class="kpis">
-    {% for k in kpis %}<div class="kpi"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span></div>{% endfor %}
+    {% for k in kpis %}<div class="kpi {{ k.clase }}"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span></div>{% endfor %}
   </div>
 
   <section>
@@ -130,7 +136,7 @@
   </header>
 
   <section>
-    <h2>Hipótesis declaradas antes de medir, y lo que salió</h2>
+    <h2>Hipótesis y resultado</h2>
     <table>
       <thead><tr><th>Hipótesis</th><th>Esperado</th><th class="num">IA</th><th class="num">Humano</th>
         <th class="num">Diferencia, pp [IC 95 %]</th><th class="num">p ajustado</th><th>Resultado</th></tr></thead>
@@ -167,11 +173,11 @@
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      {% for m in metodo %}<p>{{ m|safe }}</p>{% endfor %}
+      <ul class="bullets">{% for m in metodo %}<li>{{ m|safe }}</li>{% endfor %}</ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
-      {% for l in limitaciones %}<p>{{ l|safe }}</p>{% endfor %}
+      <ul class="bullets">{% for l in limitaciones %}<li>{{ l|safe }}</li>{% endfor %}</ul>
     </section>
   </div>
 

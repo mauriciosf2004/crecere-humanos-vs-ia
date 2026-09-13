@@ -32,3 +32,6 @@ models/
 
 # ─── Harness local: no se publica el inventario de plugins/MCP ──────────
 .claude/settings.local.json
+
+# ─── Enunciado original: no se publica ──────────────────────────────────
+docs/brief-original.html

@@ -128,7 +128,7 @@ def audit(source: Path = EXTRACTIONS) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Anclaje de citas en las transcripciones.")
-    parser.add_argument("--source", choices=("extraccion", "consenso"), default="extraccion")
+    parser.add_argument("--source", choices=("extraccion", "consenso"), default="consenso")
     source = CONSENSUS if parser.parse_args().source == "consenso" else EXTRACTIONS
 
     result = audit(source)

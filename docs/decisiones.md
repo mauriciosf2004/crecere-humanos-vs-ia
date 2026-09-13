@@ -4,6 +4,21 @@ Las decisiones que cambiaron el resultado, con el motivo y —donde lo hubo— e
 sostiene. Está en el repositorio porque una decisión sin su razón no se puede auditar, y varias
 de estas se tomaron *contra* la opción más vistosa.
 
+
+## Cómo cambió la conclusión sobre los compromisos de pago
+
+La conclusión comercial cambió tres veces. Los mensajes de esos commits reflejan lo que se sabía en
+cada momento; esta tabla es la lectura vigente.
+
+| Commit | Qué cambió en la medición | Compromisos IA / humano | Diferencia | Lectura |
+|---|---|---|---|---|
+| `9da5050` | Extracción de un modelo, con el ordinal mal leído | 15 / 38 | −46 pp, significativa | Brecha a favor del humano |
+| `fe78371` | Solo cuenta el nivel calificado | 11 / 25 | −28 pp, p aj. 0,014 | Brecha a favor del humano |
+| `bff89d0` | Estratificación por acuerdo previo | 11 / 25 | p estratificado 0,13 | No atribuible al agente |
+| `6248731` | Consenso del panel de tres anotadores | 9 / 17 | −16 pp, p aj. 0,196 | No se detecta diferencia |
+| §14 | Rúbrica literal para «hoy» en la propuesta con cifras | 9 / 17 | −16 pp, p aj. 0,295 | No se detecta diferencia |
+
+
 ---
 
 ## 1. No diarizar. Y por tanto, no medir reparto del habla, latencia ni interrupciones
@@ -167,7 +182,7 @@ ausencia de confirmación, que es justo el tipo de variable que se descartó en 
 
 ## 11. Validar sin escuchar: el anclaje de citas
 
-> Cifras de la extracción original. Con el panel, 249 de 250 afirmativas anclan: ver el §13.
+> Cifras de la extracción original. Con el panel, 258 de 260 afirmativas anclan: ver los §13 y §14.
 
 Escuchar las llamadas contra lo anotado es el siguiente paso de la validación. Antes de eso se puede
 comprobar una parte por máquina: la rúbrica obliga a citar literalmente la frase que justifica cada
@@ -228,7 +243,7 @@ cada celda se quedó con la respuesta de al menos dos de tres. Las instrucciones
 - La ceguera se verificó en los registros de los 300 agentes: ninguno abrió nada fuera de la rúbrica
   y la carpeta de su llamada.
 - 249 de 250 respuestas afirmativas citan una frase que existe en las transcripciones, frente a 262
-  de 273 en la pasada única.
+  de 273 en la pasada única (258 de 260 tras la regla del §14).
 
 **La pasada única tenía un sesgo, y en una sola dirección.** Donde más cambió fue el compromiso de
 pago: el panel bajó de calificado a vago 8 compromisos humanos y 2 de IA, y no subió ninguno a
@@ -243,12 +258,40 @@ extracción; lo que no aceptan como aceptación es un asentimiento vago —un «
 
 **Qué cambia en las conclusiones.** Las diferencias de encuadre y de promesa no se mueven:
 presentación jurídica 43 frente a 1, oferta que vence hoy 27 frente a 1, amenaza legal 21 frente a
-2, promesa crediticia 3 frente a 22. La verificación de identidad (14 frente a 1) pasa a sostenerse
-también dentro del mismo tipo de gestión. En cambio, **la diferencia en compromisos de pago deja de
+2, promesa crediticia 3 frente a 22. La verificación de identidad (14 frente a 1) parecía sostenerse
+también dentro del mismo tipo de gestión; el §14 corrige esa lectura. En cambio, **la diferencia en compromisos de pago deja de
 ser significativa incluso antes de estratificar**: 9 frente a 17, −16 puntos, IC95 [−32, +1]. Con la
 extracción original parecía una brecha que la cartera explicaba; con el panel ni siquiera se detecta.
 
 La composición de las carteras, en cambio, se vuelve más nítida: con el panel ninguna llamada de IA
 retoma un acuerdo previo, frente a 26 humanas. La comparación estratificada es, en la práctica, la
 de las gestiones nuevas.
+
+## 14. Leer la rúbrica al pie de la letra, y corregir también dentro de las gestiones nuevas
+
+**«Hoy» es una fecha.** La rúbrica, congelada antes de anotar, cuenta `hoy` como fecha resoluble en la
+propuesta con cifras. En 10 llamadas de IA la única fecha era el vencimiento de la oferta —«vencería
+hoy mismo»— y el panel no la aceptó. La extracción original sí. Había dos caminos: volver a anotar
+con otra instrucción o aplicar la regla ya escrita. Se eligió la regla escrita, porque cambiar la
+interpretación después de ver el resultado es justo el camino que abre falsos hallazgos.
+
+La regla se aplica en código, después del voto (`apply_literal_date_rule` en `src/annotate.py`): si la
+celda no quedó afirmativa y alguna anotación de esa llamada —del panel o de la extracción— la marcó
+afirmativa con una cita que tiene un monto y «hoy», la celda pasa a afirmativa con esa cita. Es
+simétrica entre brazos; cambió 10 llamadas de IA y ninguna humana, y las 10 citas anclan.
+
+| Propuesta con cifras | Antes | Después |
+|---|---|---|
+| IA / humano | 19 / 29 | 29 / 29 |
+| Diferencia | −20 pp, IC95 [−38, −1] | 0 pp, IC95 [−19, +19] |
+| p ajustado | 0,125 | 1,000 |
+
+La hipótesis H7 («sin diferencia») pasa a coincidir. El p ajustado del compromiso de pago sube de
+0,196 a 0,295: en Westfall-Young el ajuste de cada variable depende de las demás, y la propuesta con
+cifras dejó de ir por delante de él.
+
+**La estratificación también se corrige por las ocho.** El p de Mantel-Haenszel de la verificación
+de identidad (0,039) no estaba ajustado. Con Westfall-Young dentro de las gestiones nuevas —el único
+estrato con los dos brazos— da 0,165, así que se rotula como no concluyente. Las otras cuatro
+diferencias siguen por debajo de 0,01 también ahí.
 
