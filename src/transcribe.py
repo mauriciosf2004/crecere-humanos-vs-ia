@@ -3,8 +3,11 @@
 Ningún audio sale del equipo: son grabaciones de deudores reales y subirlas a un
 servicio de terceros exigiría un acuerdo de tratamiento de datos que no existe.
 
+Hay dos pasadas. La principal usa large-v3-turbo. La segunda usa large-v3 completo,
+unas 2,6 veces más lento, y existe para contrastar: donde los dos modelos coinciden la
+transcripción es fiable, y donde difieren los anotadores reciben las dos versiones.
+
 Decisiones de configuración, todas medidas y no heredadas:
-  large-v3-turbo   2,6x más rápido que large-v3 sin razón para pagar la diferencia
   sin -nt          -nt no es cosmético: colapsa la decodificación en bloques de 30 s
                    y pierde ~23% de las palabras. Sin él salen los segmentos reales
                    con sus offsets, que son la base de las métricas libres de rol.
@@ -12,12 +15,15 @@ Decisiones de configuración, todas medidas y no heredadas:
   -bs 5 -bo 5      beam search; el greedy alucina más en silencios
   sin --prompt     un prompt de dominio es una vía conocida de texto alucinado
 
-Salida: un JSON por llamada en data/interim/transcripts/, cacheado. Re-ejecutar
-no vuelve a transcribir lo ya hecho.
+Salida: un JSON por llamada, cacheado. Re-ejecutar no repite lo ya hecho.
+
+  python -m src.transcribe                    # large-v3-turbo -> data/interim/transcripts/
+  python -m src.transcribe --model large-v3   # large-v3 -> data/interim/transcripts_large-v3/
 """
 
 from __future__ import annotations
 
+import argparse
 import subprocess
 import sys
 import time
@@ -25,15 +31,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
-OUT = ROOT / "data" / "interim" / "transcripts"
-MODEL = Path.home() / ".whisper-models" / "ggml-large-v3-turbo.bin"
+INTERIM = ROOT / "data" / "interim"
+MODELS = Path.home() / ".whisper-models"
+PRIMARY = "large-v3-turbo"
 
 ARMS = ("humano", "ia")
 
 
-def transcribe(audio: Path, arm: str) -> bool:
+def output_dir(model: str) -> Path:
+    """La pasada principal conserva su ruta original; las demás llevan el modelo en el nombre."""
+    return INTERIM / ("transcripts" if model == PRIMARY else f"transcripts_{model}")
+
+
+def transcribe(audio: Path, arm: str, model: Path, out: Path) -> bool:
     """Transcribe un archivo si no está ya en caché. Devuelve True si hizo trabajo."""
-    target = OUT / arm / f"{audio.stem}.json"
+    target = out / arm / f"{audio.stem}.json"
     if target.exists():
         return False
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -42,7 +54,7 @@ def transcribe(audio: Path, arm: str) -> bool:
         [
             "whisper-cli",
             "-m",
-            str(MODEL),
+            str(model),
             "-f",
             str(audio),
             "-l",
@@ -64,22 +76,28 @@ def transcribe(audio: Path, arm: str) -> bool:
 
 
 def main() -> None:
-    if not MODEL.exists():
-        sys.exit(f"Falta el modelo: {MODEL}")
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--model", default=PRIMARY, help="large-v3-turbo o large-v3")
+    args = parser.parse_args()
+
+    model = MODELS / f"ggml-{args.model}.bin"
+    if not model.exists():
+        sys.exit(f"Falta el modelo: {model}")
+    out = output_dir(args.model)
 
     audios = [(path, arm) for arm in ARMS for path in sorted((RAW / arm).glob("*.wav"))]
     started = time.monotonic()
     done = skipped = 0
 
     for index, (path, arm) in enumerate(audios, start=1):
-        if transcribe(path, arm):
+        if transcribe(path, arm, model, out):
             done += 1
         else:
             skipped += 1
         elapsed = time.monotonic() - started
         rate = elapsed / max(done, 1)
         print(
-            f"[{index:3d}/{len(audios)}] {arm:<7} {path.stem[:8]} "
+            f"[{index:3d}/{len(audios)}] {args.model} {arm:<7} {path.stem[:8]} "
             f"· {elapsed / 60:5.1f} min · ~{rate * (len(audios) - index) / 60:4.1f} min restantes",
             flush=True,
         )

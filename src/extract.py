@@ -29,6 +29,7 @@ SCHEMA = ROOT / "src" / "schema.json"
 
 ARMS = ("humano", "ia")
 WORKERS = 6
+MODEL = "claude-sonnet-5"
 
 # Alucinaciones canónicas de whisper en los silencios: texto de YouTube que no puede
 # aparecer en una llamada de cobranza. Son diferenciales por brazo (14/50 humano vs
@@ -60,41 +61,58 @@ def clean(segments: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def _ask(text: str, rubric: str, schema: str, turns: int) -> dict | None:
+def ask(
+    text: str,
+    rubric: str,
+    schema: str,
+    turns: int,
+    model: str = MODEL,
+    effort: str | None = None,
+) -> dict | None:
     """Una invocación del CLI. Devuelve la fila validada, o None ante cualquier fallo.
 
     El texto va por stdin y no como argumento posicional: hay transcripciones que
     empiezan por guion ("-Aló.") y el CLI las interpretaba como una opción
     desconocida, fallando con stdout vacío.
 
+    `effort` fija el nivel de esfuerzo de esta llamada. Sin él, el CLI hereda el de la
+    configuración del usuario, y no todos los modelos aceptan cualquier nivel: Opus
+    rechaza "xhigh" con un error 400.
+
     Nada de lo que devuelve el subproceso se da por bueno: puede salir con error,
     escribir algo que no es JSON, o terminar por agotar turnos sin haber llamado a
     la herramienta de salida estructurada. Los tres casos se tratan igual.
     """
+    command = [
+        "claude",
+        "-p",
+        "--safe-mode",
+        "--tools",
+        "",
+        "--model",
+        model,
+        "--system-prompt",
+        rubric,
+        "--json-schema",
+        schema,
+        "--output-format",
+        "json",
+        "--max-turns",
+        str(turns),
+    ]
+    if effort:
+        command += ["--effort", effort]
     try:
         result = subprocess.run(
-            [
-                "claude",
-                "-p",
-                "--safe-mode",
-                "--tools",
-                "",
-                "--model",
-                "claude-sonnet-5",
-                "--system-prompt",
-                rubric,
-                "--json-schema",
-                schema,
-                "--output-format",
-                "json",
-                "--max-turns",
-                str(turns),
-            ],
+            command,
             capture_output=True,
             text=True,
-            env={**os.environ, "MAX_THINKING_TOKENS": "0"},
+            env={
+                **os.environ,
+                "MAX_THINKING_TOKENS": "0",
+            },  # sin razonamiento: baja coste y dispersión
             input=text,  # por stdin: ver la nota del docstring
-            timeout=180,
+            timeout=300,
         )
         payload = json.loads(result.stdout)
     except (subprocess.TimeoutExpired, json.JSONDecodeError, OSError):
@@ -113,6 +131,8 @@ def _ask(text: str, rubric: str, schema: str, turns: int) -> dict | None:
         return None
 
     row["_cost_usd"] = payload.get("total_cost_usd")
+    # un alias como "opus" resuelve al modelo vigente: se guarda a cuál resolvió
+    row["_models"] = sorted(payload.get("modelUsage") or {})
     return row
 
 
@@ -128,9 +148,9 @@ def extract(path: Path, arm: str, rubric: str, schema: str) -> dict | None:
         if previous.get("_fingerprint") == fingerprint:
             return previous
 
-    row = _ask(text, rubric, schema, turns=8)
+    row = ask(text, rubric, schema, turns=8)
     if row is None:
-        row = _ask(text, rubric, schema, turns=16)  # un reintento: algunas agotan turnos
+        row = ask(text, rubric, schema, turns=16)  # un reintento: algunas agotan turnos
     if row is None:
         return None
 

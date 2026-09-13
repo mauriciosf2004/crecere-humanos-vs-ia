@@ -1,0 +1,193 @@
+"""Consenso de tres anotadores independientes por llamada.
+
+La extracción original es una sola pasada de un solo modelo. Para no depender de ella,
+cada transcripción la anotan tres agentes, sin ver lo que respondieron los otros ni la
+extracción original, y cada celda se queda con la respuesta de al menos dos de tres. Si
+no hay mayoría, la celda queda vacía y marcada.
+
+  clasificador   Sonnet   aplica la rúbrica
+  auditor        Opus     aplica la rúbrica
+  reauditor      Opus     aplica la rúbrica exigiendo cada criterio al pie de la letra
+
+Los tres son agentes internos de Claude Code orquestados por un workflow, con las
+instrucciones de docs/panel-de-anotacion.md. Este módulo no llama a ningún modelo: guarda
+sus respuestas, vota y mide el acuerdo. Cuando existe la segunda transcripción
+(large-v3), cada agente lee las dos.
+
+Lo que esto mide y lo que no: tres anotadores de acuerdo miden consistencia, no verdad.
+Comparten la rúbrica y parte de sus sesgos, así que el acuerdo no sustituye escuchar. Lo
+que sí hace es separar las celdas firmes (3 de 3) de las frágiles (2 de 3 o sin mayoría).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter
+from pathlib import Path
+
+from src.extract import SCHEMA, call_id, clean
+
+ROOT = Path(__file__).resolve().parent.parent
+INTERIM = ROOT / "data" / "interim"
+TRANSCRIPTS = INTERIM / "transcripts"
+SECOND = INTERIM / "transcripts_large-v3"
+PANEL_INPUT = INTERIM / "panel_input"
+ANNOTATIONS = INTERIM / "annotations"
+CONSENSUS = INTERIM / "consensus"
+EXTRACTIONS = INTERIM / "extractions"
+PUBLIC = ROOT / "data" / "public"
+
+PANEL = {"clasificador": "sonnet", "auditor": "opus", "reauditor": "opus"}
+
+
+def fields() -> list[str]:
+    return [
+        key
+        for key in json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]
+        if key != "call_id"
+    ]
+
+
+def stage() -> dict:
+    """Copia las transcripciones a carpetas sin el brazo en la ruta, ya limpias.
+
+    Los agentes leen de data/interim/panel_input/<uuid>/, así que no ven si la llamada
+    viene de humano/ o de ia/. Se aplica la misma limpieza que usó la extracción original
+    (alucinaciones de YouTube y bucles del decodificador). Re-ejecutable: añade la segunda
+    transcripción cuando aparece.
+    """
+    staged, with_second = 0, 0
+    for arm in ("humano", "ia"):
+        for path in sorted((TRANSCRIPTS / arm).glob("*.json")):
+            folder = PANEL_INPUT / path.stem
+            folder.mkdir(parents=True, exist_ok=True)
+            first = json.loads(path.read_text(encoding="utf-8"))["transcription"]
+            (folder / "transcripcion_a.txt").write_text(clean(first), encoding="utf-8")
+            second = SECOND / arm / path.name
+            if second.exists():
+                text = clean(json.loads(second.read_text(encoding="utf-8"))["transcription"])
+                (folder / "transcripcion_b.txt").write_text(text, encoding="utf-8")
+                with_second += 1
+            staged += 1
+    return {"llamadas": staged, "con_segunda_transcripcion": with_second}
+
+
+def persist(annotations: list[dict]) -> int:
+    """Guarda las respuestas del workflow, una por rol y llamada.
+
+    El identificador no se toma del agente —los modelos devuelven un marcador de
+    posición—, sino que se deriva del nombre del archivo, igual que en el inventario.
+    """
+    for item in annotations:
+        row = dict(item["anotacion"])
+        row.update(
+            call_id=call_id(item["stem"]), arm=item["arm"], _rol=item["rol"], _modelo=item["modelo"]
+        )
+        target = ANNOTATIONS / item["rol"] / item["arm"] / f"{item['stem']}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(row, ensure_ascii=False, indent=2), encoding="utf-8")
+    return len(annotations)
+
+
+def _value(cell):
+    return cell.get("value") if isinstance(cell, dict) else cell
+
+
+def vote(rows: list[dict], names: list[str]) -> dict:
+    """Celda a celda: la respuesta de al menos dos anotadores, o vacía si no hay mayoría."""
+    consensus = {"call_id": rows[0]["call_id"], "arm": rows[0]["arm"], "_acuerdo": {}}
+    for name in names:
+        answers = [json.dumps(_value(row.get(name)), sort_keys=True) for row in rows]
+        winner, count = Counter(answers).most_common(1)[0]
+        if count >= 2:
+            consensus[name] = next(
+                r[name] for r, a in zip(rows, answers, strict=True) if a == winner
+            )
+        else:
+            consensus[name] = {"value": None}
+        consensus["_acuerdo"][name] = f"{count}/{len(rows)}"
+    return consensus
+
+
+def consolidate() -> dict:
+    """Vota cada llamada con las anotaciones disponibles y escribe su consenso."""
+    names = fields()
+    calls = {(p.parent.name, p.stem) for p in ANNOTATIONS.glob("*/*/*.json")}
+    agreement, complete, partial = Counter(), 0, 0
+    for arm, stem in sorted(calls):
+        rows = [
+            json.loads(path.read_text(encoding="utf-8"))
+            for role in PANEL
+            if (path := ANNOTATIONS / role / arm / f"{stem}.json").exists()
+        ]
+        if len(rows) < 2:
+            continue
+        complete += len(rows) == len(PANEL)
+        partial += len(rows) < len(PANEL)
+        consensus = vote(rows, names)
+        target = CONSENSUS / arm / f"{stem}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(consensus, ensure_ascii=False, indent=2), encoding="utf-8")
+        agreement.update(consensus["_acuerdo"].values())
+    return {
+        "llamadas_con_tres_votos": complete,
+        "llamadas_con_dos_votos": partial,
+        "celdas": dict(agreement),
+    }
+
+
+def agreement_with_extraction(names: list[str]) -> dict:
+    """Cuánto coincide la extracción original, de un solo modelo, con el consenso del panel.
+
+    Si la mayoría de tres anotadores contradice a la extracción en una variable, esa
+    variable no era firme. Solo conteos, ni una palabra de las llamadas.
+    """
+    table = {name: {"coinciden": 0, "total": 0} for name in names}
+    for path in sorted(CONSENSUS.glob("*/*.json")):
+        original = EXTRACTIONS / path.parent.name / path.name
+        if not original.exists():
+            continue
+        consensus = json.loads(path.read_text(encoding="utf-8"))
+        first = json.loads(original.read_text(encoding="utf-8"))
+        for name in names:
+            table[name]["total"] += 1
+            table[name]["coinciden"] += _value(consensus.get(name)) == _value(first.get(name))
+    return table
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Consenso del panel de anotadores.")
+    parser.add_argument(
+        "--stage", action="store_true", help="prepara las carpetas ciegas para los agentes"
+    )
+    parser.add_argument("--from-workflow", type=Path, help="salida JSON del workflow de anotación")
+    args = parser.parse_args()
+
+    if args.stage:
+        print(json.dumps(stage(), ensure_ascii=False))
+        return
+
+    if args.from_workflow:
+        payload = json.loads(args.from_workflow.read_text(encoding="utf-8"))
+        result = payload.get("result", payload)
+        print(f"Guardadas {persist(result['anotaciones'])} anotaciones")
+
+    summary = consolidate()
+    agreement = agreement_with_extraction(fields())
+    PUBLIC.mkdir(parents=True, exist_ok=True)
+    (PUBLIC / "agreement.json").write_text(
+        json.dumps(
+            {"panel": PANEL, "resumen": summary, "extraccion_vs_consenso": agreement},
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(json.dumps(summary, ensure_ascii=False))
+    for name, counts in agreement.items():
+        print(f"  {name:<30} extracción = consenso en {counts['coinciden']}/{counts['total']}")
+
+
+if __name__ == "__main__":
+    main()

@@ -25,8 +25,10 @@ menudo— y cada variable se re-contrasta estratificando por esa diferencia.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -44,6 +46,7 @@ from src.stats import (
 
 ROOT = Path(__file__).resolve().parent.parent
 EXTRACTIONS = ROOT / "data" / "interim" / "extractions"
+CONSENSUS = ROOT / "data" / "interim" / "consensus"
 PUBLIC = ROOT / "data" / "public"
 
 PERMUTATIONS = 10_000
@@ -113,27 +116,31 @@ def cell(row: dict, key: str) -> int:
     return int(bool(raw))
 
 
-def load_rows() -> list[dict]:
-    """Las extracciones, humano primero y luego IA, en orden estable."""
+def load_rows(source: Path = EXTRACTIONS) -> list[dict]:
+    """Las anotaciones de una fuente, humano primero y luego IA, en orden estable.
+
+    La fuente es la extracción original de un solo modelo o el consenso del panel de tres.
+    """
     rows = [
         json.loads(path.read_text(encoding="utf-8"))
         for arm in ("humano", "ia")
-        for path in sorted((EXTRACTIONS / arm).glob("*.json"))
+        for path in sorted((source / arm).glob("*.json"))
     ]
     if not rows:
+        step = "make annotate" if source == CONSENSUS else "make extract"
         raise FileNotFoundError(
-            f"No hay extracciones en {EXTRACTIONS.relative_to(ROOT)}. Corre `make extract`, "
+            f"No hay anotaciones en {source.relative_to(ROOT)}. Corre `{step}`, "
             "que necesita las transcripciones de `make transcribe`."
         )
     arms = {row["arm"] for row in rows}
     if arms != {"humano", "ia"}:
-        raise ValueError(f"Faltan extracciones de un brazo: solo hay {sorted(arms)}.")
+        raise ValueError(f"Faltan anotaciones de un brazo: solo hay {sorted(arms)}.")
     return rows
 
 
-def load_table() -> tuple[np.ndarray, np.ndarray, list[str]]:
+def load_table(source: Path = EXTRACTIONS) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """Matriz (llamadas x variables) de 0/1, el vector de brazo y los identificadores."""
-    rows = load_rows()
+    rows = load_rows(source)
     names = [name for name, _, _ in FAMILY]
     matrix = np.array([[cell(row, name) for name in names] for row in rows], dtype=float)
     is_ai = np.array([row["arm"] == "ia" for row in rows], dtype=bool)
@@ -194,8 +201,8 @@ def westfall_young(
     return out
 
 
-def analyse() -> tuple[float, list[Contrast]]:
-    matrix, is_ai, _ = load_table()
+def analyse(source: Path = EXTRACTIONS) -> tuple[float, list[Contrast]]:
+    matrix, is_ai, _ = load_table(source)
     rng = np.random.default_rng(SEED)
 
     p_global = global_test(matrix, is_ai, rng)
@@ -360,6 +367,18 @@ def duration_contrast() -> dict:
     }
 
 
+def panel_agreement(rows: list[dict]) -> dict:
+    """Con cuántos votos se decidió cada celda, cuando los datos vienen del panel.
+
+    Con la extracción original no hay votos y devuelve un diccionario vacío.
+    """
+    counts: dict[str, Counter] = {}
+    for row in rows:
+        for field, agreement in row.get("_acuerdo", {}).items():
+            counts.setdefault(field, Counter())[agreement] += 1
+    return {field: dict(counter) for field, counter in counts.items()}
+
+
 def _context_value(row: dict, key: str):
     raw = _raw(row, key)
     if raw is None:
@@ -369,7 +388,7 @@ def _context_value(row: dict, key: str):
     return int(raw) if isinstance(raw, bool) else raw
 
 
-def export(p_global: float, contrasts: list[Contrast]) -> None:
+def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTIONS) -> None:
     """Escribe la tabla desidentificada y los efectos que consume el informe.
 
     Solo salen variables derivadas y categorías cerradas: ni una palabra del texto
@@ -377,7 +396,7 @@ def export(p_global: float, contrasts: list[Contrast]) -> None:
     deudores reales.
     """
     PUBLIC.mkdir(parents=True, exist_ok=True)
-    rows = load_rows()
+    rows = load_rows(source)
     names = [name for name, _, _ in FAMILY]
 
     with (PUBLIC / "features.csv").open("w", newline="", encoding="utf-8") as fh:
@@ -396,6 +415,8 @@ def export(p_global: float, contrasts: list[Contrast]) -> None:
     n_ai, n_human = contrasts[0].n_ai, contrasts[0].n_human
     payload = {
         "p_global": p_global,
+        "fuente": source.name,
+        "acuerdo_panel": panel_agreement(rows),
         "permutations": PERMUTATIONS,
         "seed": SEED,
         "mde_pp": round(minimum_detectable_effect(PLANNING_BASE, n_ai, n_human), 1),
@@ -431,8 +452,16 @@ def export(p_global: float, contrasts: list[Contrast]) -> None:
 
 
 def main() -> None:
-    p_global, contrasts = analyse()
-    export(p_global, contrasts)
+    parser = argparse.ArgumentParser(description="Contrasta la familia de ocho variables.")
+    parser.add_argument(
+        "--source",
+        choices=("extraccion", "consenso"),
+        default="extraccion",
+        help="extracción original de un modelo, o consenso del panel de tres",
+    )
+    source = CONSENSUS if parser.parse_args().source == "consenso" else EXTRACTIONS
+    p_global, contrasts = analyse(source)
+    export(p_global, contrasts, source)
     effects = json.loads((PUBLIC / "effects.json").read_text(encoding="utf-8"))
 
     print(f"Nivel 1 · test global por permutación: p = {p_global:.5f}")

@@ -1,6 +1,6 @@
 # Pipeline del análisis. Cada paso escribe su salida en data/ y es re-ejecutable.
 #
-#   inventory → transcribe → extract → analyze → report → verify
+#   inventory → transcribe → extract → annotate → analyze → report → verify
 #
 # transcribe y extract necesitan los audios originales (data/raw, no versionados), el
 # binario whisper-cli y el CLI de Claude Code. Desde un clon limpio corren `make report`,
@@ -12,7 +12,7 @@ PY := uv run --quiet
 
 # report y verify DEBEN ser .PHONY: existe un directorio report/ y sin esto make responde
 # "up to date" sin ejecutar nada, y la puerta de dos páginas deja de proteger.
-.PHONY: help inventory transcribe extract analyze anchoring report verify test lint check clean
+.PHONY: help inventory transcribe extract annotate analyze anchoring report verify test lint check clean
 
 help: ## Muestra esta ayuda
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-11s %s\n", $$1, $$2}'
@@ -25,6 +25,9 @@ transcribe: ## Transcribe en local con whisper.cpp (requiere data/raw)
 
 extract: ## Aplica la rúbrica a cada transcripción con Claude Code (~4 USD, cacheado)
 	$(PY) python -m src.extract
+
+annotate: ## Vota por mayoría las anotaciones del panel de tres agentes
+	$(PY) python -m src.annotate
 
 analyze: ## Contrasta la familia y escribe data/public/effects.json
 	$(PY) python -m src.analyze

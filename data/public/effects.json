@@ -1,5 +1,7 @@
 {
   "p_global": 9.999000099990002e-05,
+  "fuente": "extractions",
+  "acuerdo_panel": {},
   "permutations": 10000,
   "seed": 20260915,
   "mde_pp": 29.0,
