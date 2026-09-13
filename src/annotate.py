@@ -49,6 +49,20 @@ def fields() -> list[str]:
     ]
 
 
+def _readable_second(path: Path) -> str | None:
+    """La segunda transcripción ya limpia, o None si aún no existe o se está escribiendo.
+
+    stage() se puede correr mientras large-v3 sigue transcribiendo: un JSON a medio
+    escribir se trata como si todavía no estuviera.
+    """
+    if not path.exists():
+        return None
+    try:
+        return clean(json.loads(path.read_text(encoding="utf-8"))["transcription"])
+    except (json.JSONDecodeError, KeyError):
+        return None
+
+
 def stage() -> dict:
     """Copia las transcripciones a carpetas sin el brazo en la ruta, ya limpias.
 
@@ -64,9 +78,8 @@ def stage() -> dict:
             folder.mkdir(parents=True, exist_ok=True)
             first = json.loads(path.read_text(encoding="utf-8"))["transcription"]
             (folder / "transcripcion_a.txt").write_text(clean(first), encoding="utf-8")
-            second = SECOND / arm / path.name
-            if second.exists():
-                text = clean(json.loads(second.read_text(encoding="utf-8"))["transcription"])
+            text = _readable_second(SECOND / arm / path.name)
+            if text is not None:
                 (folder / "transcripcion_b.txt").write_text(text, encoding="utf-8")
                 with_second += 1
             staged += 1
