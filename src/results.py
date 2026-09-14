@@ -205,8 +205,8 @@ def build() -> dict:
     literal_by_arm = agreement["resumen"].get("ajustes_regla_literal", {})
     methods = [
         (
-            "Dos transcripciones por llamada, hechas en este equipo. Tres anotadores "
-            f"({panel_models}) respondieron por separado {questions} preguntas sin saber el "
+            "Dos transcripciones por llamada, en este equipo. Tres anotadores "
+            f"({panel_models}) respondieron {questions} preguntas por separado, sin saber el "
             "canal; vale la mayoría."
         ),
         (
@@ -216,7 +216,7 @@ def build() -> dict:
             "comprobaron contra una frase textual de la llamada."
         ),
         (
-            "Una pasada con un solo modelo aceptaba asentimientos vagos: veía "
+            "Un solo modelo aceptaba asentimientos vagos: veía "
             f"{single_pass['extraccion']['humano']} compromisos humanos donde el panel ve "
             f"{single_pass['consenso']['humano']}."
         ),
@@ -417,10 +417,7 @@ def build() -> dict:
                 "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el "
                 "compromiso es verbal, no un pago."
             ),
-            (
-                "Objeciones y claridad exigen separar hablantes, y un error al separarlos "
-                "favorecería a la IA; la negociación se aproxima con cifras y cuotas."
-            ),
+            ("Objeciones y claridad exigen separar hablantes; un error ahí favorecería a la IA."),
             f"Sin identificador de gestor ni criterio conocido para elegir las {2 * n} llamadas.",
             (
                 f"Con {n} llamadas por canal, diferencias menores a {mde:.0f} pp pueden pasar "
