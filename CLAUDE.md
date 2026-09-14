@@ -18,7 +18,9 @@ Audio ya censurado en origen. Mono → **la diarización no es gratis**.
 | `data/interim/` | transcripciones, anotaciones crudas | **NO** |
 | `data/processed/` | tablas con texto de llamada | **NO** |
 | `data/interim/{annotations,consensus}/` | votos del panel y su consenso | **NO** |
+| `data/interim/{annotations,consensus}_desenlace/` | panel de desenlace y reacción | **NO** |
 | `data/public/` | variables derivadas, sin texto | **SÍ** |
+| `data/reference/` | precios y normas con su fuente, sin datos de llamadas | SÍ |
 | `report/index.html` | entregable 1 | SÍ |
 
 ## Regla de PII

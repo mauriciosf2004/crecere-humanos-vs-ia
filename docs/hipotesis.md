@@ -144,3 +144,55 @@ Una cota conservadora: aunque se corrigiera por Bonferroni sobre las 47 candidat
 significativas, con p de Fisher sin ajustar entre 2·10⁻¹⁹ y 4·10⁻⁴. La prueba de verdad sigue siendo
 el piloto que se propone, con datos nuevos.
 
+## 7. Desenlace de la llamada y reacción del interlocutor (exploratorio, congelado antes de anotar)
+
+Añadido el 13 de septiembre, **antes** de que el panel lea una sola llamada con esta rúbrica
+(`src/rubric_desenlace.md`, esquema `src/schema_desenlace.json`). Las 8 conductas miden cómo habla
+el agente; faltaba cómo termina la llamada, en el lenguaje de un banco, y cómo responde la persona.
+La investigación que lo motiva está en `docs/investigacion.md`.
+
+**Qué ya se había visto.** Con el compromiso de pago ya anotado (0, 1 o 2) se miró antes de congelar
+esto que «acepta algo» separa más a los brazos que «compromiso con fecha y monto». La variable nueva
+no es ciega a ese patrón. Su valor está en distinguir el acuerdo parcial del total y en la reacción
+del interlocutor, no en confirmar esa brecha.
+
+**Cortes, fijados ahora:**
+
+| Corte | Definición | Denominador |
+|---|---|---|
+| Positivo (principal) | `acepta_parcial`, `acepta_total` o `acepta_alcance_indeterminado` | llamadas con desenlace distinto de `no_aplica` y de `null` |
+| Positivo amplio (sensibilidad) | lo anterior o `acepta_vago` | el mismo |
+| Positivo por llamada | positivo principal | las 50 llamadas del brazo |
+| Peso de lo parcial | `acepta_parcial` | llamadas con positivo principal |
+| Malestar al cierre | `angustiado` o `molesto` | llamadas con estado distinto de `null` |
+| Reconoce y ofrece | `reconoce_y_ofrece` | llamadas con una dificultad expresada |
+
+Cada corte se reporta por brazo con IC de Newcombe, en el total y dentro de las gestiones nuevas
+(sin acuerdo previo). No entra a la familia de 8: sin test global ni Westfall-Young. Las
+distribuciones completas van como barras descriptivas, sin test por categoría. Si un denominador baja
+de 20 en un brazo, solo se publican conteos.
+
+**Validación y regla de publicación, fijadas ahora:**
+
+- **Coherencia.** El positivo principal se compara con el compromiso calificado (nivel 2) de la
+  familia, y cada discrepancia se lista.
+- **Escucha.** 20 llamadas, 10 por brazo, con semilla fija, estratificadas por desenlace y con
+  prioridad a las discrepancias. Se escuchan los últimos 90 segundos sin ver el voto del panel. Se
+  reportan el acuerdo exacto y el AC1 de Gwet por brazo, para el corte positivo y para el malestar
+  al cierre.
+- **Publicación.** Un corte entra al informe solo si su AC1 es de al menos 0,6 en los dos brazos y el
+  acuerdo no difiere de forma visible entre brazos. Si no, va a `docs/decisiones.md` como validación
+  negativa. La respuesta ante una dificultad solo se valida por anclaje de citas, así que entra como
+  conteo descriptivo o se queda en los documentos.
+- **Piloto.** Después del piloto de 6 llamadas solo se admiten cambios de redacción, registrados en
+  `docs/decisiones.md`; ningún cambio de categorías ni de cortes.
+
+**Expectativa honesta.** Potencia exacta de Fisher (α = 0,05 bilateral) con una tasa base del 35 %:
+
+| Diferencia real | Total, 50 frente a 50 | Gestiones nuevas, 50 frente a 24 |
+|---|---|---|
+| 15 pp | 0,27 | 0,20 |
+| 20 pp | 0,46 | 0,33 |
+| 30 pp | 0,83 | 0,65 |
+
+Lo más probable es que el positivo salga no concluyente. Se dice ahora, antes de ver los datos.

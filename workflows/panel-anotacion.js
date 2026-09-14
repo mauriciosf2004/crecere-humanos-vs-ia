@@ -1,7 +1,8 @@
 // Script de orquestación que produjo las 300 anotaciones del panel, tal como se ejecutó con el
 // tool Workflow de Claude Code. Único cambio respecto a lo ejecutado: la ruta del repositorio,
-// que ahora llega como argumento. Invocación: args = { root, calls: [[brazo, uuid], ...], schema }
-// con el contenido de src/schema.json. Ver docs/panel-de-anotacion.md.
+// que ahora llega como argumento, y la rúbrica, que es opcional (por defecto src/rubric.md).
+// Invocación: args = { root, calls: [[brazo, uuid], ...], schema, rubric? } con el esquema de la
+// rúbrica elegida. Ver docs/panel-de-anotacion.md.
 export const meta = {
   name: 'panel-anotacion',
   description: 'Tres agentes ciegos (Sonnet, Opus, Opus) anotan cada llamada con la rúbrica, sin verse entre sí',
@@ -11,6 +12,7 @@ export const meta = {
 }
 
 const ROOT = args.root
+const RUBRIC = args.rubric || 'src/rubric.md'
 
 const ROLES = [
   { rol: 'clasificador', model: 'sonnet', extra: 'Aplica la rúbrica tal como está escrita.' },
@@ -30,7 +32,7 @@ const common = (stem) => {
   const carpeta = `${ROOT}/data/interim/panel_input/${stem}`
   return (
     `Eres anotador en un análisis de llamadas de gestión de cobranza. Tu única fuente de verdad ` +
-    `es la rúbrica de ${ROOT}/src/rubric.md: léela completa antes de anotar.\n\n` +
+    `es la rúbrica de ${ROOT}/${RUBRIC}: léela completa antes de anotar.\n\n` +
     `Después lee las transcripciones de la llamada en ${carpeta}: transcripcion_a.txt y, si ` +
     `existe, transcripcion_b.txt. Son dos transcripciones automáticas de la misma llamada, ` +
     `hechas con modelos distintos. Donde difieran, quédate con la lectura que tenga sentido en la ` +

@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "call_disposition",
+  "description": "Una fila por llamada: desenlace, reacción del interlocutor y respuesta del agente ante una dificultad. Exploratorio, fuera de la familia de 8.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "call_id",
+    "final_disposition",
+    "claims_already_paid",
+    "debtor_state_at_close",
+    "difficulty_response"
+  ],
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "UUID del audio. Al guardar se sustituye por un hash del nombre del archivo."
+    },
+    "final_disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "quote_proposal", "quote_response"],
+      "description": "Estado final del interlocutor frente a la última propuesta concreta.",
+      "properties": {
+        "value": {
+          "enum": [
+            "no_aplica",
+            "rechazo_o_disputa",
+            "sin_cierre",
+            "acepta_vago",
+            "acepta_parcial",
+            "acepta_total",
+            "acepta_alcance_indeterminado",
+            null
+          ]
+        },
+        "quote_proposal": {"type": ["string", "null"], "maxLength": 400},
+        "quote_response": {"type": ["string", "null"], "maxLength": 400}
+      }
+    },
+    "claims_already_paid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "quote"],
+      "description": "El interlocutor afirma que ya pagó. No se verifica.",
+      "properties": {
+        "value": {"enum": [true, false, null]},
+        "quote": {"type": ["string", "null"], "maxLength": 400}
+      }
+    },
+    "debtor_state_at_close": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "quote"],
+      "description": "Estado que muestran las palabras del interlocutor en el tramo final.",
+      "properties": {
+        "value": {"enum": ["cooperativo", "angustiado", "molesto", "evasivo", null]},
+        "quote": {"type": ["string", "null"], "maxLength": 400}
+      }
+    },
+    "difficulty_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "quote_difficulty", "quote_response"],
+      "description": "Respuesta del agente la primera vez que el interlocutor expresa una dificultad para pagar.",
+      "properties": {
+        "value": {
+          "enum": [
+            "reconoce_y_ofrece",
+            "ofrece_sin_reconocer",
+            "reconoce_sin_ofrecer",
+            "insiste_o_presiona",
+            "no_aplica",
+            null
+          ]
+        },
+        "quote_difficulty": {"type": ["string", "null"], "maxLength": 400},
+        "quote_response": {"type": ["string", "null"], "maxLength": 400}
+      }
+    }
+  }
+}
