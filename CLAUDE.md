@@ -46,8 +46,15 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
   las 8; la de confidencialidad no (tentativa). Los compromisos de pago no difieren (9 vs 17).
 → Propuesta con cifras: rúbrica literal, «hoy» es fecha, solo con citas que existen en la
   transcripción (28 vs 29). Ver `docs/decisiones.md` §14.
-→ La hoja de escucha del lunes (`data/interim/hoja_escucha_compromisos.csv`) valida a oído las 14
-  celdas de compromiso sin unanimidad. Su recuento va a `docs/decisiones.md`.
+→ La hoja de escucha (`data/interim/hoja_escucha_compromisos.csv`) valida a oído las 14 celdas de
+  compromiso sin unanimidad. Su recuento va a `docs/decisiones.md`.
+→ **Desenlace y reacción del interlocutor**: segunda rúbrica (`src/rubric_desenlace.md`), panel de
+  tres, cortes y regla de publicación congelados en `docs/hipotesis.md` §7. Es **exploratorio**:
+  fuera de la familia de 8, sin Westfall-Young, con IC de Newcombe y validación a oído.
+→ El informe habla en KPIs de banco y rotula las cuatro conductas de riesgo como **alerta para
+  revisión de cumplimiento**, nunca como infracción, y aplicada a los dos canales
+  (`data/reference/cumplimiento.json`). Los costos a escala salen de `data/reference/costos.json`
+  y los calcula `src/results.py`: ninguno se escribe a mano.
 
 ## Reglas de trabajo
 - Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.
