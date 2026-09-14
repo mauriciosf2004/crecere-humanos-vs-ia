@@ -306,3 +306,20 @@ de identidad (0,039) no estaba ajustado, y ya no se calcula. Con Westfall-Young 
 nuevas —el único estrato con los dos brazos— da 0,166, así que se rotula como no concluyente. Las otras cuatro
 diferencias siguen por debajo de 0,01 también ahí.
 
+## 15. Piloto de la rúbrica de desenlace: tres aclaraciones de redacción
+
+La rúbrica de desenlace y reacción del interlocutor se congeló antes de anotar (docs/hipotesis.md §7).
+Se probó con 6 llamadas elegidas con semilla fija, 3 por brazo, anotadas por el mismo panel. De 24
+respuestas, 21 salieron unánimes. Las tres discrepancias eran de frontera, y el pre-registro solo
+admite cambios de redacción, así que se aclaró el texto sin tocar categorías ni cortes:
+
+- **Rechazo o sin cierre.** «Ahora no puedo», dejando algo abierto, se leía como rechazo. Ahora
+  `sin_cierre` incluye no poder ahora dejando abierta una fecha o un contacto, y el rechazo exige
+  no dejar nada abierto.
+- **Estado al cierre.** Un anotador tomó el «gracias» de la despedida como estado cooperativo cuando
+  la última frase con contenido era una queja. Las fórmulas de cortesía ya no cuentan como estado.
+- **Ofrecer una alternativa.** No estaba claro si preguntar «¿qué fecha le queda bien?» ofrece una
+  alternativa. Ahora sí cuenta; repetir la oferta original no.
+
+Las 100 llamadas, incluidas las 6 del piloto, se anotan con el texto final.
+

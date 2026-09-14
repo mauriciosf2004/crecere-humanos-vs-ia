@@ -47,8 +47,8 @@ Elige **un único** valor:
 | Valor | Cuándo |
 |---|---|
 | `no_aplica` | No se habla con el titular ni con alguien que diga poder decidir sobre esa deuda (tercero, número equivocado, «no está»), o la llamada termina antes de cualquier propuesta concreta. |
-| `rechazo_o_disputa` | El interlocutor dice que no va a pagar o que no puede pagar nada, no reconoce la deuda o el monto, pide que no lo llamen, o corta la conversación tras la propuesta sin aceptar. |
-| `sin_cierre` | Aplaza sin aceptar nada: «lo consulto», «llámeme la otra semana», «voy a mirar», «le confirmo después». |
+| `rechazo_o_disputa` | El interlocutor dice que no va a pagar o que no puede pagar nada, **sin dejar nada abierto**; no reconoce la deuda o el monto; pide que no lo llamen, o corta la conversación tras la propuesta sin aceptar. |
+| `sin_cierre` | Aplaza sin aceptar nada: «lo consulto», «llámeme la otra semana», «voy a mirar», «le confirmo después». También si dice que **ahora** no puede pero deja abierta una fecha, un contacto posterior o una posibilidad. |
 | `acepta_vago` | Expresa intención de pagar o acepta en general, pero **falta** la fecha resoluble o el valor. |
 | `acepta_parcial` | Acepta **con fecha resoluble y valor** un acuerdo que, cumplido, **no salda** lo que se discutió en la llamada: un abono, ponerse al día en cuotas vencidas, pagar una de varias obligaciones, una cuota reducida, una refinanciación o reestructuración que deja saldo. |
 | `acepta_total` | Acepta **con fecha resoluble y valor** un acuerdo que, cumplido, **salda** lo que se discutió: el pago total, o una liquidación con descuento en uno o varios pagos. |
@@ -92,7 +92,9 @@ Elige el estado que muestran **sus propias palabras** en ese tramo:
 | `molesto` | Expresa frustración, reclamo o enojo con el agente, la entidad o la llamada: `ya me han llamado muchas veces`, `esto es un abuso`, insultos. |
 | `evasivo` | Evita comprometerse o desconfía: duda de quién llama, `¿esto es real?`, `mándeme eso por escrito`, respuestas mínimas para salir de la llamada. |
 
-Si en el tramo aparecen varios estados, elige el **último** que se expresa. Si el interlocutor
+Si en el tramo aparecen varios estados, elige el **último** que se expresa. Las fórmulas de
+cortesía o despedida (`gracias`, `bueno`, `hasta luego`) **no** cuentan como estado: toma la última
+frase con contenido sobre la deuda, la llamada o su situación. Si el interlocutor
 casi no habla en ese tramo, o sus palabras no permiten elegir con seguridad, responde `null`.
 `quote`: la frase del interlocutor que sustenta el valor.
 
@@ -106,12 +108,16 @@ inmediatamente después, en sus turnos siguientes:
 
 | Valor | Cuándo |
 |---|---|
-| `reconoce_y_ofrece` | El agente reconoce la situación con palabras (`entiendo su situación`, `lamento lo que está pasando`) **y** ofrece una alternativa: otra fecha, otro monto, cuotas. |
+| `reconoce_y_ofrece` | El agente reconoce la situación con palabras (`entiendo su situación`, `lamento lo que está pasando`) **y** ofrece una alternativa. |
 | `ofrece_sin_reconocer` | Ofrece una alternativa sin reconocer la situación. |
 | `reconoce_sin_ofrecer` | Reconoce la situación, pero no ofrece alternativa. |
 | `insiste_o_presiona` | Repite la exigencia original o menciona consecuencias (jurídicas, reportes, vencimiento de la oferta) sin reconocer ni ofrecer alternativa. |
 
 Citas:
+
+**Ofrecer una alternativa** es proponer algo distinto de lo exigido —otra fecha, otro monto, cuotas— o
+invitar al interlocutor a proponer una fecha o un monto que pueda cumplir (`¿qué fecha le queda
+bien?`). Repetir la oferta original no es una alternativa.
 
 - `quote_difficulty`: la frase del interlocutor que expresa la dificultad.
 - `quote_response`: la respuesta del agente que decide el valor.
