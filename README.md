@@ -14,9 +14,9 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 | Pregunta | Respuesta corta | Dónde está |
 |---|---|---|
 | Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, hallazgo 5 |
-| Explicación: ¿qué explica las diferencias? | El guion (encuadre jurídico, vencimiento, amenaza) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
-| Conducta: ¿qué hace mejor cada uno? | Con criterio de cumplimiento, la IA casi no promete beneficios crediticios; los humanos no se presentan como área jurídica ni presionan con el vencimiento | informe, veredicto |
-| Mejora: ¿qué cambiar? | Un piloto con asignación al azar y una variante de la IA sin amenaza ni vencimiento | informe, siguiente paso |
+| Explicación: ¿qué explica las diferencias? | El guion (encuadre jurídico, vencimiento, anuncio de proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
+| Conducta: ¿qué hace mejor cada uno? | La IA se presenta como área jurídica y dice que la oferta vence hoy; los humanos prometen más beneficios crediticios | informe, veredicto |
+| Mejora: ¿qué cambiar? | Un piloto con asignación al azar, una variante de la IA sin anuncio legal ni vencimiento y un estándar común para los dos canales | informe, siguiente paso |
 
 ## Por dónde empezar
 

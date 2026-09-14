@@ -53,6 +53,7 @@ PUBLIC = ROOT / "data" / "public"
 PERMUTATIONS = 10_000
 SEED = 20260915
 PLANNING_BASE = 0.30  # tasa de referencia para el umbral detectable y el piloto
+PLANNING_POWER = 0.80
 
 # La familia, en el orden en que se declaró antes de medir. El texto es la etiqueta
 # que ve el lector del informe; la hipótesis es la que se registró de antemano.
@@ -287,9 +288,9 @@ def composition(rows: list[dict]) -> list[dict]:
                 "n_ia": len(ai),
                 "k_humano": k_human,
                 "n_humano": len(human),
-                "diff_pp": round(test.diff_pp, 1),
-                "ci_low_pp": round(test.ci_low_pp, 1),
-                "ci_high_pp": round(test.ci_high_pp, 1),
+                "diff_pp": test.diff_pp,
+                "ci_low_pp": test.ci_low_pp,
+                "ci_high_pp": test.ci_high_pp,
                 "p": test.p_value,
                 "indeterminado_ia": sum(_raw(r, key) in undetermined for r in ai),
                 "indeterminado_humano": sum(_raw(r, key) in undetermined for r in human),
@@ -380,8 +381,10 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = CONSENSUS)
         "seed": SEED,
         "mde_pp": round(minimum_detectable_effect(PLANNING_BASE, n_ai, n_human), 1),
         "mde_tasa_base": PLANNING_BASE,
+        "potencia_plan": PLANNING_POWER,
         "piloto_n_por_brazo": {
-            str(delta): sample_size_per_arm(PLANNING_BASE, delta / 100) for delta in (10, 15)
+            str(delta): sample_size_per_arm(PLANNING_BASE, delta / 100, power=PLANNING_POWER)
+            for delta in (10, 15)
         },
         "contrastes": [
             {
@@ -392,9 +395,9 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = CONSENSUS)
                 "n_ia": c.n_ai,
                 "k_humano": c.k_human,
                 "n_humano": c.n_human,
-                "diff_pp": round(c.diff_pp, 1),
-                "ci_low_pp": round(c.ci_low_pp, 1),
-                "ci_high_pp": round(c.ci_high_pp, 1),
+                "diff_pp": c.diff_pp,
+                "ci_low_pp": c.ci_low_pp,
+                "ci_high_pp": c.ci_high_pp,
                 "p_raw": c.p_raw,
                 "p_ajustado": c.p_adjusted,
                 "p_ajustado_nuevas": float(adjusted_new[i]),

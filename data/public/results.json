@@ -6,11 +6,11 @@
     "autor": "Mauricio Salas",
     "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
-  "veredicto": "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Con criterio de cumplimiento, la IA casi no promete beneficios crediticios (6 % frente a 44 %); los humanos no se presentan como área jurídica (2 % frente a 86 %) ni presionan con el vencimiento de la oferta (2 % frente a 54 %). En compromisos de pago no hay ganador demostrable.",
+  "veredicto": "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica (IA 86 %, humanos 2 %) y dice que la oferta vence hoy (IA 54 %, humanos 2 %); los humanos prometen más beneficios crediticios (IA 6 %, humanos 44 %). En compromisos de pago no se detectó diferencia.",
   "kpis": [
     {
       "valor": "86 % vs 2 %",
-      "etiqueta": "área jurídica, IA vs humano",
+      "etiqueta": "área jurídica · IA vs humanos",
       "clase": ""
     },
     {
@@ -21,7 +21,7 @@
     {
       "valor": "6 % vs 44 %",
       "etiqueta": "promesa de beneficio crediticio",
-      "clase": ""
+      "clase": "neg"
     },
     {
       "valor": "18 % vs 34 %",
@@ -35,8 +35,8 @@
       "tentativo": false,
       "significativo": true,
       "diff_pp": 84.0,
-      "ci_low_pp": 69.1,
-      "ci_high_pp": 91.2,
+      "ci_low_pp": 69.14483661916347,
+      "ci_high_pp": 91.23880578847015,
       "n_ia": "43/50",
       "n_humano": "1/50"
     },
@@ -45,8 +45,8 @@
       "tentativo": false,
       "significativo": true,
       "diff_pp": 52.0,
-      "ci_low_pp": 36.0,
-      "ci_high_pp": 65.1,
+      "ci_low_pp": 35.96368929159722,
+      "ci_high_pp": 65.13390741240647,
       "n_ia": "27/50",
       "n_humano": "1/50"
     },
@@ -55,8 +55,8 @@
       "tentativo": false,
       "significativo": true,
       "diff_pp": 38.0,
-      "ci_low_pp": 22.2,
-      "ci_high_pp": 52.1,
+      "ci_low_pp": 22.223946747187235,
+      "ci_high_pp": 52.067892089325426,
       "n_ia": "21/50",
       "n_humano": "2/50"
     },
@@ -65,8 +65,8 @@
       "tentativo": false,
       "significativo": true,
       "diff_pp": -38.0,
-      "ci_low_pp": -52.2,
-      "ci_high_pp": -21.6,
+      "ci_low_pp": -52.249093804095146,
+      "ci_high_pp": -21.59274270925314,
       "n_ia": "3/50",
       "n_humano": "22/50"
     },
@@ -75,8 +75,8 @@
       "tentativo": true,
       "significativo": true,
       "diff_pp": 26.0,
-      "ci_low_pp": 12.5,
-      "ci_high_pp": 39.8,
+      "ci_low_pp": 12.473520596629475,
+      "ci_high_pp": 39.763908077700506,
       "n_ia": "14/50",
       "n_humano": "1/50"
     },
@@ -84,9 +84,9 @@
       "etiqueta": "Compromiso con fecha y monto",
       "tentativo": false,
       "significativo": false,
-      "diff_pp": -16.0,
-      "ci_low_pp": -32.1,
-      "ci_high_pp": 1.2,
+      "diff_pp": -16.000000000000004,
+      "ci_low_pp": -32.10733565325013,
+      "ci_high_pp": 1.2465397415983792,
       "n_ia": "9/50",
       "n_humano": "17/50"
     },
@@ -95,8 +95,8 @@
       "tentativo": false,
       "significativo": false,
       "diff_pp": 6.0,
-      "ci_low_pp": -12.9,
-      "ci_high_pp": 24.3,
+      "ci_low_pp": -12.88436521202958,
+      "ci_high_pp": 24.298545079233627,
       "n_ia": "22/50",
       "n_humano": "19/50"
     },
@@ -104,14 +104,14 @@
       "etiqueta": "Propuesta con cifras",
       "tentativo": false,
       "significativo": false,
-      "diff_pp": -2.0,
-      "ci_low_pp": -20.6,
-      "ci_high_pp": 16.8,
+      "diff_pp": -1.9999999999999907,
+      "ci_low_pp": -20.625665330076608,
+      "ci_high_pp": 16.823582411067846,
       "n_ia": "28/50",
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: no concluyente tras corregir por 8 comparaciones · línea: IC 95 %. *Punto hueco: no concluyente entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.",
+  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.",
   "hallazgos": [
     {
       "claim": "La IA se presenta como área jurídica o de embargos en el 86 % de las llamadas, frente al 2 % de los humanos: 84 pp.",
@@ -124,18 +124,18 @@
       "accion": "Contrastar cada vencimiento con la matriz de condonaciones."
     },
     {
-      "claim": "Los humanos prometen un beneficio en el historial crediticio en el 44 % de las llamadas, frente al 6 % de la IA: 38 pp.",
+      "claim": "La IA casi no promete beneficios en el historial crediticio: 6 % de sus llamadas, frente al 44 % de los humanos: 38 pp.",
       "why": "Se midió que se ofrezca, no que sea cierto.",
       "accion": "Incluir qué se promete en el muestreo de calidad de los gestores."
     },
     {
       "claim": "La IA anuncia un proceso legal si no se paga en el 42 % de las llamadas, frente al 4 % de los humanos: 38 pp.",
       "why": "No es el nombre del área: es la consecuencia que se anuncia.",
-      "accion": "Medir en el piloto si retirarla cambia la conversión."
+      "accion": "Medir en el piloto si retirar ese anuncio cambia la conversión."
     },
     {
-      "claim": "No se puede decir qué canal consigue más compromisos de pago.",
-      "why": "Humanos 34 %, IA 18 %; entre gestiones nuevas, 25 % y 18 %. No es concluyente, y es la variable en la que más discreparon los anotadores.",
+      "claim": "La IA logra compromiso de pago en el 18 % de las llamadas, frente al 34 % de los humanos: 16 pp, no concluyente.",
+      "why": "Entre gestiones nuevas, 18 % frente a 25 %.",
       "accion": "Asignar cuentas al azar: al menos 356 por canal para detectar 10 pp."
     }
   ],
@@ -147,7 +147,7 @@
       "humano": "1/50",
       "diff": "+84 [+69, +91]",
       "p": "< 0,001",
-      "estado": "coincide",
+      "estado": "detectada",
       "estado_clase": "ok"
     },
     {
@@ -157,7 +157,7 @@
       "humano": "1/50",
       "diff": "+52 [+36, +65]",
       "p": "< 0,001",
-      "estado": "coincide",
+      "estado": "detectada",
       "estado_clase": "ok"
     },
     {
@@ -167,7 +167,7 @@
       "humano": "2/50",
       "diff": "+38 [+22, +52]",
       "p": "< 0,001",
-      "estado": "coincide",
+      "estado": "detectada",
       "estado_clase": "ok"
     },
     {
@@ -177,7 +177,7 @@
       "humano": "22/50",
       "diff": "−38 [−52, −22]",
       "p": "< 0,001",
-      "estado": "coincide",
+      "estado": "detectada",
       "estado_clase": "ok"
     },
     {
@@ -185,9 +185,9 @@
       "esperado": "más en IA",
       "ia": "14/50",
       "humano": "1/50",
-      "diff": "+26 [+13, +40]",
+      "diff": "+26 [+12, +40]",
       "p": "0,021",
-      "estado": "no concluyente",
+      "estado": "solo en el total",
       "estado_clase": "warn"
     },
     {
@@ -206,7 +206,7 @@
       "ia": "28/50",
       "humano": "29/50",
       "diff": "−2 [−21, +17]",
-      "p": "1,000",
+      "p": "1",
       "estado": "no detectada",
       "estado_clase": "neutral"
     },
@@ -221,6 +221,7 @@
       "estado_clase": "neutral"
     }
   ],
+  "tabla_nota": "p ajustado por las 8 comparaciones. *Confidencialidad o identidad: 0,021 en el total, 0,166 entre gestiones nuevas.",
   "composicion": [
     {
       "etiqueta": "Retoma un acuerdo de pago previo",
@@ -233,30 +234,33 @@
       "humano": "46/50"
     }
   ],
-  "composicion_nota": "Los humanos retomaban sobre todo acuerdos ya pactados; ninguna llamada de IA lo hacía. Se detecta por lo dicho en la llamada, así que puede reflejar tanto la cartera como la conducta del agente. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana).",
+  "composicion_nota": "El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o la conducta. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
-      "detalle": "Es la única forma de medir conversión sin que decida la cartera: al menos 356 cuentas por canal para detectar 10 puntos, y 162 para 15."
+      "detalle": "Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %)."
     },
     {
-      "titulo": "Dentro del piloto, una variante de la IA sin amenaza ni vencimiento.",
-      "detalle": "Para medir si retirarlos cambia la conversión, en vez de suponerlo."
+      "titulo": "Un tercer grupo:",
+      "detalle": "IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo."
+    },
+    {
+      "titulo": "Un estándar común.",
+      "detalle": "Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde."
     }
   ],
   "metodo": [
-    "Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de la mayoría.",
-    "1.042 de 1.100 celdas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.",
+    "Dos transcripciones por llamada, hechas en este equipo. Tres anotadores (Sonnet, Opus, Opus) respondieron por separado 11 preguntas sin saber el canal; vale la mayoría.",
+    "1.042 de 1.100 respuestas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto se comprobaron contra una frase textual de la llamada.",
     "Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.",
-    "Test global por permutación (p < 0,001) y corrección de Westfall-Young por las 8 comparaciones. Sentido esperado fijado antes de ver la extracción, tras barridos exploratorios de las mismas llamadas.",
-    "En 9 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras."
+    "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.",
+    "En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras."
   ],
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",
-    "Objeciones y claridad exigen separar hablantes, y ese error favorecería a la IA; la negociación se aproxima con propuesta con cifras y cuotas.",
+    "Objeciones y claridad exigen separar hablantes, y un error al separarlos favorecería a la IA; la negociación se aproxima con cifras y cuotas.",
     "Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.",
-    "Con 50 llamadas por canal, diferencias menores a 29 puntos porcentuales pueden pasar inadvertidas.",
-    "Hasta 24 puntos no se descartan en las variables donde se esperaba no encontrar diferencia."
-  ],
-  "cierre": "Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319)."
+    "Con 50 llamadas por canal, diferencias menores a 29 pp pueden pasar inadvertidas (tasa base 30 %).",
+    "En las variables sin diferencia esperada no se descartan hasta 24 pp."
+  ]
 }

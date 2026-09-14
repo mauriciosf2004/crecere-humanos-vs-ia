@@ -86,6 +86,7 @@
   ul.bullets { margin:0; padding-left:3.5mm; }
   ul.bullets li { margin-bottom:1mm; }
   .kpi.null { border-top-color:var(--null); }
+  .kpi.neg { border-top-color:var(--neg); }
   footer a { color:inherit; text-decoration:none; }
   .kpi.null .v { color:var(--muted); }
   /* el color de la cifra va en el relleno: con trazo, el texto sale contorneado */
@@ -106,10 +107,10 @@
     <h1>Cobranza con agentes humanos y de IA: qué cambia en la gestión</h1>
   </header>
 
-  <p class="verdict"><strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Con criterio de cumplimiento, la IA casi no promete beneficios crediticios (6 % frente a 44 %); los humanos no se presentan como área jurídica (2 % frente a 86 %) ni presionan con el vencimiento de la oferta (2 % frente a 54 %). En compromisos de pago no hay ganador demostrable.</p>
+  <p class="verdict"><strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica (IA 86 %, humanos 2 %) y dice que la oferta vence hoy (IA 54 %, humanos 2 %); los humanos prometen más beneficios crediticios (IA 6 %, humanos 44 %). En compromisos de pago no se detectó diferencia.</p>
 
   <div class="kpis">
-    <div class="kpi "><span class="v">86 % vs 2 %</span><span class="l">área jurídica, IA vs humano</span></div><div class="kpi "><span class="v">54 % vs 2 %</span><span class="l">oferta que vence hoy</span></div><div class="kpi "><span class="v">6 % vs 44 %</span><span class="l">promesa de beneficio crediticio</span></div><div class="kpi null"><span class="v">18 % vs 34 %</span><span class="l">compromiso de pago: no concluyente</span></div>
+    <div class="kpi "><span class="v">86 % vs 2 %</span><span class="l">área jurídica · IA vs humanos</span></div><div class="kpi "><span class="v">54 % vs 2 %</span><span class="l">oferta que vence hoy</span></div><div class="kpi neg"><span class="v">6 % vs 44 %</span><span class="l">promesa de beneficio crediticio</span></div><div class="kpi null"><span class="v">18 % vs 34 %</span><span class="l">compromiso de pago: no concluyente</span></div>
   </div>
 
   <section>
@@ -127,19 +128,19 @@
 <circle class="pt pos" cx="454.2" cy="20" r="4"/>
 <text class="row-value pos" x="516" y="24">+84</text>
 <text class="row-label" x="210" y="45">Dice que la oferta vence hoy</text>
-<line class="ci pos" x1="394.6" y1="41" x2="430.7" y2="41"/>
+<line class="ci pos" x1="394.6" y1="41" x2="430.8" y2="41"/>
 <circle class="pt pos" cx="414.5" cy="41" r="4"/>
 <text class="row-value pos" x="516" y="45">+52</text>
 <text class="row-label" x="210" y="66">Plantea un proceso legal</text>
-<line class="ci pos" x1="377.5" y1="62" x2="414.6" y2="62"/>
+<line class="ci pos" x1="377.6" y1="62" x2="414.6" y2="62"/>
 <circle class="pt pos" cx="397.1" cy="62" r="4"/>
 <text class="row-value pos" x="516" y="66">+38</text>
 <text class="row-label" x="210" y="87">Promete beneficio crediticio</text>
-<line class="ci neg" x1="285.3" y1="83" x2="323.2" y2="83"/>
+<line class="ci neg" x1="285.2" y1="83" x2="323.2" y2="83"/>
 <circle class="pt neg" cx="302.9" cy="83" r="4"/>
 <text class="row-value neg" x="516" y="87">−38</text>
 <text class="row-label" x="210" y="108">Confidencialidad o identidad*</text>
-<line class="ci pos tentative" x1="365.5" y1="104" x2="399.4" y2="104"/>
+<line class="ci pos tentative" x1="365.5" y1="104" x2="399.3" y2="104"/>
 <circle class="pt pos tentative" cx="382.2" cy="104" r="4"/>
 <text class="row-value pos" x="516" y="108">+26</text>
 <text class="row-label" x="210" y="129">Compromiso con fecha y monto</text>
@@ -151,11 +152,11 @@
 <circle class="pt null" cx="357.4" cy="146" r="4"/>
 <text class="row-value null" x="516" y="150">+6</text>
 <text class="row-label" x="210" y="171">Propuesta con cifras</text>
-<line class="ci null" x1="324.5" y1="167" x2="370.8" y2="167"/>
+<line class="ci null" x1="324.4" y1="167" x2="370.9" y2="167"/>
 <circle class="pt null" cx="347.5" cy="167" r="4"/>
 <text class="row-value null" x="516" y="171">−2</text>
 </svg>
-    <p class="note">Morado: más en IA · naranja: más en humanos · gris: no concluyente tras corregir por 8 comparaciones · línea: IC 95 %. *Punto hueco: no concluyente entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.</p>
+    <p class="note">Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.</p>
   </section>
 
   <section>
@@ -168,13 +169,13 @@
       <li><span class="claim">La IA dice que la oferta vence hoy en el 54 % de las llamadas, frente al 2 % de los humanos: 52 pp.</span> <span class="why">Crea urgencia; las grabaciones no dicen si el plazo es real.</span>
         <span class="action">→ Contrastar cada vencimiento con la matriz de condonaciones.</span></li>
       
-      <li><span class="claim">Los humanos prometen un beneficio en el historial crediticio en el 44 % de las llamadas, frente al 6 % de la IA: 38 pp.</span> <span class="why">Se midió que se ofrezca, no que sea cierto.</span>
+      <li><span class="claim">La IA casi no promete beneficios en el historial crediticio: 6 % de sus llamadas, frente al 44 % de los humanos: 38 pp.</span> <span class="why">Se midió que se ofrezca, no que sea cierto.</span>
         <span class="action">→ Incluir qué se promete en el muestreo de calidad de los gestores.</span></li>
       
       <li><span class="claim">La IA anuncia un proceso legal si no se paga en el 42 % de las llamadas, frente al 4 % de los humanos: 38 pp.</span> <span class="why">No es el nombre del área: es la consecuencia que se anuncia.</span>
-        <span class="action">→ Medir en el piloto si retirarla cambia la conversión.</span></li>
+        <span class="action">→ Medir en el piloto si retirar ese anuncio cambia la conversión.</span></li>
       
-      <li><span class="claim">No se puede decir qué canal consigue más compromisos de pago.</span> <span class="why">Humanos 34 %, IA 18 %; entre gestiones nuevas, 25 % y 18 %. No es concluyente, y es la variable en la que más discreparon los anotadores.</span>
+      <li><span class="claim">La IA logra compromiso de pago en el 18 % de las llamadas, frente al 34 % de los humanos: 16 pp, no concluyente.</span> <span class="why">Entre gestiones nuevas, 18 % frente a 25 %.</span>
         <span class="action">→ Asignar cuentas al azar: al menos 356 por canal para detectar 10 pp.</span></li>
       
     </ol>
@@ -191,36 +192,36 @@
   <section>
     <h2>Hipótesis y resultado</h2>
     <table>
-      <thead><tr><th>Hipótesis</th><th>Esperado</th><th class="num">IA</th><th class="num">Humano</th>
+      <thead><tr><th>Conducta</th><th>Sentido esperado</th><th class="num">IA</th><th class="num">Humano</th>
         <th class="num">Diferencia, pp [IC 95 %]</th><th class="num">p ajustado</th><th>Resultado</th></tr></thead>
       <tbody>
       
         <tr><td>Se presenta como área jurídica</td><td>mucho más en IA</td><td class="num">43/50</td>
             <td class="num">1/50</td><td class="num">+84 [+69, +91]</td><td class="num">&lt; 0,001</td>
-            <td><span class="tag ok">coincide</span></td></tr>
+            <td><span class="tag ok">detectada</span></td></tr>
       
         <tr><td>Dice que la oferta vence hoy</td><td>mucho más en IA</td><td class="num">27/50</td>
             <td class="num">1/50</td><td class="num">+52 [+36, +65]</td><td class="num">&lt; 0,001</td>
-            <td><span class="tag ok">coincide</span></td></tr>
+            <td><span class="tag ok">detectada</span></td></tr>
       
         <tr><td>Plantea un proceso legal</td><td>mucho más en IA</td><td class="num">21/50</td>
             <td class="num">2/50</td><td class="num">+38 [+22, +52]</td><td class="num">&lt; 0,001</td>
-            <td><span class="tag ok">coincide</span></td></tr>
+            <td><span class="tag ok">detectada</span></td></tr>
       
         <tr><td>Promete beneficio crediticio</td><td>mucho más en humanos</td><td class="num">3/50</td>
             <td class="num">22/50</td><td class="num">−38 [−52, −22]</td><td class="num">&lt; 0,001</td>
-            <td><span class="tag ok">coincide</span></td></tr>
+            <td><span class="tag ok">detectada</span></td></tr>
       
         <tr><td>Confidencialidad o identidad*</td><td>más en IA</td><td class="num">14/50</td>
-            <td class="num">1/50</td><td class="num">+26 [+13, +40]</td><td class="num">0,021</td>
-            <td><span class="tag warn">no concluyente</span></td></tr>
+            <td class="num">1/50</td><td class="num">+26 [+12, +40]</td><td class="num">0,021</td>
+            <td><span class="tag warn">solo en el total</span></td></tr>
       
         <tr><td>Compromiso con fecha y monto</td><td>más en humanos</td><td class="num">9/50</td>
             <td class="num">17/50</td><td class="num">−16 [−32, +1]</td><td class="num">0,260</td>
             <td><span class="tag neutral">no detectada</span></td></tr>
       
         <tr><td>Propuesta con cifras</td><td>sin diferencia</td><td class="num">28/50</td>
-            <td class="num">29/50</td><td class="num">−2 [−21, +17]</td><td class="num">1,000</td>
+            <td class="num">29/50</td><td class="num">−2 [−21, +17]</td><td class="num">1</td>
             <td><span class="tag neutral">no detectada</span></td></tr>
       
         <tr><td>Ofrece cuotas o abono</td><td>sin diferencia</td><td class="num">22/50</td>
@@ -229,6 +230,7 @@
       
       </tbody>
     </table>
+    <p class="note">p ajustado por las 8 comparaciones. *Confidencialidad o identidad: 0,021 en el total, 0,166 entre gestiones nuevas.</p>
   </section>
 
   <section>
@@ -243,29 +245,25 @@
       
       </tbody>
     </table>
-    <p class="note">Los humanos retomaban sobre todo acuerdos ya pactados; ninguna llamada de IA lo hacía. Se detecta por lo dicho en la llamada, así que puede reflejar tanto la cartera como la conducta del agente. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana).</p>
-  </section>
-
-  <section>
-    <h2>Siguiente paso</h2>
-    <ul class="levers">
-      <li><strong>Un piloto con asignación al azar.</strong> Es la única forma de medir conversión sin que decida la cartera: al menos 356 cuentas por canal para detectar 10 puntos, y 162 para 15.</li><li><strong>Dentro del piloto, una variante de la IA sin amenaza ni vencimiento.</strong> Para medir si retirarlos cambia la conversión, en vez de suponerlo.</li>
-    </ul>
+    <p class="note">El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o la conducta. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
   </section>
 
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de la mayoría.</li><li>1.042 de 1.100 celdas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.</li><li>Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.</li><li>Test global por permutación (p < 0,001) y corrección de Westfall-Young por las 8 comparaciones. Sentido esperado fijado antes de ver la extracción, tras barridos exploratorios de las mismas llamadas.</li><li>En 9 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras.</li></ul>
+      <ul class="bullets"><li>Dos transcripciones por llamada, hechas en este equipo. Tres anotadores (Sonnet, Opus, Opus) respondieron por separado 11 preguntas sin saber el canal; vale la mayoría.</li><li>1.042 de 1.100 respuestas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto se comprobaron contra una frase textual de la llamada.</li><li>Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.</li><li>Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.</li><li>En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras.</li></ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
-      <ul class="bullets"><li>Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.</li><li>Objeciones y claridad exigen separar hablantes, y ese error favorecería a la IA; la negociación se aproxima con propuesta con cifras y cuotas.</li><li>Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.</li><li>Con 50 llamadas por canal, diferencias menores a 29 puntos porcentuales pueden pasar inadvertidas.</li><li>Hasta 24 puntos no se descartan en las variables donde se esperaba no encontrar diferencia.</li></ul>
+      <ul class="bullets"><li>Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.</li><li>Objeciones y claridad exigen separar hablantes, y un error al separarlos favorecería a la IA; la negociación se aproxima con cifras y cuotas.</li><li>Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.</li><li>Con 50 llamadas por canal, diferencias menores a 29 pp pueden pasar inadvertidas (tasa base 30 %).</li><li>En las variables sin diferencia esperada no se descartan hasta 24 pp.</li></ul>
     </section>
   </div>
 
   <section>
-    <p class="note">Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
+    <h2>Siguiente paso</h2>
+    <ul class="levers">
+      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %).</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde.</li>
+    </ul>
   </section>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>2 / 2</span></footer>

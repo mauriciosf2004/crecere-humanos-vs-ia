@@ -86,6 +86,7 @@
   ul.bullets { margin:0; padding-left:3.5mm; }
   ul.bullets li { margin-bottom:1mm; }
   .kpi.null { border-top-color:var(--null); }
+  .kpi.neg { border-top-color:var(--neg); }
   footer a { color:inherit; text-decoration:none; }
   .kpi.null .v { color:var(--muted); }
   /* el color de la cifra va en el relleno: con trazo, el texto sale contorneado */
@@ -139,7 +140,7 @@
   <section>
     <h2>Hipótesis y resultado</h2>
     <table>
-      <thead><tr><th>Hipótesis</th><th>Esperado</th><th class="num">IA</th><th class="num">Humano</th>
+      <thead><tr><th>Conducta</th><th>Sentido esperado</th><th class="num">IA</th><th class="num">Humano</th>
         <th class="num">Diferencia, pp [IC 95 %]</th><th class="num">p ajustado</th><th>Resultado</th></tr></thead>
       <tbody>
       {% for r in tabla %}
@@ -149,6 +150,7 @@
       {% endfor %}
       </tbody>
     </table>
+    <p class="note">{{ tabla_nota }}</p>
   </section>
 
   <section>
@@ -164,13 +166,6 @@
     <p class="note">{{ composicion_nota|safe }}</p>
   </section>
 
-  <section>
-    <h2>Siguiente paso</h2>
-    <ul class="levers">
-      {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
-    </ul>
-  </section>
-
   <div class="grid2">
     <section>
       <h2>Método</h2>
@@ -183,7 +178,10 @@
   </div>
 
   <section>
-    <p class="note">{{ cierre|safe }}</p>
+    <h2>Siguiente paso</h2>
+    <ul class="levers">
+      {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
+    </ul>
   </section>
 
   <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>2 / 2</span></footer>
