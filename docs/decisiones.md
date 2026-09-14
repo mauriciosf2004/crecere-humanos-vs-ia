@@ -323,3 +323,39 @@ admite cambios de redacción, así que se aclaró el texto sin tocar categorías
 
 Las 100 llamadas, incluidas las 6 del piloto, se anotan con el texto final.
 
+## 16. Hablarle al banco: semáforo de cumplimiento, KPIs y escala
+
+El informe medía conductas y las presentaba como conductas. Un gerente de banco no gestiona
+conductas: gestiona contacto, acuerdos, cumplimiento de esos acuerdos, costo y riesgo regulatorio.
+La investigación (`docs/investigacion.md`, §5 y §6) mostró que el hallazgo con más peso para él no es
+comercial sino normativo, así que la página 1 cambió en tres cosas.
+
+**Las cuatro conductas de riesgo se presentan con su norma.** Presentarse como área jurídica,
+anunciar un proceso legal, decir que la oferta vence hoy y prometer un beneficio en el historial
+crediticio salen ahora en una tabla con la cifra de cada canal, la norma y la acción. Tres decisiones
+sostienen ese bloque:
+
+- **Se rotula «alerta para revisión de cumplimiento», nunca «infracción».** Depende de si el área
+  existe, de si el proceso está previsto y de las condiciones reales de la oferta, y nada de eso se
+  puede saber desde la grabación.
+- **Se aplica a los dos canales.** Los humanos prometen beneficios crediticios en el 44 % de sus
+  llamadas. Un semáforo que solo mirara a la IA sería un sesgo, y el evaluador es su proveedor.
+- **Cada norma se verificó en su texto**, y el archivo `data/reference/cumplimiento.json` guarda la
+  fuente y el nivel de verificación de cada una. El informe no cita leyes que el repositorio no
+  respalde.
+
+**El compromiso se mide sobre el denominador del banco.** La promesa de pago se calcula sobre los
+contactos con el titular (31 en IA, 46 en humanos), no sobre las 50 llamadas marcadas. Mezclar
+denominadores confundía canal con contactabilidad.
+
+**Se dice qué se puede medir hoy y qué no.** La tabla «hoy / piloto / producción» reemplazó a la lista
+de limitaciones en prosa: promesa cumplida, cure rate y costo por peso recuperado necesitan CRM, y el
+horario de contacto de la Ley 2300 necesita los registros del marcador.
+
+**La escala se cuantifica, no se promete.** `data/reference/costos.json` guarda precios unitarios con
+su fuente y `src/results.py` calcula los totales. Nada de arquitectura se implementó: sería código
+que nadie pidió.
+
+**Qué salió a cambio.** La tabla de las ocho hipótesis pasó a `docs/hipotesis.md`; el gráfico de
+efectos se quedó, más compacto. El límite de dos páginas no se negocia.
+
