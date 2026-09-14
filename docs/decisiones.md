@@ -16,7 +16,7 @@ cada momento; esta tabla es la lectura vigente.
 | `ca26b46` | Solo cuenta el nivel calificado | 11 / 25 | −28 pp, p aj. 0,014 | Brecha a favor del humano |
 | `71c7133` | Estratificación por acuerdo previo | 11 / 25 | p estratificado 0,13 | No atribuible al agente |
 | `bde7bb4` | Consenso del panel de tres anotadores | 9 / 17 | −16 pp, p aj. 0,196 | No se detecta diferencia |
-| §14 | Rúbrica literal para «hoy» en la propuesta con cifras | 9 / 17 | −16 pp, p aj. 0,295 | No se detecta diferencia |
+| §14 | Rúbrica literal para «hoy» en la propuesta con cifras | 9 / 17 | −16 pp, p aj. 0,260 | No se detecta diferencia |
 
 
 ---
@@ -87,9 +87,12 @@ de confianza, que comunica lo mismo sin fingir rigor.
 
 ## 6. Westfall-Young, y por qué no Bonferroni
 
-Se simuló la ganancia antes de elegir. Con desenlaces independientes, Westfall-Young es
-idéntico a Holm. Con correlación de 0,7 —el escenario real, porque varias variables miden
-partes del mismo guion— gana unos **5 puntos de potencia**.
+Se simuló la ganancia antes de elegir: con correlación de 0,7 —el escenario real, porque varias
+variables miden partes del mismo guion— gana a Holm unos **5 puntos de potencia**. Una simulación
+posterior corrigió la lectura: la ventaja no viene solo de la correlación. Aun con variables
+independientes, Westfall-Young supera a Holm aplicado sobre los p de Fisher (potencia 0,64 frente a
+0,52 en 300 réplicas, con un efecto de 30 a 60 % y 50 llamadas por brazo), porque la permutación
+aprovecha lo discreto de los datos binarios y Fisher no.
 
 Se adoptó sabiendo cuánto compra.
 
@@ -149,7 +152,9 @@ por guion. Se corrigió pasando el texto por la entrada estándar.
 ## 10. Los dos brazos no atacaron la misma cartera
 
 > Cifras de la extracción original, de un solo modelo. Con el panel de tres anotadores la
-> composición se vuelve más nítida y cambia la lectura del compromiso de pago: ver el §13.
+> composición se vuelve más nítida y cambia la lectura del compromiso de pago: ver el §13. El
+> Mantel-Haenszel de esta sección ya no se calcula: con el panel la IA no tiene llamadas de acuerdo
+> previo, y la comparación ajustada es Westfall-Young dentro de las gestiones nuevas (§14).
 
 Sin metadatos no había forma de comprobar el balance entre brazos, así que se midió desde el
 audio. La señal más limpia es si la llamada **retoma un acuerdo de pago ya existente**: se detecta
@@ -182,7 +187,7 @@ ausencia de confirmación, que es justo el tipo de variable que se descartó en 
 
 ## 11. Validar sin escuchar: el anclaje de citas
 
-> Cifras de la extracción original. Con el panel, 258 de 260 afirmativas anclan: ver los §13 y §14.
+> Cifras de la extracción original. Con el panel, 258 de 259 afirmativas anclan: ver los §13 y §14.
 
 Escuchar las llamadas contra lo anotado es el siguiente paso de la validación. Antes de eso se puede
 comprobar una parte por máquina: la rúbrica obliga a citar literalmente la frase que justifica cada
@@ -243,7 +248,7 @@ cada celda se quedó con la respuesta de al menos dos de tres. Las instrucciones
 - La ceguera se verificó en los registros de los 300 agentes: ninguno abrió nada fuera de la rúbrica
   y la carpeta de su llamada.
 - 249 de 250 respuestas afirmativas citan una frase que existe en las transcripciones, frente a 262
-  de 273 en la pasada única (258 de 260 tras la regla del §14).
+  de 273 en la pasada única (258 de 259 tras la regla del §14).
 
 **La pasada única tenía un sesgo, y en una sola dirección.** Donde más cambió fue el compromiso de
 pago: el panel bajó de calificado a vago 8 compromisos humanos y 2 de IA, y no subió ninguno a
@@ -277,21 +282,27 @@ interpretación después de ver el resultado es justo el camino que abre falsos 
 
 La regla se aplica en código, después del voto (`apply_literal_date_rule` en `src/annotate.py`): si la
 celda no quedó afirmativa y alguna anotación de esa llamada —del panel o de la extracción— la marcó
-afirmativa con una cita que tiene un monto y «hoy», la celda pasa a afirmativa con esa cita. Es
-simétrica entre brazos; cambió 10 llamadas de IA y ninguna humana, y 9 de esas 10 citas anclan.
+afirmativa con una cita que tiene un monto y «hoy», **y esa cita existe en la transcripción**, la
+celda pasa a afirmativa con ella. Es simétrica entre brazos.
+
+Hubo 10 llamadas candidatas, todas de IA. Nueve citas anclan y entran; la décima no aparece en la
+transcripción y se descarta, porque una cita que no existe no basta para contradecir al panel. En 5
+de las 9 el panel había votado que no por unanimidad y la cita viene de la extracción: entran porque
+la frase está en la llamada y cumple la regla escrita, no porque la extracción lo diga. Así la
+extracción de un solo modelo sigue siendo fuente de citas, no de valores.
 
 | Propuesta con cifras | Antes | Después |
 |---|---|---|
-| IA / humano | 19 / 29 | 29 / 29 |
-| Diferencia | −20 pp, IC95 [−38, −1] | 0 pp, IC95 [−19, +19] |
+| IA / humano | 19 / 29 | 28 / 29 |
+| Diferencia | −20 pp, IC95 [−38, −1] | −2 pp, IC95 [−21, +17] |
 | p ajustado | 0,125 | 1,000 |
 
 La hipótesis H7 («sin diferencia») pasa a coincidir. El p ajustado del compromiso de pago sube de
-0,196 a 0,295: en Westfall-Young el ajuste de cada variable depende de las demás, y la propuesta con
+0,196 a 0,260: en Westfall-Young el ajuste de cada variable depende de las demás, y la propuesta con
 cifras dejó de ir por delante de él.
 
 **La estratificación también se corrige por las ocho.** El p de Mantel-Haenszel de la verificación
-de identidad (0,039) no estaba ajustado. Con Westfall-Young dentro de las gestiones nuevas —el único
-estrato con los dos brazos— da 0,165, así que se rotula como no concluyente. Las otras cuatro
+de identidad (0,039) no estaba ajustado, y ya no se calcula. Con Westfall-Young dentro de las gestiones
+nuevas —el único estrato con los dos brazos— da 0,166, así que se rotula como no concluyente. Las otras cuatro
 diferencias siguen por debajo de 0,01 también ahí.
 

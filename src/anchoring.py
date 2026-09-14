@@ -78,7 +78,7 @@ def _quotes(row: dict, name: str) -> list[str]:
     return [text for key, text in value.items() if key.startswith("quote") and text]
 
 
-def _seen(arm: str, stem: str, source: Path) -> list[str]:
+def transcripts_seen(arm: str, stem: str, source: Path) -> list[str]:
     """Las transcripciones que tuvo delante quien anotó esta fuente."""
     texts = [
         clean(
@@ -97,14 +97,14 @@ def _sum(counts: dict, names: list[str], arms: tuple[str, ...] = ARMS) -> dict:
     return {k: sum(counts[name][arm][k] for name in names for arm in arms) for k in COUNTS}
 
 
-def audit(source: Path = EXTRACTIONS) -> dict:
+def audit(source: Path = CONSENSUS) -> dict:
     """Conteos por variable y por brazo: positivos, con cita, y con cita anclada."""
     names = FAMILY_NAMES + list(CONTEXT_POSITIVE)
     counts = {name: {arm: dict.fromkeys(COUNTS, 0) for arm in ARMS} for name in names}
     for arm in ARMS:
         for path in sorted((source / arm).glob("*.json")):
             row = json.loads(path.read_text(encoding="utf-8"))
-            texts = _seen(arm, path.stem, source)
+            texts = transcripts_seen(arm, path.stem, source)
             for name in names:
                 if not _is_positive(row, name):
                     continue
@@ -131,6 +131,8 @@ def main() -> None:
     parser.add_argument("--source", choices=("extraccion", "consenso"), default="consenso")
     source = CONSENSUS if parser.parse_args().source == "consenso" else EXTRACTIONS
 
+    if not any(source.glob("*/*.json")):
+        raise SystemExit(f"No hay anotaciones en {source.relative_to(ROOT)}: nada que anclar.")
     result = audit(source)
     PUBLIC.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "anchoring.json").write_text(

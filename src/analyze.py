@@ -5,22 +5,23 @@ El procedimiento tiene dos niveles, en el orden de la pregunta del encargo: prim
 
   Nivel 1  Test global por permutación sobre el perfil completo de las ocho
            variables. Una sola pregunta, un solo p-valor, sin multiplicidad.
-  Nivel 2  Solo si el nivel 1 rechaza: Westfall-Young step-down sobre la familia.
+  Nivel 2  Westfall-Young step-down sobre la familia, si el nivel 1 rechaza.
 
 El control del error por familia lo pone Westfall-Young por sí solo, no la compuerta.
 Se eligió frente a Bonferroni o Holm porque aprovecha la correlación entre variables,
-que aquí es alta: varias miden partes del mismo guion. La compuerta no añade
-garantías; ordena la respuesta, y si el perfil conjunto no difiriera evitaría
-interpretar variables sueltas.
+que aquí es alta —varias miden partes del mismo guion—, y lo discreto de los datos
+binarios. La compuerta no añade garantías; ordena la respuesta, y si el perfil conjunto
+no difiriera evitaría interpretar variables sueltas.
 
-Toda la inferencia es por permutación: exacta con 50 llamadas por brazo y sin
-supuestos distribucionales. Cada contraste se reporta con su diferencia en puntos
-porcentuales y su intervalo, porque con esta potencia el p-valor solo no dice si la
-diferencia importa.
+El test global y Westfall-Young son por permutación Monte Carlo (10.000 reordenamientos,
+semilla fija), sin supuestos distribucionales. Cada contraste lleva además su diferencia
+en puntos porcentuales con el IC de Newcombe y el p de Fisher exacto, porque con esta
+potencia el p-valor solo no dice si la diferencia importa.
 
 Además del contraste, el módulo mide la composición de las carteras. Los brazos no
-atacaron las mismas cuentas —los humanos retoman acuerdos previos mucho más a
-menudo— y cada variable se re-contrasta estratificando por esa diferencia.
+atacaron las mismas cuentas —los humanos retoman acuerdos previos y la IA no—, así que
+Westfall-Young se repite dentro de las gestiones nuevas, el único tipo de gestión con
+llamadas de los dos brazos.
 """
 
 from __future__ import annotations
@@ -51,7 +52,6 @@ PUBLIC = ROOT / "data" / "public"
 
 PERMUTATIONS = 10_000
 SEED = 20260915
-MIN_CELL = 4  # por debajo, una tasa condicionada no significa nada
 PLANNING_BASE = 0.30  # tasa de referencia para el umbral detectable y el piloto
 
 # La familia, en el orden en que se declaró antes de medir. El texto es la etiqueta
@@ -109,14 +109,18 @@ def _raw(row: dict, key: str):
 
 
 def cell(row: dict, key: str) -> int:
-    """Valor 0/1 de una variable de la familia en una fila de extracción."""
+    """Valor 0/1 de una variable de la familia en una fila anotada.
+
+    Una celda vacía —sin mayoría en el panel— cuenta como 0: no se afirma una conducta
+    que no quedó respaldada.
+    """
     raw = _raw(row, key)
     if key in ORDINAL:
         return int(raw == ORDINAL[key])
     return int(bool(raw))
 
 
-def load_rows(source: Path = EXTRACTIONS) -> list[dict]:
+def load_rows(source: Path = CONSENSUS) -> list[dict]:
     """Las anotaciones de una fuente, humano primero y luego IA, en orden estable.
 
     La fuente es la extracción original de un solo modelo o el consenso del panel de tres.
@@ -138,7 +142,7 @@ def load_rows(source: Path = EXTRACTIONS) -> list[dict]:
     return rows
 
 
-def load_table(source: Path = EXTRACTIONS) -> tuple[np.ndarray, np.ndarray, list[str]]:
+def load_table(source: Path = CONSENSUS) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """Matriz (llamadas x variables) de 0/1, el vector de brazo y los identificadores."""
     rows = load_rows(source)
     names = [name for name, _, _ in FAMILY]
@@ -201,7 +205,7 @@ def westfall_young(
     return out
 
 
-def analyse(source: Path = EXTRACTIONS) -> tuple[float, list[Contrast]]:
+def analyse(source: Path = CONSENSUS) -> tuple[float, list[Contrast]]:
     matrix, is_ai, _ = load_table(source)
     rng = np.random.default_rng(SEED)
 
@@ -234,43 +238,28 @@ def analyse(source: Path = EXTRACTIONS) -> tuple[float, list[Contrast]]:
 
 
 def stratified(rows: list[dict], name: str) -> dict:
-    """Contraste de una variable dentro de cada estrato de acuerdo previo.
+    """Recuentos de una variable dentro de cada estrato de acuerdo previo.
 
-    Dos estratos: la llamada retoma un acuerdo de pago existente, o no. Un valor
-    ausente cuenta como "no" (hay uno en cien). Se reporta Mantel-Haenszel con
-    corrección de continuidad y, sobre todo, las celdas: el estrato de acuerdo previo
-    tiene muy pocas llamadas de IA y un único número escondería eso.
+    Un valor ausente cuenta como "no" (hay uno en cien). Con el consenso, la IA no tiene
+    ninguna llamada que retome un acuerdo previo, así que en ese estrato no hay contraste
+    posible: la comparación ajustada es Westfall-Young dentro de las gestiones nuevas
+    (p_ajustado_nuevas en export). Aquí se publican las celdas, para que eso se vea.
     """
-    tables, strata = [], []
+    strata = []
     for label, flag in (("nuevo", False), ("previo", True)):
         members = [r for r in rows if bool(_raw(r, "prior_agreement_followup")) is flag]
         ai = [r for r in members if r["arm"] == "ia"]
         human = [r for r in members if r["arm"] == "humano"]
-        k_ai = sum(cell(r, name) for r in ai)
-        k_human = sum(cell(r, name) for r in human)
-        tables.append(np.array([[k_ai, len(ai) - k_ai], [k_human, len(human) - k_human]]))
         strata.append(
             {
                 "estrato": label,
-                "k_ia": k_ai,
+                "k_ia": sum(cell(r, name) for r in ai),
                 "n_ia": len(ai),
-                "k_humano": k_human,
+                "k_humano": sum(cell(r, name) for r in human),
                 "n_humano": len(human),
             }
         )
-
-    usable = [t for t in tables if t.sum() > 1]
-    observed = sum(t[0, 0] for t in usable)
-    expected = sum(t[0].sum() * t[:, 0].sum() / t.sum() for t in usable)
-    variance = sum(
-        t[0].sum() * t[1].sum() * t[:, 0].sum() * t[:, 1].sum() / (t.sum() ** 2 * (t.sum() - 1))
-        for t in usable
-    )
-    p_cmh = None
-    if variance > 0:
-        statistic = max(0.0, abs(observed - expected) - 0.5) ** 2 / variance
-        p_cmh = float(stats.chi2.sf(statistic, 1))
-    return {"estratos": strata, "p_cmh": p_cmh}
+    return {"estratos": strata}
 
 
 def composition(rows: list[dict]) -> list[dict]:
@@ -309,48 +298,11 @@ def composition(rows: list[dict]) -> list[dict]:
     return out
 
 
-def exploratory_within_arm(rows: list[dict]) -> list[dict]:
-    """Qué conductas acompañan al compromiso de pago DENTRO de cada brazo.
-
-    Exploratorio y fuera de la familia: sin control de multiplicidad, con celdas
-    pequeñas y sin dirección causal identificada —una llamada que llega a hablar de
-    cuotas puede ser una llamada que ya iba bien—. Sirve para proponer qué probar,
-    no para afirmar qué funciona.
-    """
-    target = "qualified_payment_commitment"
-    out = []
-    for name, label, _ in FAMILY:
-        if name == target:
-            continue
-        for arm in ("ia", "humano"):
-            members = [r for r in rows if r["arm"] == arm]
-            doing = [r for r in members if cell(r, name)]
-            not_doing = [r for r in members if not cell(r, name)]
-            if len(doing) < MIN_CELL or len(not_doing) < MIN_CELL:
-                continue
-            k_doing = sum(cell(r, target) for r in doing)
-            k_not = sum(cell(r, target) for r in not_doing)
-            test = compare_proportions(k_doing, len(doing), k_not, len(not_doing))
-            out.append(
-                {
-                    "conducta": name,
-                    "etiqueta": label,
-                    "brazo": arm,
-                    "k_con": k_doing,
-                    "n_con": len(doing),
-                    "k_sin": k_not,
-                    "n_sin": len(not_doing),
-                    "diff_pp": round(test.diff_pp, 1),
-                    "ci_low_pp": round(test.ci_low_pp, 1),
-                    "ci_high_pp": round(test.ci_high_pp, 1),
-                    "p": test.p_value,
-                }
-            )
-    return out
-
-
 def duration_contrast() -> dict:
-    """El nulo de duración, con el signo en la convención IA − humano."""
+    """El nulo de duración, con el signo en la convención IA − humano.
+
+    Mann-Whitney bilateral; con empates, scipy usa la aproximación normal.
+    """
     path = PUBLIC / "durations.csv"
     if not path.exists():
         raise FileNotFoundError(f"Falta {path.relative_to(ROOT)}. Corre `make inventory`.")
@@ -388,7 +340,7 @@ def _context_value(row: dict, key: str):
     return int(raw) if isinstance(raw, bool) else raw
 
 
-def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTIONS) -> None:
+def export(p_global: float, contrasts: list[Contrast], source: Path = CONSENSUS) -> None:
     """Escribe la tabla desidentificada y los efectos que consume el informe.
 
     Solo salen variables derivadas y categorías cerradas: ni una palabra del texto
@@ -414,7 +366,7 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTION
 
     # La comparación "dentro del mismo tipo de gestión" también se corrige por las ocho
     # variables: Westfall-Young sobre las gestiones nuevas, que es el único estrato con los
-    # dos brazos.
+    # dos brazos. Sin compuerta: Westfall-Young controla el error por familia por sí solo.
     new = np.array([not bool(_raw(row, "prior_agreement_followup")) for row in rows])
     matrix, is_ai, _ = load_table(source)
     adjusted_new = westfall_young(matrix[new], is_ai[new], np.random.default_rng(SEED + 1))
@@ -452,7 +404,6 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = EXTRACTION
         ],
         "composicion": composition(rows),
         "duracion": duration_contrast(),
-        "exploratorio_intra_brazo": exploratory_within_arm(rows),
     }
     (PUBLIC / "effects.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -475,17 +426,16 @@ def main() -> None:
     print(f"Nivel 1 · test global por permutación: p = {p_global:.5f}")
     print("  la compuerta abre\n" if p_global < 0.05 else "  la compuerta NO abre\n")
     print(
-        f"{'variable':<32}{'IA':>8}{'humano':>9}{'dif':>6}{'IC 95%':>12}{'p aj.':>8}{'p estr.':>9}"
+        f"{'variable':<32}{'IA':>8}{'humano':>9}{'dif':>6}{'IC 95%':>12}{'p aj.':>8}{'p nuevas':>9}"
     )
     for item in sorted(effects["contrastes"], key=lambda x: -abs(x["diff_pp"])):
         ci = f"[{item['ci_low_pp']:+.0f},{item['ci_high_pp']:+.0f}]"
         p_adj = "—" if item["p_ajustado"] is None else f"{item['p_ajustado']:.4f}"
-        p_str = item["estratificado"]["p_cmh"]
-        p_str = "—" if p_str is None else f"{p_str:.4f}"
+        p_new = f"{item['p_ajustado_nuevas']:.4f}"
         print(
             f"{item['etiqueta'][:31]:<32}{item['k_ia']:>4}/{item['n_ia']:<3}"
             f"{item['k_humano']:>5}/{item['n_humano']:<3}{item['diff_pp']:>+6.0f}"
-            f"{ci:>12}{p_adj:>8}{p_str:>9}"
+            f"{ci:>12}{p_adj:>8}{p_new:>9}"
         )
 
     print("\nComposición de las carteras")
@@ -505,14 +455,6 @@ def main() -> None:
         f"δ {d['cliffs_delta']:+.3f} · p {d['p_mann_whitney']:.3f}"
     )
     print(f"MDE con tasa base 30 %: {effects['mde_pp']} pp")
-
-    print("\nExploratorio: compromiso calificado según la conducta, dentro de cada brazo")
-    for item in effects["exploratorio_intra_brazo"]:
-        print(
-            f"  {item['brazo']:<7}{item['etiqueta'][:40]:<41}"
-            f"{item['k_con']:>3}/{item['n_con']:<3}{item['k_sin']:>4}/{item['n_sin']:<3}"
-            f"{item['diff_pp']:>+6.0f} pp  p={item['p']:.3f}"
-        )
 
 
 if __name__ == "__main__":

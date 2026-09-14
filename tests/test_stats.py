@@ -1,7 +1,7 @@
-"""Verifica los helpers estadísticos contra valores conocidos.
+"""Verifica los helpers estadísticos contra valores publicados.
 
-Se testea esto y no el pipeline porque es el único código donde un error
-silencioso cambiaría una conclusión del reporte sin que nadie lo note.
+Cada test fija un número de la literatura o una propiedad exacta: un error silencioso
+aquí cambiaría una conclusión del reporte sin que nadie lo note.
 """
 
 import numpy as np
@@ -38,9 +38,11 @@ def test_power_is_low_for_small_differences():
     assert fisher_power(0.30, 0.40, 50, 50) < 0.20
 
 
-def test_confidence_interval_contains_difference():
-    result = compare_proportions(20, 50, 10, 50)
-    assert result.ci_low_pp < result.diff_pp < result.ci_high_pp
+def test_newcombe_interval_matches_published_example():
+    """Newcombe (1998), método 10: 56/70 frente a 48/80 da [0,0524; 0,3339]."""
+    result = compare_proportions(56, 70, 48, 80)
+    assert abs(result.ci_low_pp - 5.24) < 0.01
+    assert abs(result.ci_high_pp - 33.39) < 0.01
 
 
 def test_sample_size_matches_cohen_table():

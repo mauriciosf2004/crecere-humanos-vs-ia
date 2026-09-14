@@ -6,28 +6,12 @@ conclusión sin avisar.
 """
 
 import numpy as np
-import pytest
 
-from src.analyze import EXTRACTIONS, global_test, westfall_young
-
-# Las extracciones no se versionan (contienen texto de llamadas de deudores reales), así
-# que en un clon limpio este test no tiene datos contra los que comprobar. Se salta con el
-# motivo a la vista en vez de fallar: `make check` debe pasar sin los datos privados.
-needs_extractions = pytest.mark.skipif(
-    not any(EXTRACTIONS.glob("*/*.json")),
-    reason="requiere data/interim/extractions, que no se versiona",
-)
+from src.analyze import cell, global_test, westfall_young
 
 
 def _rng():
     return np.random.default_rng(0)
-
-
-def test_global_test_returns_valid_pvalue():
-    matrix = _rng().integers(0, 2, size=(40, 6)).astype(float)
-    is_ai = np.array([True] * 20 + [False] * 20)
-    p = global_test(matrix, is_ai, _rng(), permutations=400)
-    assert 0 < p <= 1
 
 
 def test_global_test_detects_a_blatant_difference():
@@ -37,12 +21,30 @@ def test_global_test_detects_a_blatant_difference():
     assert global_test(matrix, is_ai, _rng(), permutations=400) < 0.01
 
 
-def test_adjustment_never_lowers_significance():
-    """El p ajustado no puede ser menor que la proporción de permutaciones extremas."""
+def test_westfall_young_matches_an_independent_max_t():
+    """El menor p ajustado es el max-T de un paso, y ninguno queda por debajo de su marginal.
+
+    Se rehace la nula con las mismas permutaciones. Si el ajuste se quedara en los p
+    marginales perdería el control del error por familia, y este test lo detectaría.
+    """
     matrix = _rng().integers(0, 2, size=(60, 8)).astype(float)
     is_ai = np.array([True] * 30 + [False] * 30)
-    adjusted = westfall_young(matrix, is_ai, _rng(), permutations=400)
-    assert np.all((adjusted >= 0) & (adjusted <= 1))
+    permutations = 400
+    adjusted = westfall_young(matrix, is_ai, np.random.default_rng(1), permutations)
+
+    def statistic(group):
+        return np.abs(matrix[group].mean(axis=0) - matrix[~group].mean(axis=0))
+
+    rng = np.random.default_rng(1)
+    observed = statistic(is_ai)
+    null = np.array([statistic(rng.permutation(is_ai)) for _ in range(permutations)])
+    top = observed.argmax()
+    max_t = (np.sum(null.max(axis=1) >= observed[top]) + 1) / (permutations + 1)
+    marginal = ((null >= observed).sum(axis=0) + 1) / (permutations + 1)
+
+    assert adjusted[top] == max_t
+    assert adjusted[top] > marginal[top]
+    assert np.all(adjusted >= marginal)
 
 
 def test_step_down_is_monotone_in_effect_order():
@@ -57,34 +59,14 @@ def test_step_down_is_monotone_in_effect_order():
     assert np.all(np.diff(adjusted[order]) >= -1e-12)
 
 
-@needs_extractions
 def test_ordinal_commitment_counts_only_the_qualified_level():
-    """El compromiso de pago es 0/1/2 y solo el 2 cuenta.
+    """El compromiso de pago es 0/1/2 y solo el 2 cuenta; una celda sin mayoría cuenta 0.
 
     Colapsarlo con bool() contaría los compromisos vagos como calificados, que es
-    exactamente la distinción que separa una promesa ejecutable de un "yo veo cómo
-    hago". Se fijan los tres niveles observados en el corpus.
+    exactamente la distinción que separa una promesa ejecutable de un "yo veo cómo hago".
     """
-    import json
-    from collections import Counter
-
-    from src.analyze import EXTRACTIONS, FAMILY, load_table
-
-    levels = {}
-    for arm in ("humano", "ia"):
-        counter = Counter()
-        for path in sorted((EXTRACTIONS / arm).glob("*.json")):
-            cell = json.loads(path.read_text(encoding="utf-8"))["qualified_payment_commitment"]
-            counter[cell["value"] if isinstance(cell, dict) else cell] += 1
-        levels[arm] = counter
-
-    assert levels["humano"] == {0: 12, 1: 13, 2: 25}
-    assert levels["ia"] == {0: 35, 1: 4, 2: 11}
-
-    matrix, is_ai, _ = load_table()
-    column = matrix[:, [n for n, _, _ in FAMILY].index("qualified_payment_commitment")]
-    assert column[is_ai].sum() == 11  # no 15: los vagos no cuentan
-    assert column[~is_ai].sum() == 25  # no 38
+    name = "qualified_payment_commitment"
+    assert [cell({name: {"value": v}}, name) for v in (0, 1, 2, None)] == [0, 0, 1, 0]
 
 
 def test_permutation_pvalue_is_never_exactly_zero():

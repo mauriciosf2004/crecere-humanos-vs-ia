@@ -30,14 +30,6 @@ class ProportionTest:
     ci_low_pp: float
     ci_high_pp: float
 
-    def __str__(self) -> str:
-        return (
-            f"{self.k1}/{self.n1} ({100 * self.k1 / self.n1:.0f}%) vs "
-            f"{self.k2}/{self.n2} ({100 * self.k2 / self.n2:.0f}%) · "
-            f"dif {self.diff_pp:+.0f} pp "
-            f"[IC95 {self.ci_low_pp:+.0f}, {self.ci_high_pp:+.0f}] · p={self.p_value:.3f}"
-        )
-
 
 def _wilson(k: int, n: int, z: float = 1.959963985) -> tuple[float, float]:
     """Intervalo de Wilson para una proporción. Base del IC de Newcombe."""
@@ -73,7 +65,11 @@ def compare_proportions(k1: int, n1: int, k2: int, n2: int) -> ProportionTest:
 
 
 def cliffs_delta(a: np.ndarray, b: np.ndarray) -> float:
-    """Tamaño de efecto no paramétrico. |d|<0.15 insignificante, 0.33 mediano, 0.47 grande."""
+    """Tamaño de efecto no paramétrico.
+
+    |d| < 0,147 insignificante, < 0,33 pequeño, < 0,474 mediano; por encima, grande
+    (Romano et al., 2006).
+    """
     diff = np.subtract.outer(np.asarray(a), np.asarray(b))
     return float((np.sum(diff > 0) - np.sum(diff < 0)) / diff.size)
 

@@ -14,7 +14,7 @@
     },
     "ajustes_regla_literal": {
       "humano": 0,
-      "ia": 10
+      "ia": 9
     }
   },
   "extraccion_vs_consenso": {
@@ -51,7 +51,7 @@
       "total": 100
     },
     "quantified_proposal_stated": {
-      "coinciden": 96,
+      "coinciden": 95,
       "total": 100
     },
     "installment_or_partial_offer": {
@@ -131,7 +131,7 @@
       },
       "consenso": {
         "humano": 29,
-        "ia": 29
+        "ia": 28
       }
     },
     "installment_or_partial_offer": {

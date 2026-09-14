@@ -9,6 +9,9 @@ Es idempotente: cachea por hash del texto de entrada más la versión de la rúb
 de modo que cambiar la rúbrica invalida la caché y volver a correr no repite trabajo
 ya hecho. El call_id no se le pregunta al modelo —devolvía un marcador de posición—
 sino que se deriva del nombre del archivo, igual que en el inventario.
+
+Es la pasada histórica de un solo modelo: el análisis usa el consenso del panel
+(src/annotate.py), que de aquí solo toma citas para la regla literal de fecha.
 """
 
 from __future__ import annotations

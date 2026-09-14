@@ -31,4 +31,4 @@ def test_every_fragment_joined_by_ellipsis_must_appear():
 
 def test_partial_words_do_not_count_as_a_match():
     """El precedente real: "sin embargo" no es "embargo"."""
-    assert not is_anchored("sin embargo usted debe", "sin embargos usted debe pagar hoy")
+    assert not is_anchored("area de embargo", "le hablo del area de embargos")

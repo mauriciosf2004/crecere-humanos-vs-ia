@@ -3,7 +3,8 @@
 La extracción original fue una sola pasada de un solo modelo. Para no depender de ella, cada
 llamada la anotan tres agentes internos de Claude Code, cada uno por su cuenta, y cada celda se
 queda con la respuesta de al menos dos de tres. `src/annotate.py` guarda sus respuestas, vota y
-mide el acuerdo; no llama a ningún modelo.
+mide el acuerdo; no llama a ningún modelo. La extracción original solo vuelve a entrar como fuente
+de citas para la regla literal de fecha (abajo).
 
 | Rol | Modelo | Qué hace |
 |---|---|---|
@@ -72,5 +73,6 @@ que leyó el panel: ninguno reproduce lo dicho en una llamada.
 
 Después del voto se aplica una única regla determinista: en la propuesta con cifras, «hoy» cuenta
 como fecha, como dice la rúbrica. El panel no lo había aceptado cuando la fecha era el vencimiento de
-la oferta. Ver `docs/decisiones.md`, §14.
+la oferta. La celda solo cambia si alguna anotación —del panel o de la extracción— cita un monto y
+«hoy», y esa cita existe en la transcripción. Ver `docs/decisiones.md`, §14.
 

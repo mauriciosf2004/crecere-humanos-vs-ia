@@ -5,8 +5,7 @@ description = "Comparación de gestiones de cobranza humanas vs agentes de IA"
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.0",
-    "pandas>=2.2",
-    "scipy>=1.14",   # fisher_exact, mannwhitneyu, bootstrap, levene: todo lo estadístico
+    "scipy>=1.14",   # fisher_exact, hypergeom, mannwhitneyu y cdist
     "jinja2>=3.1",   # el HTML se renderiza desde plantilla + results.json, nunca a mano
 ]
 

@@ -32,15 +32,16 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 | Paso | Comando | Qué hace | Necesita |
 |---|---|---|---|
 | Inventario | `make inventory` | formato y duración de cada audio | audios |
-| Transcripción | `make transcribe` y `python -m src.transcribe --model large-v3` | dos pasadas locales con whisper.cpp | audios, `whisper-cli`, modelos ggml |
-| Panel | `python -m src.annotate --stage` → `workflows/panel-anotacion.js` → `python -m src.annotate --from-workflow <salida>` | tres agentes ciegos anotan cada llamada y se vota por mayoría | transcripciones, Claude Code |
-| Contraste | `make analyze` | test global, Westfall-Young y estratificación sobre el consenso | consenso del panel |
+| Transcripción | `make transcribe` y `uv run python -m src.transcribe --model large-v3` | dos pasadas locales con whisper.cpp | audios, `whisper-cli`, modelos ggml en `~/.whisper-models/` |
+| Panel | `uv run python -m src.annotate --stage` → `workflows/panel-anotacion.js` (tool Workflow de Claude Code) → `uv run python -m src.annotate --from-workflow <salida>` | tres agentes ciegos anotan cada llamada, se vota por mayoría y se aplica la regla literal de fecha | transcripciones, extracciones (`make extract`), Claude Code |
+| Contraste | `make analyze` | test global y Westfall-Young sobre el consenso, en el total y dentro de las gestiones nuevas | consenso del panel |
 | Anclaje | `make anchoring` | comprueba que cada cita existe en las transcripciones | consenso del panel |
 | Informe | `make report` | arma `results.json` y renderiza el HTML | `data/public/` |
-| Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas; probado en macOS | Chrome, `pdfinfo` |
+| Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas; probado en macOS (`CHROME=<ruta>` en otro sistema) | Chrome, `pdfinfo` |
 
 `make extract` es la pasada única original, de un solo modelo. Se conserva para compararla con el
-panel (`docs/decisiones.md`, §13). Los audios los entrega Creceré y no se versionan.
+panel (`docs/decisiones.md`, §13) y como fuente de citas de la regla literal de fecha (§14): una cita
+suya solo cuenta si existe en la transcripción. Los audios los entrega Creceré y no se versionan.
 
 `make check` pasa formato, linting y tests. `make help` lista todo.
 

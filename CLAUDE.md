@@ -42,7 +42,8 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
 → **Los brazos no comparten cartera**: el humano retoma un acuerdo previo en 26/50, la IA en 0/50.
   Cuatro diferencias de encuadre y promesa se sostienen entre gestiones nuevas, corrigiendo por
   las 8; la de confidencialidad no (tentativa). Los compromisos de pago no difieren (9 vs 17).
-→ Propuesta con cifras: rúbrica literal, «hoy» es fecha (29 vs 29). Ver `docs/decisiones.md` §14.
+→ Propuesta con cifras: rúbrica literal, «hoy» es fecha, solo con citas que existen en la
+  transcripción (28 vs 29). Ver `docs/decisiones.md` §14.
 → La hoja de escucha del lunes (`data/interim/hoja_escucha_compromisos.csv`) valida a oído las 14
   celdas de compromiso sin unanimidad. Su recuento va a `docs/decisiones.md`.
 

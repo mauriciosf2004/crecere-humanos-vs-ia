@@ -89,8 +89,7 @@
             "k_humano": 0,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 1.4056380990483266e-10
+        ]
       }
     },
     {
@@ -123,8 +122,7 @@
             "k_humano": 1,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 2.3327842518478908e-05
+        ]
       }
     },
     {
@@ -139,8 +137,8 @@
       "ci_low_pp": 22.2,
       "ci_high_pp": 52.1,
       "p_raw": 6.9994538061897515e-06,
-      "p_ajustado": 0.00029997000299970003,
-      "p_ajustado_nuevas": 0.0052994700529947,
+      "p_ajustado": 0.00039996000399960006,
+      "p_ajustado_nuevas": 0.004999500049995001,
       "estratificado": {
         "estratos": [
           {
@@ -157,8 +155,7 @@
             "k_humano": 1,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 0.0023591762358725677
+        ]
       }
     },
     {
@@ -173,7 +170,7 @@
       "ci_low_pp": -52.2,
       "ci_high_pp": -21.6,
       "p_raw": 1.548786791526268e-05,
-      "p_ajustado": 0.00029997000299970003,
+      "p_ajustado": 0.00039996000399960006,
       "p_ajustado_nuevas": 0.00029997000299970003,
       "estratificado": {
         "estratos": [
@@ -191,8 +188,7 @@
             "k_humano": 9,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 1.1856964504722364e-05
+        ]
       }
     },
     {
@@ -207,8 +203,8 @@
       "ci_low_pp": 12.5,
       "ci_high_pp": 39.8,
       "p_raw": 0.00038796407137255107,
-      "p_ajustado": 0.023297670232976703,
-      "p_ajustado_nuevas": 0.16478352164783522,
+      "p_ajustado": 0.0206979302069793,
+      "p_ajustado_nuevas": 0.16628337166283372,
       "estratificado": {
         "estratos": [
           {
@@ -225,8 +221,7 @@
             "k_humano": 0,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 0.03897770424618491
+        ]
       }
     },
     {
@@ -241,7 +236,7 @@
       "ci_low_pp": -32.1,
       "ci_high_pp": 1.2,
       "p_raw": 0.10954044613289907,
-      "p_ajustado": 0.2946705329467053,
+      "p_ajustado": 0.25997400259974,
       "p_ajustado_nuevas": 0.7535246475352465,
       "estratificado": {
         "estratos": [
@@ -259,29 +254,28 @@
             "k_humano": 11,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 0.6967805443436489
+        ]
       }
     },
     {
       "variable": "quantified_proposal_stated",
       "etiqueta": "Enuncia una propuesta con cifras",
       "hipotesis": "sin diferencia",
-      "k_ia": 29,
+      "k_ia": 28,
       "n_ia": 50,
       "k_humano": 29,
       "n_humano": 50,
-      "diff_pp": 0.0,
-      "ci_low_pp": -18.7,
-      "ci_high_pp": 18.7,
+      "diff_pp": -2.0,
+      "ci_low_pp": -20.6,
+      "ci_high_pp": 16.8,
       "p_raw": 1.0,
       "p_ajustado": 1.0,
-      "p_ajustado_nuevas": 0.4310568943105689,
+      "p_ajustado_nuevas": 0.49875012498750126,
       "estratificado": {
         "estratos": [
           {
             "estrato": "nuevo",
-            "k_ia": 29,
+            "k_ia": 28,
             "n_ia": 50,
             "k_humano": 10,
             "n_humano": 24
@@ -293,8 +287,7 @@
             "k_humano": 19,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 0.2884831525450815
+        ]
       }
     },
     {
@@ -309,7 +302,7 @@
       "ci_low_pp": -12.9,
       "ci_high_pp": 24.3,
       "p_raw": 0.6845277333681987,
-      "p_ajustado": 0.8458154184581542,
+      "p_ajustado": 0.8076192380761924,
       "p_ajustado_nuevas": 0.8041195880411959,
       "estratificado": {
         "estratos": [
@@ -327,8 +320,7 @@
             "k_humano": 7,
             "n_humano": 26
           }
-        ],
-        "p_cmh": 0.8149207431782528
+        ]
       }
     }
   ],
@@ -368,124 +360,5 @@
     "hodges_lehmann_s": -20.5,
     "cliffs_delta": -0.116,
     "p_mann_whitney": 0.3191709781105352
-  },
-  "exploratorio_intra_brazo": [
-    {
-      "conducta": "legal_department_framing",
-      "etiqueta": "Se presenta desde un área jurídica o de embargos",
-      "brazo": "ia",
-      "k_con": 9,
-      "n_con": 43,
-      "k_sin": 0,
-      "n_sin": 7,
-      "diff_pp": 20.9,
-      "ci_low_pp": -15.8,
-      "ci_high_pp": 35.2,
-      "p": 0.324761223974915
-    },
-    {
-      "conducta": "offer_expiry_claim",
-      "etiqueta": "Afirma que la oferta caduca hoy",
-      "brazo": "ia",
-      "k_con": 7,
-      "n_con": 27,
-      "k_sin": 2,
-      "n_sin": 23,
-      "diff_pp": 17.2,
-      "ci_low_pp": -4.9,
-      "ci_high_pp": 37.0,
-      "p": 0.15188025729836718
-    },
-    {
-      "conducta": "situational_legal_pressure",
-      "etiqueta": "Plantea un proceso legal como consecuencia de no pagar",
-      "brazo": "ia",
-      "k_con": 5,
-      "n_con": 21,
-      "k_sin": 4,
-      "n_sin": 29,
-      "diff_pp": 10.0,
-      "ci_low_pp": -11.3,
-      "ci_high_pp": 32.9,
-      "p": 0.464154539391723
-    },
-    {
-      "conducta": "credit_benefit_promised",
-      "etiqueta": "Promete beneficio en el historial crediticio",
-      "brazo": "humano",
-      "k_con": 7,
-      "n_con": 22,
-      "k_sin": 10,
-      "n_sin": 28,
-      "diff_pp": -3.9,
-      "ci_low_pp": -28.0,
-      "ci_high_pp": 21.8,
-      "p": 1.0
-    },
-    {
-      "conducta": "confidentiality_gate",
-      "etiqueta": "Invoca confidencialidad o verifica identidad",
-      "brazo": "ia",
-      "k_con": 2,
-      "n_con": 14,
-      "k_sin": 7,
-      "n_sin": 36,
-      "diff_pp": -5.2,
-      "ci_low_pp": -23.8,
-      "ci_high_pp": 22.3,
-      "p": 1.0
-    },
-    {
-      "conducta": "quantified_proposal_stated",
-      "etiqueta": "Enuncia una propuesta con cifras",
-      "brazo": "ia",
-      "k_con": 9,
-      "n_con": 29,
-      "k_sin": 0,
-      "n_sin": 21,
-      "diff_pp": 31.0,
-      "ci_low_pp": 10.3,
-      "ci_high_pp": 49.2,
-      "p": 0.006469995593976404
-    },
-    {
-      "conducta": "quantified_proposal_stated",
-      "etiqueta": "Enuncia una propuesta con cifras",
-      "brazo": "humano",
-      "k_con": 16,
-      "n_con": 29,
-      "k_sin": 1,
-      "n_sin": 21,
-      "diff_pp": 50.4,
-      "ci_low_pp": 25.3,
-      "ci_high_pp": 67.3,
-      "p": 0.00019543804331633924
-    },
-    {
-      "conducta": "installment_or_partial_offer",
-      "etiqueta": "Ofrece cuotas o abono parcial",
-      "brazo": "ia",
-      "k_con": 6,
-      "n_con": 22,
-      "k_sin": 3,
-      "n_sin": 28,
-      "diff_pp": 16.6,
-      "ci_low_pp": -5.1,
-      "ci_high_pp": 38.6,
-      "p": 0.15711212394085705
-    },
-    {
-      "conducta": "installment_or_partial_offer",
-      "etiqueta": "Ofrece cuotas o abono parcial",
-      "brazo": "humano",
-      "k_con": 10,
-      "n_con": 19,
-      "k_sin": 7,
-      "n_sin": 31,
-      "diff_pp": 30.1,
-      "ci_low_pp": 2.9,
-      "ci_high_pp": 53.0,
-      "p": 0.03710647870979688
-    }
-  ]
+  }
 }

@@ -190,6 +190,10 @@ def build() -> dict:
     _require(share(expiry, "humano") <= 0.05, "los humanos no usan el vencimiento como presión")
     _require(not significant(commitment), "no se puede decir qué canal consigue más compromisos")
     _require(
+        commitment["p_ajustado_nuevas"] >= ALPHA,
+        "el compromiso tampoco difiere entre gestiones nuevas",
+    )
+    _require(
         least_unanimous == "qualified_payment_commitment",
         "el compromiso es la variable donde más discreparon los anotadores",
     )
@@ -212,10 +216,10 @@ def build() -> dict:
         (
             f"Dos transcripciones locales por llamada. Tres agentes ciegos —{panel_text}— "
             f"respondieron por separado {questions} preguntas cerradas; cada celda es la "
-            "respuesta de al menos dos."
+            "respuesta de la mayoría."
         ),
         (
-            f"{thousands(unanimous)} de {thousands(total_cells)} celdas unánimes; "
+            f"{thousands(unanimous)} de {thousands(total_cells)} celdas con voto unánime; "
             f"{family_anchor['anclados']} de {family_anchor['positivos']} afirmativas y "
             f"{context_anchor['anclados']} de {context_anchor['positivos']} de contexto citan "
             "frases que existen en las transcripciones."

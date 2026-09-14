@@ -80,8 +80,8 @@
         "anclados": 29
       },
       "ia": {
-        "positivos": 29,
-        "con_cita": 29,
+        "positivos": 28,
+        "con_cita": 28,
         "anclados": 27
       }
     },
@@ -129,14 +129,14 @@
       "anclados": 92
     },
     "ia": {
-      "positivos": 168,
-      "con_cita": 168,
+      "positivos": 167,
+      "con_cita": 167,
       "anclados": 166
     }
   },
   "total": {
-    "positivos": 260,
-    "con_cita": 260,
+    "positivos": 259,
+    "con_cita": 259,
     "anclados": 258
   },
   "total_contexto": {

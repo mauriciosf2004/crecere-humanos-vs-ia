@@ -151,9 +151,9 @@
 <circle class="pt null" cx="357.4" cy="146" r="4"/>
 <text class="row-value null" x="516" y="150">+6</text>
 <text class="row-label" x="210" y="171">Propuesta con cifras</text>
-<line class="ci null" x1="326.8" y1="167" x2="373.2" y2="167"/>
-<circle class="pt null" cx="350.0" cy="167" r="4"/>
-<text class="row-value null" x="516" y="171">0</text>
+<line class="ci null" x1="324.5" y1="167" x2="370.8" y2="167"/>
+<circle class="pt null" cx="347.5" cy="167" r="4"/>
+<text class="row-value null" x="516" y="171">−2</text>
 </svg>
     <p class="note">Morado: más en IA · naranja: más en humanos · gris: no concluyente tras corregir por 8 comparaciones · línea: IC 95 %. *Punto hueco: no concluyente entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.</p>
   </section>
@@ -212,19 +212,19 @@
             <td><span class="tag ok">coincide</span></td></tr>
       
         <tr><td>Confidencialidad o identidad*</td><td>más en IA</td><td class="num">14/50</td>
-            <td class="num">1/50</td><td class="num">+26 [+13, +40]</td><td class="num">0,023</td>
+            <td class="num">1/50</td><td class="num">+26 [+13, +40]</td><td class="num">0,021</td>
             <td><span class="tag warn">no concluyente</span></td></tr>
       
         <tr><td>Compromiso con fecha y monto</td><td>más en humanos</td><td class="num">9/50</td>
-            <td class="num">17/50</td><td class="num">−16 [−32, +1]</td><td class="num">0,295</td>
+            <td class="num">17/50</td><td class="num">−16 [−32, +1]</td><td class="num">0,260</td>
             <td><span class="tag neutral">no detectada</span></td></tr>
       
-        <tr><td>Propuesta con cifras</td><td>sin diferencia</td><td class="num">29/50</td>
-            <td class="num">29/50</td><td class="num">0 [−19, +19]</td><td class="num">1,000</td>
+        <tr><td>Propuesta con cifras</td><td>sin diferencia</td><td class="num">28/50</td>
+            <td class="num">29/50</td><td class="num">−2 [−21, +17]</td><td class="num">1,000</td>
             <td><span class="tag neutral">no detectada</span></td></tr>
       
         <tr><td>Ofrece cuotas o abono</td><td>sin diferencia</td><td class="num">22/50</td>
-            <td class="num">19/50</td><td class="num">+6 [−13, +24]</td><td class="num">0,846</td>
+            <td class="num">19/50</td><td class="num">+6 [−13, +24]</td><td class="num">0,808</td>
             <td><span class="tag neutral">no detectada</span></td></tr>
       
       </tbody>
@@ -256,7 +256,7 @@
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de al menos dos.</li><li>1.042 de 1.100 celdas unánimes; 258 de 260 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.</li><li>Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.</li><li>Test global por permutación (p < 0,001) y corrección de Westfall-Young por las 8 comparaciones. Sentido esperado fijado antes de ver la extracción, tras barridos exploratorios de las mismas llamadas.</li><li>En 10 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras.</li></ul>
+      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de la mayoría.</li><li>1.042 de 1.100 celdas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.</li><li>Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.</li><li>Test global por permutación (p < 0,001) y corrección de Westfall-Young por las 8 comparaciones. Sentido esperado fijado antes de ver la extracción, tras barridos exploratorios de las mismas llamadas.</li><li>En 9 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras.</li></ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>

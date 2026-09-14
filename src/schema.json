@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://crecere.local/schema/call_extraction.json",
   "title": "call_extraction",
   "description": "Una fila por llamada. 8 desenlaces de la familia + 2 covariables + 1 descriptivo.",
   "type": "object",
@@ -23,7 +22,7 @@
     "call_id": {
       "type": "string",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-      "description": "UUID del audio. No contiene informacion del brazo."
+      "description": "UUID del audio. No contiene informacion del brazo; al guardar se sustituye por un hash del nombre del archivo."
     },
     "effective_contact": {
       "type": "object",

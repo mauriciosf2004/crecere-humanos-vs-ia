@@ -86,8 +86,8 @@ pero esta muestra no las distingue del ruido, y eso se dice en el informe en vez
 
 De ahí salen tres decisiones:
 
-**Inferencia por permutación.** Exacta con este tamaño y sin supuestos distribucionales. Nada
-de asintótica.
+**Inferencia por permutación.** Monte Carlo, con 10.000 reordenamientos y semilla fija, sin supuestos
+distribucionales. Cada diferencia lleva además su IC de Newcombe y el p de Fisher exacto.
 
 **Dos niveles, en el orden de la pregunta.** Primero un test global sobre el perfil completo de
 las ocho variables, que responde "¿existen diferencias?" con un solo p-valor y sin multiplicidad.
@@ -96,9 +96,10 @@ por sí mismo el error por familia al 5 %. La compuerta no añade control de err
 respuesta, y si el perfil conjunto no difiriera evitaría interpretar variables sueltas.
 
 Se eligió Westfall-Young y no Bonferroni ni Holm porque aprovecha la correlación entre
-variables, que aquí es alta —varias miden partes del mismo guion—. La ganancia se simuló antes
-de adoptarlo: con variables independientes es idéntico a Holm, y con correlación de 0,7 gana
-unos 5 puntos de potencia. Se adoptó sabiendo cuánto compra, no por prestigio.
+variables, que aquí es alta —varias miden partes del mismo guion—, y lo discreto de los datos
+binarios. La ganancia se simuló: frente a Holm sobre los p de Fisher gana potencia incluso con
+variables independientes, y algo más con correlación (`docs/decisiones.md`, §6). Se adoptó
+sabiendo cuánto compra, no por prestigio.
 
 **Tamaños de efecto con intervalo, no p-valores.** Cada contraste se reporta en puntos
 porcentuales con su intervalo de Newcombe. Con esta potencia, un p-valor solo no dice si la

@@ -3,7 +3,8 @@
 La extracción original es una sola pasada de un solo modelo. Para no depender de ella,
 cada transcripción la anotan tres agentes, sin ver lo que respondieron los otros ni la
 extracción original, y cada celda se queda con la respuesta de al menos dos de tres. Si
-no hay mayoría, la celda queda vacía y marcada.
+no hay mayoría, la celda queda vacía y marcada. La extracción solo vuelve a entrar en la
+regla literal de fecha, como fuente de citas que tienen que existir en la transcripción.
 
   clasificador   Sonnet   aplica la rúbrica
   auditor        Opus     aplica la rúbrica
@@ -27,6 +28,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from src.anchoring import is_anchored, transcripts_seen
 from src.extract import SCHEMA, call_id, clean
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -43,7 +45,7 @@ PANEL = {"clasificador": "sonnet", "auditor": "opus", "reauditor": "opus"}
 
 # La rúbrica cuenta «hoy» como fecha resoluble en la propuesta con cifras (src/rubric.md,
 # variable 10). El panel no la aceptó cuando la fecha era el vencimiento de la oferta
-# («vencería hoy mismo»). Se aplica la regla escrita antes de anotar, sin volver a anotar.
+# («vencería hoy mismo»). La regla escrita se aplica después del voto, sin volver a anotar.
 LITERAL_DATE_FIELD = "quantified_proposal_stated"
 AMOUNT = re.compile(r"\d|\bmil\b|\bmill[oó]n", re.I)
 TODAY = re.compile(r"\bhoy\b", re.I)
@@ -131,19 +133,24 @@ def vote(rows: list[dict], names: list[str]) -> dict:
     return consensus
 
 
-def apply_literal_date_rule(consensus: dict, sources: list[dict]) -> bool:
+def apply_literal_date_rule(consensus: dict, sources: list[dict], transcripts: list[str]) -> bool:
     """Aplica la regla literal de fecha a la propuesta con cifras. Devuelve si cambió la celda.
 
     Si la celda no quedó en True pero alguna anotación de la llamada —del panel o de la
-    extracción original— la marcó True citando un monto y «hoy», pasa a True con esa cita.
-    La regla es simétrica entre brazos, y la cita se sigue verificando en el anclaje.
+    extracción original— la marcó True con una cita que tiene un monto y «hoy», y esa cita
+    existe en la transcripción, la celda pasa a True con ella. Una cita que no ancla no
+    basta para contradecir al panel. La regla es simétrica entre brazos.
     """
     if _value(consensus.get(LITERAL_DATE_FIELD)) is True:
         return False
     for source in sources:
         candidate = source.get(LITERAL_DATE_FIELD)
         quote = candidate.get("quote") if isinstance(candidate, dict) else None
-        if _value(candidate) is True and quote and AMOUNT.search(quote) and TODAY.search(quote):
+        if not (
+            _value(candidate) is True and quote and AMOUNT.search(quote) and TODAY.search(quote)
+        ):
+            continue
+        if any(is_anchored(quote, text) for text in transcripts):
             consensus[LITERAL_DATE_FIELD] = {"value": True, "quote": quote}
             consensus.setdefault("_ajustes", {})[LITERAL_DATE_FIELD] = (
                 "regla literal: «hoy» es fecha"
@@ -171,7 +178,8 @@ def consolidate() -> dict:
         consensus = vote(rows, names)
         original = EXTRACTIONS / arm / f"{stem}.json"
         extra = [json.loads(original.read_text(encoding="utf-8"))] if original.exists() else []
-        adjusted[arm] += apply_literal_date_rule(consensus, rows + extra)
+        texts = transcripts_seen(arm, stem, CONSENSUS)
+        adjusted[arm] += apply_literal_date_rule(consensus, rows + extra, texts)
         target = CONSENSUS / arm / f"{stem}.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(consensus, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -234,15 +242,27 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.stage:
-        print(json.dumps(stage(), ensure_ascii=False))
+        staged = stage()
+        if not staged["llamadas"]:
+            raise SystemExit(
+                "No hay transcripciones en data/interim/transcripts. Corre `make transcribe`."
+            )
+        print(json.dumps(staged, ensure_ascii=False))
         return
 
     if args.from_workflow:
+        if not args.from_workflow.exists():
+            raise SystemExit(f"No existe la salida del workflow: {args.from_workflow}")
         payload = json.loads(args.from_workflow.read_text(encoding="utf-8"))
         result = payload.get("result", payload)
         print(f"Guardadas {persist(result['anotaciones'])} anotaciones")
 
     summary = consolidate()
+    if not summary["llamadas_con_tres_votos"] + summary["llamadas_con_dos_votos"]:
+        raise SystemExit(
+            "No hay anotaciones del panel en data/interim/annotations: nada que votar. "
+            "Ver docs/panel-de-anotacion.md."
+        )
     agreement = agreement_with_extraction(fields())
     PUBLIC.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "agreement.json").write_text(

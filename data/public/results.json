@@ -104,10 +104,10 @@
       "etiqueta": "Propuesta con cifras",
       "tentativo": false,
       "significativo": false,
-      "diff_pp": 0.0,
-      "ci_low_pp": -18.7,
-      "ci_high_pp": 18.7,
-      "n_ia": "29/50",
+      "diff_pp": -2.0,
+      "ci_low_pp": -20.6,
+      "ci_high_pp": 16.8,
+      "n_ia": "28/50",
       "n_humano": "29/50"
     }
   ],
@@ -186,7 +186,7 @@
       "ia": "14/50",
       "humano": "1/50",
       "diff": "+26 [+13, +40]",
-      "p": "0,023",
+      "p": "0,021",
       "estado": "no concluyente",
       "estado_clase": "warn"
     },
@@ -196,16 +196,16 @@
       "ia": "9/50",
       "humano": "17/50",
       "diff": "−16 [−32, +1]",
-      "p": "0,295",
+      "p": "0,260",
       "estado": "no detectada",
       "estado_clase": "neutral"
     },
     {
       "variable": "Propuesta con cifras",
       "esperado": "sin diferencia",
-      "ia": "29/50",
+      "ia": "28/50",
       "humano": "29/50",
-      "diff": "0 [−19, +19]",
+      "diff": "−2 [−21, +17]",
       "p": "1,000",
       "estado": "no detectada",
       "estado_clase": "neutral"
@@ -216,7 +216,7 @@
       "ia": "22/50",
       "humano": "19/50",
       "diff": "+6 [−13, +24]",
-      "p": "0,846",
+      "p": "0,808",
       "estado": "no detectada",
       "estado_clase": "neutral"
     }
@@ -245,11 +245,11 @@
     }
   ],
   "metodo": [
-    "Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de al menos dos.",
-    "1.042 de 1.100 celdas unánimes; 258 de 260 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.",
+    "Dos transcripciones locales por llamada. Tres agentes ciegos —uno con Sonnet y dos con Opus— respondieron por separado 11 preguntas cerradas; cada celda es la respuesta de la mayoría.",
+    "1.042 de 1.100 celdas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto citan frases que existen en las transcripciones.",
     "Una pasada con un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.",
     "Test global por permutación (p < 0,001) y corrección de Westfall-Young por las 8 comparaciones. Sentido esperado fijado antes de ver la extracción, tras barridos exploratorios de las mismas llamadas.",
-    "En 10 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras."
+    "En 9 llamadas se aplicó la rúbrica literal: «hoy» cuenta como fecha en la propuesta con cifras."
   ],
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",

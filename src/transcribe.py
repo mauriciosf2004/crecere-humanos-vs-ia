@@ -10,7 +10,7 @@ transcripción es fiable, y donde difieren los anotadores reciben las dos versio
 Decisiones de configuración, todas medidas y no heredadas:
   sin -nt          -nt no es cosmético: colapsa la decodificación en bloques de 30 s
                    y pierde ~23% de las palabras. Sin él salen los segmentos reales
-                   con sus offsets, que son la base de las métricas libres de rol.
+                   con sus offsets.
   -l es            el autodetector se equivoca en audio telefónico de 8 kHz
   -bs 5 -bo 5      beam search; el greedy alucina más en silencios
   sin --prompt     un prompt de dominio es una vía conocida de texto alucinado
