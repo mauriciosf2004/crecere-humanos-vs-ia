@@ -1,7 +1,7 @@
 // Script de orquestación que produjo las 300 anotaciones del panel, tal como se ejecutó con el
 // tool Workflow de Claude Code. Único cambio respecto a lo ejecutado: la ruta del repositorio,
 // que ahora llega como argumento, y la rúbrica, que es opcional (por defecto src/rubric.md).
-// Invocación: args = { root, calls: [[brazo, uuid], ...], schema, rubric? } con el esquema de la
+// Invocación: args = { root, calls: [[brazo, uuid], ...], schema, rubric?, jobs? } con el esquema
 // rúbrica elegida. Ver docs/panel-de-anotacion.md.
 export const meta = {
   name: 'panel-anotacion',
@@ -47,10 +47,12 @@ const common = (stem) => {
 
 phase('Anotar')
 
-const jobs = []
-for (const [arm, stem] of args.calls) {
-  for (const r of ROLES) jobs.push({ arm, stem, ...r })
-}
+// args.jobs = [[brazo, uuid, rol], ...] reanuda solo lo que falta; si no viene, se anotan
+// las tres veces todas las llamadas de args.calls.
+const byRole = Object.fromEntries(ROLES.map((r) => [r.rol, r]))
+const jobs = args.jobs
+  ? args.jobs.map(([arm, stem, rol]) => ({ arm, stem, ...byRole[rol] }))
+  : args.calls.flatMap(([arm, stem]) => ROLES.map((r) => ({ arm, stem, ...r })))
 
 const results = await parallel(
   jobs.map((j) => () =>

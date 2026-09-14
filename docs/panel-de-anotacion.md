@@ -86,3 +86,7 @@ con 6 llamadas; las aclaraciones de redacción están en `docs/decisiones.md` §
 `args.rubric = "src/rubric_desenlace.md"`, y `uv run python -m src.disposition --from-workflow <salida>`
 guarda, vota, ancla y calcula los cortes.
 
+El panel es reanudable: si una corrida se interrumpe, se guardan las anotaciones que sí salieron
+y la siguiente se lanza con `args.jobs = [[brazo, uuid, rol], ...]`, solo con lo que falta. Así se
+completaron las 300 anotaciones del desenlace en dos tandas.
+
