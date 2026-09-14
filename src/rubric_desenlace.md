@@ -113,11 +113,11 @@ inmediatamente después, en sus turnos siguientes:
 | `reconoce_sin_ofrecer` | Reconoce la situación, pero no ofrece alternativa. |
 | `insiste_o_presiona` | Repite la exigencia original o menciona consecuencias (jurídicas, reportes, vencimiento de la oferta) sin reconocer ni ofrecer alternativa. |
 
-Citas:
-
 **Ofrecer una alternativa** es proponer algo distinto de lo exigido —otra fecha, otro monto, cuotas— o
 invitar al interlocutor a proponer una fecha o un monto que pueda cumplir (`¿qué fecha le queda
 bien?`). Repetir la oferta original no es una alternativa.
+
+Citas:
 
 - `quote_difficulty`: la frase del interlocutor que expresa la dificultad.
 - `quote_response`: la respuesta del agente que decide el valor.
