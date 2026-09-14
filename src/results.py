@@ -10,6 +10,7 @@ armado falla en vez de publicarla.
 
 from __future__ import annotations
 
+import csv
 import json
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
@@ -18,6 +19,7 @@ from src.charts import signed
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
+REFERENCE = ROOT / "data" / "reference"
 SCHEMA = ROOT / "src" / "schema.json"
 ALPHA = 0.05
 NBSP = " "
@@ -96,6 +98,82 @@ def p_text(p: float) -> str:
     return f"p {formatted}" if formatted.startswith("<") else f"p = {formatted}"
 
 
+def tiers(item: dict, quantity: float) -> float:
+    """Costo por tramos de volumen: cada unidad paga el precio del tramo en el que cae."""
+    if "tramos" not in item:
+        return quantity * item["precio"]
+    total, used = 0.0, 0.0
+    for tier in item["tramos"]:
+        limit = next((v for k, v in tier.items() if k.startswith("hasta")), None)
+        cap = quantity if limit is None else min(quantity, float(limit))
+        total += max(0.0, cap - used) * tier["precio"]
+        used = cap
+        if used >= quantity:
+            break
+    return total
+
+
+def scale_costs(costos: dict) -> dict:
+    """Costo mensual de cada arquitectura, calculado desde data/reference/costos.json.
+
+    Las fórmulas están documentadas en ese archivo; aquí no se escribe ningún total a mano.
+    """
+    s = costos["supuestos"]
+    price = {p["id"]: p for p in costos["partidas"]}
+    calls, minutes = s["llamadas_mes"], s["minutos_por_llamada"]
+    gib_text = calls * s["bytes_texto_por_llamada"] / 2**30
+    annotations = calls * s["anotadores_por_llamada"]
+    tokens_in = (
+        s["tokens_rubrica_por_llamada"] + s["tokens_transcripcion_por_llamada"]
+    ) * annotations
+    tokens_out = s["tokens_salida_por_llamada"] * annotations
+    base = (
+        tiers(price["dlp_inspeccion"], gib_text)
+        + tiers(price["dlp_transformacion"], gib_text)
+        + (
+            tokens_in * price["gemini_38_flash_lote_entrada_2026"]["precio"]
+            + tokens_out * price["gemini_38_flash_lote_salida_2026"]["precio"]
+        )
+        / 1e6
+        + calls
+        * minutes
+        * s["gib_audio_por_minuto_mono"]
+        * price["cloud_storage_estandar"]["precio"]
+    )
+    return {
+        "llamadas_mes": calls,
+        "minutos": minutes,
+        "propio_lote": base + calls * minutes * price["stt_v2_lote_dinamico"]["precio"],
+        "propio_lote_estereo": base
+        + calls * minutes * s["canales"]["estereo"] * price["stt_v2_lote_dinamico"]["precio"],
+        "propio_estandar": base + tiers(price["stt_v2_estandar"], calls * minutes),
+        "whisper_l4": base
+        + calls
+        * minutes
+        / 60
+        / s["factor_tiempo_real_whisper_l4"]
+        * price["gpu_l4_g2_standard_8"]["precio"],
+        "comprada": calls * minutes * price["cx_insights_voz_standard"]["precio"],
+    }
+
+
+def on_titular() -> dict:
+    """Compromiso con fecha y monto sobre las llamadas en que contestó el titular.
+
+    Es el denominador que usa un banco para la promesa de pago (PTP): contactos con el
+    titular, no llamadas marcadas.
+    """
+    counts = {"ia": [0, 0], "humano": [0, 0]}
+    with (PUBLIC / "features.csv").open(encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            if row["effective_contact"] != "titular":
+                continue
+            bucket = counts[row["arm"]]
+            bucket[0] += int(row["qualified_payment_commitment"])
+            bucket[1] += 1
+    return {arm: {"k": k, "n": n} for arm, (k, n) in counts.items()}
+
+
 def significant(item: dict) -> bool:
     return item["p_ajustado"] is not None and item["p_ajustado"] < ALPHA
 
@@ -135,6 +213,9 @@ def build() -> dict:
     anchoring = json.loads((PUBLIC / "anchoring.json").read_text(encoding="utf-8"))
     agreement = json.loads((PUBLIC / "agreement.json").read_text(encoding="utf-8"))
     questions = len(json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]) - 1
+    norms = json.loads((REFERENCE / "cumplimiento.json").read_text(encoding="utf-8"))
+    scale = scale_costs(json.loads((REFERENCE / "costos.json").read_text(encoding="utf-8")))
+    titular = on_titular()
     _require(effects["fuente"] == "consensus", "los datos son el consenso del panel")
 
     contrasts = effects["contrastes"]
@@ -288,85 +369,47 @@ def build() -> dict:
             "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra "
             "· línea: margen de error 95 %."
             + (" *Hueco: no se sostiene entre gestiones nuevas." if any_tentative else "")
-            + f" El {rate(prior, 'humano')} de las llamadas humanas retomaba un acuerdo previo"
-            + ("; ninguna de IA." if prior["k_ia"] == 0 else f"; de IA, el {rate(prior, 'ia')}.")
         ),
+        "cumplimiento": {
+            "rotulo": norms["rotulo"],
+            "advertencia": norms["advertencia"],
+            "filas": [
+                {
+                    "conducta": alert["conducta"],
+                    "ia": rate(by_name[alert["variable"]], "ia"),
+                    "humano": rate(by_name[alert["variable"]], "humano"),
+                    "norma": alert["norma_corta"],
+                    "accion": alert["accion"],
+                }
+                for alert in norms["alertas"]
+            ],
+        },
         "hallazgos": [
             {
                 "claim": (
-                    "La IA se presenta como área jurídica o de embargos en el "
-                    f"{rate(legal, 'ia')} de las llamadas, frente al {rate(legal, 'humano')} de "
-                    f"los humanos: {points(legal)} pp."
-                ),
-                "why": "Se mantiene entre gestiones nuevas.",
-                "accion": "Revisar ese encuadre con cumplimiento antes de escalar el canal.",
-            },
-            {
-                "claim": (
-                    f"La IA dice que la oferta vence hoy en el {rate(expiry, 'ia')} de las "
-                    f"llamadas, frente al {rate(expiry, 'humano')} de los humanos: "
-                    f"{points(expiry)} pp."
-                ),
-                "why": "Crea urgencia; las grabaciones no dicen si el plazo es real.",
-                "accion": "Contrastar cada vencimiento con la matriz de condonaciones.",
-            },
-            {
-                "claim": (
-                    "La IA casi no promete beneficios en el historial crediticio: "
-                    f"{rate(credit, 'ia')} de sus llamadas, frente al {rate(credit, 'humano')} de "
-                    f"los humanos: {points(credit)} pp."
-                ),
-                "why": "Se midió que se ofrezca, no que sea cierto.",
-                "accion": "Incluir qué se promete en el muestreo de calidad de los gestores.",
-            },
-            {
-                "claim": (
-                    "La IA anuncia un proceso legal si no se paga en el "
-                    f"{rate(threat, 'ia')} de las llamadas, frente al {rate(threat, 'humano')} de "
-                    f"los humanos: {points(threat)} pp."
-                ),
-                "why": "No es el nombre del área: es la consecuencia que se anuncia.",
-                "accion": "Medir en el piloto si retirar ese anuncio cambia la conversión.",
-            },
-            {
-                "claim": (
-                    f"La IA logra compromiso de pago en el {rate(commitment, 'ia')} de las "
-                    f"llamadas, frente al {rate(commitment, 'humano')} de los humanos: "
-                    f"{points(commitment)} pp, no concluyente."
+                    "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en el "
+                    f"{pct(titular['ia']['k'], titular['ia']['n'])} de las llamadas y los humanos "
+                    f"en el {pct(titular['humano']['k'], titular['humano']['n'])}."
                 ),
                 "why": (
-                    "Entre gestiones nuevas, "
-                    f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} frente a "
+                    "No concluyente. Entre gestiones nuevas, IA "
+                    f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} y humanos "
                     f"{pct(new_commitment['k_humano'], new_commitment['n_humano'])}."
                 ),
                 "accion": (
-                    f"Asignar cuentas al azar: al menos {pilot['10']} por canal para detectar "
+                    f"Medirlo en un piloto: al menos {pilot['10']} cuentas por grupo para detectar "
                     "10 pp."
                 ),
             },
-        ],
-        "tabla": [
             {
-                "variable": label(item),
-                "esperado": EXPECTED[item["hipotesis"]],
-                "ia": f"{item['k_ia']}/{item['n_ia']}",
-                "humano": f"{item['k_humano']}/{item['n_humano']}",
-                "diff": interval(item),
-                "p": p_value(item["p_ajustado"]),
-                "estado": status(item)[0],
-                "estado_clase": status(item)[1],
-            }
-            for item in contrasts
+                "claim": (
+                    f"Carteras distintas: el {rate(prior, 'humano')} de las llamadas humanas "
+                    "retomaba un acuerdo previo; ninguna de la IA."
+                ),
+                "why": "",
+                "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
+            },
         ],
-        "tabla_nota": (
-            f"p ajustado por las {len(contrasts)} comparaciones."
-            + "".join(
-                f" *{SHORT[i['variable']]}: {p_value(i['p_ajustado'])} en el total, "
-                f"{p_value(i['p_ajustado_nuevas'])} entre gestiones nuevas."
-                for i in contrasts
-                if tentative(i)
-            )
-        ),
         "composicion": [
             {
                 "etiqueta": item["etiqueta"],
@@ -385,6 +428,63 @@ def build() -> dict:
             + f" Duración mediana: {duration['mediana_ia_s']:.0f} s en IA y "
             + f"{duration['mediana_humano_s']:.0f} s en humanos, sin diferencia concluyente "
             + f"({p_text(duration['p_mann_whitney'])})."
+        ),
+        "kpis_banco": [
+            {
+                "kpi": "Contacto con el titular",
+                "hoy": f"sí · IA {rate(contact, 'ia')}, humanos {rate(contact, 'humano')}",
+                "piloto": "sí, con los intentos del marcador",
+                "produccion": "sí",
+            },
+            {
+                "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
+                "hoy": (
+                    f"sí · IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
+                    f"{pct(titular['humano']['k'], titular['humano']['n'])}"
+                ),
+                "piloto": "sí",
+                "produccion": "sí",
+            },
+            {
+                "kpi": "Promesa cumplida y recaudo a 30 días",
+                "hoy": "no: exige datos de pago",
+                "piloto": "sí, KPI principal",
+                "produccion": "sí",
+            },
+            {
+                "kpi": "Cure rate por tramo de mora",
+                "hoy": "no: exige cartera",
+                "piloto": "a 90 días",
+                "produccion": "sí",
+            },
+            {
+                "kpi": "Costo por peso recuperado",
+                "hoy": "no: exige costos y recaudo",
+                "piloto": "sí",
+                "produccion": "sí",
+            },
+            {
+                "kpi": "Alertas de cumplimiento por canal",
+                "hoy": "sí, las cuatro de arriba",
+                "piloto": "sí",
+                "produccion": "sí, en todas las llamadas",
+            },
+            {
+                "kpi": "Horario y frecuencia de contacto (Ley 2300)",
+                "hoy": "no: exige los registros del marcador",
+                "piloto": "sí",
+                "produccion": "sí",
+            },
+        ],
+        "escala": (
+            "transcribir, borrar datos personales, anotar y el tablero cuestan desde "
+            "transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero "
+            f"cuestan desde {thousands(round(scale['propio_lote']))} USD al mes "
+            f"({thousands(round(scale['propio_lote_estereo']))} grabando agente y deudor en "
+            "canales separados, que es lo que habilita medir la voz). A precio estándar, "
+            f"{thousands(round(scale['propio_estandar']))}; la analítica comprada, "
+            f"{thousands(round(scale['comprada']))}. Precios oficiales, sin ingeniería: "
+            "data/reference/costos.json."
         ),
         "palancas": [
             {

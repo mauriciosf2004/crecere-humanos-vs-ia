@@ -82,6 +82,7 @@
   .forest line.ci.tentative { stroke-dasharray:3 2; }
   /* tabla estrecha: con solo dos cifras por fila, a ancho completo quedaban lejos de su etiqueta */
   table.compact { width:62%; }
+  table.risk td:first-child { font-weight:600; }
   ul.levers { margin:0; padding-left:4mm; }
   ul.bullets { margin:0; padding-left:3.5mm; }
   ul.bullets li { margin-bottom:1mm; }
@@ -114,6 +115,21 @@
   </div>
 
   <section>
+    <h2>{{ cumplimiento.rotulo|default('Alerta para revisión de cumplimiento') }}</h2>
+    <table class="risk">
+      <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
+        <th>Norma</th><th>Qué hacer</th></tr></thead>
+      <tbody>
+      {% for a in cumplimiento.filas %}
+        <tr><td>{{ a.conducta }}</td><td class="num">{{ a.ia }}</td><td class="num">{{ a.humano }}</td>
+            <td>{{ a.norma }}</td><td>{{ a.accion }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="note">{{ cumplimiento.advertencia }}</p>
+  </section>
+
+  <section>
     <h2>Dónde difieren, y cuánto</h2>
     {{ forest_svg|safe }}
     <p class="note">{{ forest_nota }}</p>
@@ -138,19 +154,16 @@
   </header>
 
   <section>
-    <h2>Hipótesis y resultado</h2>
+    <h2>Lo que el banco necesita y cuándo lo tendrá</h2>
     <table>
-      <thead><tr><th>Conducta</th><th>Sentido esperado</th><th class="num">IA</th><th class="num">Humano</th>
-        <th class="num">Diferencia, pp [IC 95 %]</th><th class="num">p ajustado</th><th>Resultado</th></tr></thead>
+      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th>
+        <th>En producción</th></tr></thead>
       <tbody>
-      {% for r in tabla %}
-        <tr><td>{{ r.variable }}</td><td>{{ r.esperado }}</td><td class="num">{{ r.ia }}</td>
-            <td class="num">{{ r.humano }}</td><td class="num">{{ r.diff }}</td><td class="num">{{ r.p }}</td>
-            <td><span class="tag {{ r.estado_clase }}">{{ r.estado }}</span></td></tr>
+      {% for k in kpis_banco %}
+        <tr><td>{{ k.kpi }}</td><td>{{ k.hoy }}</td><td>{{ k.piloto }}</td><td>{{ k.produccion }}</td></tr>
       {% endfor %}
       </tbody>
     </table>
-    <p class="note">{{ tabla_nota }}</p>
   </section>
 
   <section>
@@ -182,6 +195,7 @@
     <ul class="levers">
       {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
     </ul>
+    <p class="note">{{ escala }}</p>
   </section>
 
   <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>2 / 2</span></footer>

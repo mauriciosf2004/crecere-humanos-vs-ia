@@ -76,3 +76,13 @@ como fecha, como dice la rúbrica. El panel no lo había aceptado cuando la fech
 la oferta. La celda solo cambia si alguna anotación —del panel o de la extracción— cita un monto y
 «hoy», y esa cita existe en la transcripción. Ver `docs/decisiones.md`, §14.
 
+## Segunda rúbrica: desenlace y reacción del interlocutor
+
+El mismo panel, con el mismo script y las mismas instrucciones, anotó una segunda rúbrica:
+`src/rubric_desenlace.md` (esquema `src/schema_desenlace.json`). Mide cómo termina la llamada,
+incluido el acuerdo parcial, cómo está el interlocutor al final y qué hace el agente cuando el
+interlocutor expresa una dificultad. Se congeló antes de anotar (`docs/hipotesis.md` §7) y se probó
+con 6 llamadas; las aclaraciones de redacción están en `docs/decisiones.md` §15. Se invoca con
+`args.rubric = "src/rubric_desenlace.md"`, y `uv run python -m src.disposition --from-workflow <salida>`
+guarda, vota, ancla y calcula los cortes.
+

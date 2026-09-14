@@ -111,117 +111,53 @@
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas. El 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de IA.",
+  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas.",
+  "cumplimiento": {
+    "rotulo": "Alerta para revisión de cumplimiento",
+    "advertencia": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
+    "filas": [
+      {
+        "conducta": "Se presenta como área jurídica",
+        "ia": "86 %",
+        "humano": "2 %",
+        "norma": "SFC CE 048/2008; Ley 1328 art. 3 c",
+        "accion": "Confirmar con el banco que el área existe y gestiona esa cartera."
+      },
+      {
+        "conducta": "Plantea un proceso legal",
+        "ia": "42 %",
+        "humano": "4 %",
+        "norma": "CGP art. 599; Ley 1328 art. 3 c",
+        "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion."
+      },
+      {
+        "conducta": "Dice que la oferta vence hoy",
+        "ia": "54 %",
+        "humano": "2 %",
+        "norma": "Ley 1328 art. 3 c",
+        "accion": "Contrastar la caducidad con la matriz de condonaciones vigente."
+      },
+      {
+        "conducta": "Promete beneficio crediticio",
+        "ia": "6 %",
+        "humano": "44 %",
+        "norma": "Ley 1266 arts. 13 y 18 (mod. Ley 2157)",
+        "accion": "Alinear el guion con los plazos de permanencia del reporte."
+      }
+    ]
+  },
   "hallazgos": [
     {
-      "claim": "La IA se presenta como área jurídica o de embargos en el 86 % de las llamadas, frente al 2 % de los humanos: 84 pp.",
-      "why": "Se mantiene entre gestiones nuevas.",
-      "accion": "Revisar ese encuadre con cumplimiento antes de escalar el canal."
+      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en el 29 % de las llamadas y los humanos en el 37 %.",
+      "why": "No concluyente. Entre gestiones nuevas, IA 18 % y humanos 25 %.",
+      "accion": "Medirlo en un piloto: al menos 356 cuentas por grupo para detectar 10 pp."
     },
     {
-      "claim": "La IA dice que la oferta vence hoy en el 54 % de las llamadas, frente al 2 % de los humanos: 52 pp.",
-      "why": "Crea urgencia; las grabaciones no dicen si el plazo es real.",
-      "accion": "Contrastar cada vencimiento con la matriz de condonaciones."
-    },
-    {
-      "claim": "La IA casi no promete beneficios en el historial crediticio: 6 % de sus llamadas, frente al 44 % de los humanos: 38 pp.",
-      "why": "Se midió que se ofrezca, no que sea cierto.",
-      "accion": "Incluir qué se promete en el muestreo de calidad de los gestores."
-    },
-    {
-      "claim": "La IA anuncia un proceso legal si no se paga en el 42 % de las llamadas, frente al 4 % de los humanos: 38 pp.",
-      "why": "No es el nombre del área: es la consecuencia que se anuncia.",
-      "accion": "Medir en el piloto si retirar ese anuncio cambia la conversión."
-    },
-    {
-      "claim": "La IA logra compromiso de pago en el 18 % de las llamadas, frente al 34 % de los humanos: 16 pp, no concluyente.",
-      "why": "Entre gestiones nuevas, 18 % frente a 25 %.",
-      "accion": "Asignar cuentas al azar: al menos 356 por canal para detectar 10 pp."
+      "claim": "Carteras distintas: el 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de la IA.",
+      "why": "",
+      "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
   ],
-  "tabla": [
-    {
-      "variable": "Se presenta como área jurídica",
-      "esperado": "mucho más en IA",
-      "ia": "43/50",
-      "humano": "1/50",
-      "diff": "+84 [+69, +91]",
-      "p": "< 0,001",
-      "estado": "detectada",
-      "estado_clase": "ok"
-    },
-    {
-      "variable": "Dice que la oferta vence hoy",
-      "esperado": "mucho más en IA",
-      "ia": "27/50",
-      "humano": "1/50",
-      "diff": "+52 [+36, +65]",
-      "p": "< 0,001",
-      "estado": "detectada",
-      "estado_clase": "ok"
-    },
-    {
-      "variable": "Plantea un proceso legal",
-      "esperado": "mucho más en IA",
-      "ia": "21/50",
-      "humano": "2/50",
-      "diff": "+38 [+22, +52]",
-      "p": "< 0,001",
-      "estado": "detectada",
-      "estado_clase": "ok"
-    },
-    {
-      "variable": "Promete beneficio crediticio",
-      "esperado": "mucho más en humanos",
-      "ia": "3/50",
-      "humano": "22/50",
-      "diff": "−38 [−52, −22]",
-      "p": "< 0,001",
-      "estado": "detectada",
-      "estado_clase": "ok"
-    },
-    {
-      "variable": "Confidencialidad o identidad*",
-      "esperado": "más en IA",
-      "ia": "14/50",
-      "humano": "1/50",
-      "diff": "+26 [+12, +40]",
-      "p": "0,021",
-      "estado": "solo en el total",
-      "estado_clase": "warn"
-    },
-    {
-      "variable": "Compromiso con fecha y monto",
-      "esperado": "más en humanos",
-      "ia": "9/50",
-      "humano": "17/50",
-      "diff": "−16 [−32, +1]",
-      "p": "0,260",
-      "estado": "no detectada",
-      "estado_clase": "neutral"
-    },
-    {
-      "variable": "Propuesta con cifras",
-      "esperado": "sin diferencia",
-      "ia": "28/50",
-      "humano": "29/50",
-      "diff": "−2 [−21, +17]",
-      "p": "1",
-      "estado": "no detectada",
-      "estado_clase": "neutral"
-    },
-    {
-      "variable": "Ofrece cuotas o abono",
-      "esperado": "sin diferencia",
-      "ia": "22/50",
-      "humano": "19/50",
-      "diff": "+6 [−13, +24]",
-      "p": "0,808",
-      "estado": "no detectada",
-      "estado_clase": "neutral"
-    }
-  ],
-  "tabla_nota": "p ajustado por las 8 comparaciones. *Confidencialidad o identidad: 0,021 en el total, 0,166 entre gestiones nuevas.",
   "composicion": [
     {
       "etiqueta": "Retoma un acuerdo de pago previo",
@@ -235,6 +171,51 @@
     }
   ],
   "composicion_nota": "El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o la conducta. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
+  "kpis_banco": [
+    {
+      "kpi": "Contacto con el titular",
+      "hoy": "sí · IA 62 %, humanos 92 %",
+      "piloto": "sí, con los intentos del marcador",
+      "produccion": "sí"
+    },
+    {
+      "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
+      "hoy": "sí · IA 29 %, humanos 37 %",
+      "piloto": "sí",
+      "produccion": "sí"
+    },
+    {
+      "kpi": "Promesa cumplida y recaudo a 30 días",
+      "hoy": "no: exige datos de pago",
+      "piloto": "sí, KPI principal",
+      "produccion": "sí"
+    },
+    {
+      "kpi": "Cure rate por tramo de mora",
+      "hoy": "no: exige cartera",
+      "piloto": "a 90 días",
+      "produccion": "sí"
+    },
+    {
+      "kpi": "Costo por peso recuperado",
+      "hoy": "no: exige costos y recaudo",
+      "piloto": "sí",
+      "produccion": "sí"
+    },
+    {
+      "kpi": "Alertas de cumplimiento por canal",
+      "hoy": "sí, las cuatro de arriba",
+      "piloto": "sí",
+      "produccion": "sí, en todas las llamadas"
+    },
+    {
+      "kpi": "Horario y frecuencia de contacto (Ley 2300)",
+      "hoy": "no: exige los registros del marcador",
+      "piloto": "sí",
+      "produccion": "sí"
+    }
+  ],
+  "escala": "transcribir, borrar datos personales, anotar y el tablero cuestan desde transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados, que es lo que habilita medir la voz). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",

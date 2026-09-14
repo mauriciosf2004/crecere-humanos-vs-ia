@@ -42,7 +42,9 @@ def render() -> Path:
         undefined=StrictUndefined,  # una variable que falte rompe el build, no sale en blanco
         autoescape=True,
     )
-    html = env.get_template("template.html.j2").render(forest_svg=forest(rows), **results)
+    html = env.get_template("template.html.j2").render(
+        forest_svg=forest(rows, row_height=19), **results
+    )
     OUTPUT.write_text(html, encoding="utf-8")
     return OUTPUT
 

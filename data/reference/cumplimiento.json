@@ -1,0 +1,72 @@
+{
+  "consultado": "2026-09-13",
+  "rotulo": "Alerta para revisión de cumplimiento",
+  "advertencia": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
+  "alertas": [
+    {
+      "variable": "legal_department_framing",
+      "conducta": "Se presenta como área jurídica",
+      "norma_corta": "SFC CE 048/2008; Ley 1328 art. 3 c",
+      "por_que": "Si el área no existe o no lleva esa cartera, la presentación podría no identificar debidamente.",
+      "accion": "Confirmar con el banco que el área existe y gestiona esa cartera.",
+      "fuentes": [
+        "https://normograma.com/keralty/compilacion/docs/circular_superfinanciera_0048_2008.htm",
+        "https://dmsjuridica.com/CODIGOS/LEGISLACION/LEYES/2009/LEY_1328_DE_2009.htm"
+      ],
+      "verificado": "espejo normativo"
+    },
+    {
+      "variable": "situational_legal_pressure",
+      "conducta": "Plantea un proceso legal",
+      "norma_corta": "CGP art. 599; Ley 1328 art. 3 c",
+      "por_que": "Anunciar un proceso legal no previsto podría no ser información cierta; el embargo se solicita desde la demanda.",
+      "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion.",
+      "fuentes": [
+        "https://leyes.co/codigo_general_del_proceso/599.htm",
+        "https://dmsjuridica.com/CODIGOS/LEGISLACION/LEYES/2009/LEY_1328_DE_2009.htm"
+      ],
+      "verificado": "espejo normativo"
+    },
+    {
+      "variable": "offer_expiry_claim",
+      "conducta": "Dice que la oferta vence hoy",
+      "norma_corta": "Ley 1328 art. 3 c",
+      "por_que": "Si la oferta no caduca realmente como se dice, la urgencia podría no ser información cierta.",
+      "accion": "Contrastar la caducidad con la matriz de condonaciones vigente.",
+      "fuentes": [
+        "https://dmsjuridica.com/CODIGOS/LEGISLACION/LEYES/2009/LEY_1328_DE_2009.htm"
+      ],
+      "verificado": "espejo normativo"
+    },
+    {
+      "variable": "credit_benefit_promised",
+      "conducta": "Promete beneficio crediticio",
+      "norma_corta": "Ley 1266 arts. 13 y 18 (mod. Ley 2157)",
+      "por_que": "La ley fija cuánto permanece el dato negativo; prometer un retiro anticipado podría no corresponder a la norma.",
+      "accion": "Alinear el guion con los plazos de permanencia del reporte.",
+      "fuentes": [
+        "https://normograma.com/documentospdf/icfes2024/compilacion/docs/ley_2157_2021.htm",
+        "https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=34488"
+      ],
+      "verificado": "espejo normativo"
+    }
+  ],
+  "no_medible_desde_la_grabacion": [
+    {
+      "norma": "Ley 2300 de 2023, art. 3",
+      "que_exige": "Horario (lunes a viernes 7:00-19:00, sábados 8:00-15:00, sin domingos ni festivos) y frecuencia: tras el contacto directo, no más de una vez al día ni por varios canales en la misma semana",
+      "que_se_necesita": "Logs del marcador con fecha, hora, canal y cuenta de cada intento",
+      "fuentes": [
+        "https://normograma.crcom.gov.co/crc/compilacion/docs/ley_2300_2023.htm"
+      ]
+    },
+    {
+      "norma": "Ley 2300 de 2023, art. 7",
+      "que_exige": "Abstenerse de consultar el motivo del incumplimiento; sí se pueden consultar alternativas de pago acordes con la situación financiera",
+      "que_se_necesita": "Se oye en la grabación, pero falta un constructo válido: definición congelada antes de anotar que separe preguntar el motivo de escuchar lo que el deudor ofrece, con escucha por brazo (descartada por ambigua, docs/decisiones.md §8)",
+      "fuentes": [
+        "https://normograma.crcom.gov.co/crc/compilacion/docs/ley_2300_2023.htm"
+      ]
+    }
+  ]
+}

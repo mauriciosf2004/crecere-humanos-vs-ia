@@ -21,7 +21,7 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 ## Por dónde empezar
 
 1. `report/index.html` — el informe, dos páginas.
-2. `docs/hipotesis.md` — qué se quería entender, qué se podía medir, qué se esperaba y qué cambió respecto al primer registro.
+2. `docs/hipotesis.md` — qué se quería entender, qué se esperaba, la tabla completa de las ocho hipótesis con su resultado, y el pre-registro del desenlace (§7).
 3. `docs/decisiones.md` — las decisiones que cambiaron el resultado, cada una con el dato que la sostiene.
 4. `src/analyze.py` — el contraste estadístico.
 
@@ -36,6 +36,7 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 | Panel | `uv run python -m src.annotate --stage` → `workflows/panel-anotacion.js` (tool Workflow de Claude Code) → `uv run python -m src.annotate --from-workflow <salida>` | tres agentes ciegos anotan cada llamada, se vota por mayoría y se aplica la regla literal de fecha | transcripciones, extracciones (`make extract`), Claude Code |
 | Contraste | `make analyze` | test global y Westfall-Young sobre el consenso, en el total y dentro de las gestiones nuevas | consenso del panel |
 | Anclaje | `make anchoring` | comprueba que cada cita existe en las transcripciones | consenso del panel |
+| Desenlace | panel con `src/rubric_desenlace.md` → `make disposition` | cómo termina la llamada (incluido el acuerdo parcial) y cómo responde el interlocutor; exploratorio, pre-registrado en `docs/hipotesis.md` §7 | transcripciones, Claude Code |
 | Informe | `make report` | arma `results.json` y renderiza el HTML | `data/public/` |
 | Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas; probado en macOS (`CHROME=<ruta>` en otro sistema) | Chrome, `pdfinfo` |
 

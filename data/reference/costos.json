@@ -1,0 +1,213 @@
+{
+  "consultado": "2026-09-13",
+  "moneda": "USD",
+  "supuestos": {
+    "llamadas_mes": 100000,
+    "minutos_por_llamada": 4,
+    "canales": {"mono": 1, "estereo": 2},
+    "palabras_por_minuto": 124.4,
+    "tokens_por_palabra": 1.5,
+    "tokens_rubrica_por_llamada": 3252,
+    "tokens_transcripcion_por_llamada": 747,
+    "tokens_salida_por_llamada": 800,
+    "tokens_audio_por_segundo": 25,
+    "anotadores_por_llamada": 1,
+    "bytes_texto_por_llamada": 20000,
+    "factor_tiempo_real_whisper_l4": 40,
+    "horas_por_mes": 730,
+    "gib_audio_por_minuto_mono": 0.000894069671630859375,
+    "nota_tokens": "Transcripción: 47.417 palabras en las 100 transcripciones turbo (tras la limpieza de src/extract.py) sobre 381,2 min de audio (22.869,3 s en data/public/durations.csv) dan 124,4 palabras por minuto, en línea con las «≈48 mil palabras» que cita la investigación. Con 4 min son 497,6 palabras por llamada; × 1,5 tokens por palabra = 746,4, redondeado hacia arriba a 747. El factor de 1,5 tokens por palabra en español es un supuesto propio, sin fuente verificada en la investigación. Rúbrica: src/rubric.md tiene 2.168 palabras (14.011 bytes); × 1,5 = 3.252 tokens. No se suma src/schema.json (787 palabras, 8.592 bytes), porque no está verificado si el esquema de salida estructurada se factura como entrada; si se factura, la entrada sube 787 × 1,5 = 1.180,5 tokens con el mismo factor. Entrada total: 3.999 tokens, que coincide con los 4.000 que supuso la investigación y cuya cuenta confirmó el verificador (4.000 × 0,375e-6 + 800 × 1,875e-6 = 0,003 USD por llamada). Salida: 800 tokens es el supuesto de la investigación; el JSON que devuelve hoy el anotador mide en promedio 1.185 caracteres (máximo 1.821), así que 800 tokens equivale a unos 1,5 caracteres por token y queda del lado alto. Audio: 25 tokens por segundo según la tarifa de Vertex AI (corrección del verificador del frente voz-es); la API para desarrolladores dice 32, y el cálculo de 215 USD por 100.000 llamadas de la síntesis usa 32. Tamaño del audio: 8 kHz × 2 bytes (s16le) × 60 s = 960.000 bytes por minuto mono = 960.000 / 2^30 GiB.",
+    "nota_supuestos": "llamadas_mes y minutos_por_llamada son el escenario de la investigación (100.000 llamadas de unos 4 min); el corpus medido promedia 3,81 min. anotadores_por_llamada = 1 es una pasada; replicar el panel de tres anotadores lo triplica. bytes_texto_por_llamada = 20.000 es el supuesto de la investigación para DLP; el texto plano medido promedia 2.682 bytes por llamada, así que es una cota alta. factor_tiempo_real_whisper_l4 = 40 es el supuesto de la investigación a partir de 41,1× medido por un tercero con whisper-large-v3-turbo en inglés leído (LibriSpeech, bf16, lote 4); el verificador advierte que no se traslada a telefonía de 8 kHz. horas_por_mes = 730 convierte precios por hora a precio mensual, como hizo el verificador con Quality AI.",
+    "nota_formulas": "tramos(partida, cantidad) aplica los tramos de la partida al volumen mensual: cada unidad paga el precio del tramo en que cae. Los precios por millón de tokens se dividen entre 1.000.000. gib_texto = llamadas_mes × bytes_texto_por_llamada / 2^30. Ningún escenario incluye ingeniería, operación, BigQuery, Looker Studio, Pub/Sub ni Cloud Run."
+  },
+  "partidas": [
+    {
+      "id": "stt_v2_estandar",
+      "concepto": "Speech-to-Text V2, precio estándar",
+      "precio": 0.016,
+      "unidad": "USD/min",
+      "tramos": [
+        {"hasta_min": 500000, "precio": 0.016},
+        {"hasta_min": 1000000, "precio": 0.01},
+        {"hasta_min": 2000000, "precio": 0.008},
+        {"hasta_min": null, "precio": 0.004}
+      ],
+      "fuente": "https://cloud.google.com/speech-to-text/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Tramos por volumen de minutos; la investigación los aplica al volumen mensual (verificado: 800.000 min = 500.000 × 0,016 + 300.000 × 0,01 = 11.000 USD). Se factura cada canal por separado: 30 s con 4 canales se cobran como 120 s. Ningún modelo revisado combina es-CO con separación de hablantes."
+    },
+    {
+      "id": "stt_v2_lote_dinamico",
+      "concepto": "Speech-to-Text V2, lote dinámico",
+      "precio": 0.003,
+      "unidad": "USD/min",
+      "fuente": "https://cloud.google.com/speech-to-text/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Solo modelos elegibles según la lista oficial: default, command_and_search, latest_short, latest_long, phone_call, video y chirp (solo V2). No figuran chirp_3 ni telephony, los candidatos para español; si el modelo elegido no es elegible, aplica stt_v2_estandar. Se factura cada canal. La documentación solo promete «lower cost transcription for higher latency», sin plazo publicado."
+    },
+    {
+      "id": "dlp_inspeccion",
+      "concepto": "Sensitive Data Protection, inspección de contenido",
+      "precio": 3,
+      "unidad": "USD/GiB",
+      "tramos": [
+        {"hasta_gib": 1, "precio": 0},
+        {"hasta_gib": 1024, "precio": 3},
+        {"hasta_gib": null, "precio": 2}
+      ],
+      "fuente": "https://cloud.google.com/sensitive-data-protection/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Gratis hasta 1 GiB al mes; 3 USD/GiB hasta 1 TiB y 2 USD/GiB por encima. Se cobra al menos 1 KB por solicitud. Solo texto: ningún método redacta audio. No se verificó qué infoTypes cubren la cédula colombiana."
+    },
+    {
+      "id": "dlp_transformacion",
+      "concepto": "Sensitive Data Protection, transformación (content.deidentify)",
+      "precio": 2,
+      "unidad": "USD/GiB",
+      "tramos": [
+        {"hasta_gib": 1, "precio": 0},
+        {"hasta_gib": 1024, "precio": 2},
+        {"hasta_gib": null, "precio": 1}
+      ],
+      "fuente": "https://cloud.google.com/sensitive-data-protection/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Gratis hasta 1 GiB al mes; 2 USD/GiB hasta 1 TiB y 1 USD/GiB por encima. Se suma a la inspección."
+    },
+    {
+      "id": "gemini_38_flash_lote_entrada_2026",
+      "concepto": "Gemini 3.8 Flash por lotes en Vertex AI, entrada",
+      "precio": 0.375,
+      "unidad": "USD/millón de tokens",
+      "vigente_hasta": "2026-12-31",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Precio introductorio de lote o flex (50 % del estándar de 0,75) vigente hasta el 31-dic-2026. Endpoint global; los regionales cuestan cerca de 10 % más. La mayoría de los trabajos terminan en 24 h y los incompletos se cancelan. Retención cero exige desactivar la caché en memoria (24 h) y pedir la excepción al registro por abuso."
+    },
+    {
+      "id": "gemini_38_flash_lote_salida_2026",
+      "concepto": "Gemini 3.8 Flash por lotes en Vertex AI, salida",
+      "precio": 1.875,
+      "unidad": "USD/millón de tokens",
+      "vigente_hasta": "2026-12-31",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Precio introductorio de lote o flex vigente hasta el 31-dic-2026; mismas condiciones que la entrada."
+    },
+    {
+      "id": "gemini_38_flash_lote_entrada_2027",
+      "concepto": "Gemini 3.8 Flash por lotes en Vertex AI, entrada, desde 2027",
+      "precio": 0.75,
+      "unidad": "USD/millón de tokens",
+      "vigente_desde": "2027-01-01",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Desde el 1-ene-2027 el precio se duplica (estándar 1,5). Sustituye a gemini_38_flash_lote_entrada_2026 en cualquier cálculo desde esa fecha."
+    },
+    {
+      "id": "gemini_38_flash_lote_salida_2027",
+      "concepto": "Gemini 3.8 Flash por lotes en Vertex AI, salida, desde 2027",
+      "precio": 3.75,
+      "unidad": "USD/millón de tokens",
+      "vigente_desde": "2027-01-01",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Desde el 1-ene-2027 el precio se duplica (estándar 7,5). Sustituye a gemini_38_flash_lote_salida_2026 en cualquier cálculo desde esa fecha."
+    },
+    {
+      "id": "gemini_35_flash_lite_lote_entrada",
+      "concepto": "Gemini 3.5 Flash-Lite por lotes en Vertex AI, entrada de texto o audio",
+      "precio": 0.15,
+      "unidad": "USD/millón de tokens",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "El verificador confirma que en Vertex el audio se cobra al mismo precio de entrada. El audio se tokeniza a 25 tokens por segundo según la tarifa de Vertex (https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing). Sube la voz cruda del deudor, que no se puede redactar: solo con autorización expresa, contrato de transmisión, región us y retención cero. Sin validación publicada de emoción en español telefónico."
+    },
+    {
+      "id": "gemini_35_flash_lite_lote_salida",
+      "concepto": "Gemini 3.5 Flash-Lite por lotes en Vertex AI, salida",
+      "precio": 1.25,
+      "unidad": "USD/millón de tokens",
+      "fuente": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Precio de lote."
+    },
+    {
+      "id": "gpu_l4_g2_standard_8",
+      "concepto": "VM g2-standard-8 con 1 GPU L4, bajo demanda, us-central1",
+      "precio": 0.8543,
+      "unidad": "USD/h",
+      "fuente": "https://cloudprice.net/gcp/compute/instances/g2-standard-8",
+      "tipo_fuente": "tercero",
+      "condicion": "Precio de calculadoras de terceros (CloudPrice, Vantage); la página oficial de GPU no se pudo leer. Otros terceros dan 0,7068 USD/h para g2-standard-4 con L4, y Vantage muestra para esa VM una cifra incoherente. No hay L4 en ninguna región de Sudamérica. Se cobra por hora encendida: una VM todo el mes cuesta 730 h."
+    },
+    {
+      "id": "cloud_storage_estandar",
+      "concepto": "Cloud Storage Standard, regional",
+      "precio": 0.01999981,
+      "unidad": "USD/GiB-mes",
+      "fuente": "https://cloud.google.com/storage/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Precio oficial de 0,000027397 USD por GiB-hora × 730 h. Regional; un bucket multirregión us cuesta más (no cuantificado). El costo se acumula mes a mes si el audio se retiene."
+    },
+    {
+      "id": "cx_insights_voz_standard",
+      "concepto": "Customer Experience Insights, voz, edición Standard",
+      "precio": 0.015,
+      "unidad": "USD/min",
+      "fuente": "https://cloud.google.com/contact-center/insights/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "La tarifa dice 0,015 USD «/ 1 count» y que la voz se factura por minuto; que la unidad sea el minuto es interpretación de la investigación. Los contratos anteriores al 17-sep-2025 pagan por conversación. Sin confirmar si la transcripción (reconocedor de Speech-to-Text del propio proyecto) se cobra aparte, ni si se cobra por canal. El reconocedor por defecto transcribe en-US. Mide el sentimiento solo del usuario final y la página de idiomas no lista el sentimiento en español (https://docs.cloud.google.com/gemini-enterprise-cx/insights/languages). Sin región en Sudamérica."
+    },
+    {
+      "id": "cx_insights_voz_enterprise",
+      "concepto": "Customer Experience Insights, voz, edición Enterprise",
+      "precio": 0.025,
+      "unidad": "USD/min",
+      "fuente": "https://cloud.google.com/contact-center/insights/pricing",
+      "tipo_fuente": "oficial",
+      "condicion": "Mismas condiciones que la edición Standard; suma scorecards de Quality AI y modelado de temas. Quality AI por usuario nombrado, 0,068493151 USD/h (unos 50 USD al mes), va aparte y no entra en los escenarios; los 60 USD por agente concurrente no están verificados."
+    }
+  ],
+  "escenarios": [
+    {
+      "id": "propio_lote_dinamico_mono",
+      "descripcion": "Pipeline propio en Google Cloud con audio mono: Speech-to-Text V2 en lote dinámico, DLP sobre las transcripciones, una pasada de Gemini 3.8 Flash por lotes con la rúbrica literal y un mes de audio en Cloud Storage. Es una cota inferior: solo vale si el modelo de transcripción elegido es elegible para lote dinámico.",
+      "formula": "llamadas_mes × minutos_por_llamada × canales.mono × stt_v2_lote_dinamico + tramos(dlp_inspeccion, gib_texto) + tramos(dlp_transformacion, gib_texto) + llamadas_mes × anotadores_por_llamada × ((tokens_rubrica_por_llamada + tokens_transcripcion_por_llamada) × gemini_38_flash_lote_entrada_2026 + tokens_salida_por_llamada × gemini_38_flash_lote_salida_2026) / 1000000 + llamadas_mes × minutos_por_llamada × canales.mono × gib_audio_por_minuto_mono × cloud_storage_estandar"
+    },
+    {
+      "id": "propio_lote_dinamico_estereo",
+      "descripcion": "El mismo pipeline con grabación en dos canales (agente y deudor separados), que evita la diarización. Google factura cada canal, así que la transcripción y el almacenamiento se duplican; los tokens de Gemini no cambian. Misma condición de modelo elegible.",
+      "formula": "llamadas_mes × minutos_por_llamada × canales.estereo × stt_v2_lote_dinamico + tramos(dlp_inspeccion, gib_texto) + tramos(dlp_transformacion, gib_texto) + llamadas_mes × anotadores_por_llamada × ((tokens_rubrica_por_llamada + tokens_transcripcion_por_llamada) × gemini_38_flash_lote_entrada_2026 + tokens_salida_por_llamada × gemini_38_flash_lote_salida_2026) / 1000000 + llamadas_mes × minutos_por_llamada × canales.estereo × gib_audio_por_minuto_mono × cloud_storage_estandar"
+    },
+    {
+      "id": "propio_estandar_mono",
+      "descripcion": "Pipeline propio con audio mono y Speech-to-Text V2 a precio estándar por tramos, el caso si chirp_3 o telephony no entran en lote dinámico. Resto igual que propio_lote_dinamico_mono.",
+      "formula": "tramos(stt_v2_estandar, llamadas_mes × minutos_por_llamada × canales.mono) + tramos(dlp_inspeccion, gib_texto) + tramos(dlp_transformacion, gib_texto) + llamadas_mes × anotadores_por_llamada × ((tokens_rubrica_por_llamada + tokens_transcripcion_por_llamada) × gemini_38_flash_lote_entrada_2026 + tokens_salida_por_llamada × gemini_38_flash_lote_salida_2026) / 1000000 + llamadas_mes × minutos_por_llamada × canales.mono × gib_audio_por_minuto_mono × cloud_storage_estandar"
+    },
+    {
+      "id": "propio_estandar_estereo",
+      "descripcion": "Pipeline propio con grabación en dos canales y Speech-to-Text V2 a precio estándar. Los minutos facturados se duplican y caen en el segundo tramo, así que el costo de transcripción no llega al doble del mono.",
+      "formula": "tramos(stt_v2_estandar, llamadas_mes × minutos_por_llamada × canales.estereo) + tramos(dlp_inspeccion, gib_texto) + tramos(dlp_transformacion, gib_texto) + llamadas_mes × anotadores_por_llamada × ((tokens_rubrica_por_llamada + tokens_transcripcion_por_llamada) × gemini_38_flash_lote_entrada_2026 + tokens_salida_por_llamada × gemini_38_flash_lote_salida_2026) / 1000000 + llamadas_mes × minutos_por_llamada × canales.estereo × gib_audio_por_minuto_mono × cloud_storage_estandar"
+    },
+    {
+      "id": "whisper_l4_mono",
+      "descripcion": "Pipeline propio con Whisper large-v3 autoalojado (faster-whisper) en una L4 dentro del proyecto propio, en lugar de Speech-to-Text; resto igual. Solo cuenta las horas de GPU que consume la transcripción: excluye la VM ociosa, la puesta en marcha, la ingeniería y la operación. Precio de GPU de tercero y velocidad medida en inglés leído, no en telefonía de 8 kHz.",
+      "formula": "llamadas_mes × minutos_por_llamada × canales.mono / 60 / factor_tiempo_real_whisper_l4 × gpu_l4_g2_standard_8 + tramos(dlp_inspeccion, gib_texto) + tramos(dlp_transformacion, gib_texto) + llamadas_mes × anotadores_por_llamada × ((tokens_rubrica_por_llamada + tokens_transcripcion_por_llamada) × gemini_38_flash_lote_entrada_2026 + tokens_salida_por_llamada × gemini_38_flash_lote_salida_2026) / 1000000 + llamadas_mes × minutos_por_llamada × canales.mono × gib_audio_por_minuto_mono × cloud_storage_estandar"
+    },
+    {
+      "id": "cx_insights_standard",
+      "descripcion": "Alternativa comprada: Customer Experience Insights edición Standard, solo el análisis de voz. No incluye la transcripción (posible cobro aparte, sin confirmar) ni Quality AI. No confirma sentimiento en español y no tiene región en Sudamérica.",
+      "formula": "llamadas_mes × minutos_por_llamada × cx_insights_voz_standard"
+    },
+    {
+      "id": "cx_insights_enterprise",
+      "descripcion": "Alternativa comprada: Customer Experience Insights edición Enterprise, solo el análisis de voz. Mismas exclusiones y limitaciones que la edición Standard.",
+      "formula": "llamadas_mes × minutos_por_llamada × cx_insights_voz_enterprise"
+    },
+    {
+      "id": "gemini_audio_deudor",
+      "descripcion": "Fase 2, opcional: Gemini 3.5 Flash-Lite por lotes escuchando el audio mono como anotador de tono, solo tras validarlo a oído y con autorización expresa para subir voz. Excluye los tokens de una rúbrica de tono, que aún no existe, igual que el cálculo verificado.",
+      "formula": "llamadas_mes × (minutos_por_llamada × 60 × tokens_audio_por_segundo × gemini_35_flash_lite_lote_entrada + tokens_salida_por_llamada × gemini_35_flash_lite_lote_salida) / 1000000"
+    }
+  ]
+}

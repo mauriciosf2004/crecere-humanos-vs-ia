@@ -96,7 +96,7 @@ def stage() -> dict:
     return {"llamadas": staged, "con_segunda_transcripcion": with_second}
 
 
-def persist(annotations: list[dict]) -> int:
+def persist(annotations: list[dict], root: Path = ANNOTATIONS) -> int:
     """Guarda las respuestas del workflow, una por rol y llamada.
 
     El identificador no se toma del agente —los modelos devuelven un marcador de
@@ -107,7 +107,7 @@ def persist(annotations: list[dict]) -> int:
         row.update(
             call_id=call_id(item["stem"]), arm=item["arm"], _rol=item["rol"], _modelo=item["modelo"]
         )
-        target = ANNOTATIONS / item["rol"] / item["arm"] / f"{item['stem']}.json"
+        target = root / item["rol"] / item["arm"] / f"{item['stem']}.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(row, ensure_ascii=False, indent=2), encoding="utf-8")
     return len(annotations)

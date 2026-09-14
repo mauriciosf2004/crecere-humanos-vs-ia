@@ -14,7 +14,7 @@ CHROME ?= /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
 
 # report y verify DEBEN ser .PHONY: existe un directorio report/ y sin esto make responde
 # "up to date" sin ejecutar nada, y la puerta de dos páginas deja de proteger.
-.PHONY: help inventory transcribe extract annotate analyze anchoring report verify test lint check clean
+.PHONY: help inventory transcribe extract annotate analyze anchoring disposition report verify test lint check clean
 
 help: ## Muestra esta ayuda
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-11s %s\n", $$1, $$2}'
@@ -36,6 +36,9 @@ analyze: ## Contrasta la familia sobre el consenso del panel y escribe data/publ
 
 anchoring: ## Comprueba que cada positivo del consenso cita una frase de las transcripciones
 	$(PY) python -m src.anchoring --source consenso
+
+disposition: ## Consenso, anclaje y cortes del desenlace y la reacción del interlocutor (exploratorio)
+	$(PY) python -m src.disposition
 
 report: ## Arma results.json y renderiza report/index.html desde data/public/
 	$(PY) python -m src.results
