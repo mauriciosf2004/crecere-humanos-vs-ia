@@ -52,7 +52,7 @@
     font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
   }
   /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; }
+  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:2.4mm; }
   h2 {
     font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
@@ -81,22 +81,19 @@
   .deal h2 { color:var(--ia); }
 
   /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
-  .risk {
-    border:1px solid var(--rule); border-left:3px solid var(--alerta); background:var(--wash);
-    padding:2.2mm 3mm 1.8mm;
-  }
-  .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
+  .risk { border-top:2.2px solid var(--ink); padding:2mm 0 0; margin-bottom:3mm; }
+  .risk h2 { color:var(--alerta); }
   /* La frase que protege a quien presenta el papel, pegada a la tabla y en cuerpo de
      lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
      reenvía es la tabla, nunca el pie. */
   .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
-  .risk tbody { counter-reset:hallazgo 2; }
+  .risk tbody { counter-reset:hallazgo; }
   .risk td:first-child { font-weight:600; }
   .risk tbody td:first-child::before {
     counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
     font-weight:400; color:var(--muted);
   }
-  .risk .note { margin:1mm 0 0; border-left-color:#e6d8d4; }
+  .risk .note { margin:1mm 0 0; }
 
   /* ── Tablas ───────────────────────────────────────────────────────────── */
   table { width:100%; border-collapse:collapse; font-size:8.3pt; }
@@ -110,12 +107,6 @@
   td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
   th.num { text-align:right; white-space:nowrap; }
   table.compact { width:78%; }
-  /* La marca es lo único de la página 2 que se ve sin leer: hace de puerta de entrada
-     donde antes había una losa de texto pareja. */
-  .mk { font-size:9pt; line-height:1; }
-  .mk.si { color:var(--ink); }
-  .mk.parcial { color:var(--muted); }
-  .mk.no { color:var(--null); }
 
   /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
   svg.forest { width:100%; height:auto; }
@@ -137,16 +128,15 @@
   .forest .row-value, .forest .row-label { stroke:none; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.findings { margin:0; padding:0; list-style:none; }
   ol.findings li {
-    counter-increment:f; padding:1mm 0 1mm 7mm; border-bottom:1px solid var(--rule);
+    padding:1mm 0 1mm 5.4mm; border-bottom:1px solid var(--rule);
     position:relative;
   }
   ol.findings li:last-child { border-bottom:0; }
   ol.findings li::before {
-    content:counter(f); position:absolute; left:0; top:1.2mm; font-family:var(--mono);
-    font-size:7.6pt; font-weight:700; color:var(--ia); border-bottom:1.4px solid var(--ia);
-    width:4.6mm; text-align:center; padding-bottom:.2mm;
+    content:""; position:absolute; left:0; top:2.1mm; width:3.4mm;
+    border-top:1.4px solid var(--ia);
   }
   ol.findings .claim { font-weight:620; }
   ol.findings .why { color:var(--muted); }
@@ -163,7 +153,7 @@
   ul.bullets li { margin-bottom:.7mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
-  .grid2 section { break-inside:avoid; margin-bottom:0; }
+  .grid2 section { break-inside:avoid; margin-bottom:1.5mm; }
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
@@ -181,24 +171,24 @@
 
   <p class="verdict"><strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA, así que esto describe cómo habla cada uno.</p>
 
-  <p class="ask">Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado de 356 cuentas por grupo.</p>
+  <p class="ask">Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.</p>
 
   <section class="deal">
     <h2>La pregunta de negocio</h2>
-    <ol class="findings" start="1">
+    <ol class="findings">
       
       <li><span class="claim">Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %).</span> <span class="why">Son −8 pp, pero no está medido: con estas llamadas los datos admiten desde 27 pp menos hasta 14 pp más para la IA.</span>
-        <span class="action">→ Medirlo: piloto aleatorizado de 356 cuentas por grupo, 2.700 USD al mes para 100.000 llamadas, decidido a los 30 días con el recaudo.</span></li>
+        </li>
       
-      <li><span class="claim">Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.</span> <span class="why">Por eso la comparación describe cómo habla cada canal y no cuál cobra mejor.</span>
+      <li><span class="claim">Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.</span> <span class="why">Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la cartera que le tocó.</span>
         <span class="action">→ No comparar conversión entre canales sin asignar las cuentas al azar.</span></li>
       
     </ol>
   </section>
 
   <section class="risk">
-    <h2>Alertas de cumplimiento</h2>
-    <p class="caveat">Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.</p>
+    <h2>Alertas para revisión de cumplimiento</h2>
+    <p class="caveat">No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta.</p>
     <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
         <th>Norma (Colombia)</th><th>Qué hacer</th></tr></thead>
@@ -264,7 +254,7 @@
 <path class="pt null" d="M 325.0 117.8 L 329.2 122.0 L 325.0 126.2 L 320.8 122.0 Z"/>
 <text class="row-value null" x="516" y="125.5">−2</text>
 </svg>
-    <p class="note">Las ocho conductas, sobre las 50 llamadas de cada canal. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.</p>
+    <p class="note">Las ocho conductas, sobre las 50 llamadas de cada canal: por eso el compromiso aparece aquí como −16 pp y en el hallazgo 1, sobre los contactos con titular, como −8 pp. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.</p>
   </section>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>1 / 2</span></footer>
@@ -278,82 +268,26 @@
   <section>
     <h2 class="major">Lo que el banco necesita y cuándo lo tendrá</h2>
     <table>
-      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th>
-        <th>En producción</th></tr></thead>
+      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th></tr></thead>
       <tbody>
       
-        <tr><td>Contacto con el titular</td>
-        
-          <td><span class="mk si">●</span> IA 62-80 %, humanos 92-94 %</td>
-        
-          <td><span class="mk si">●</span> con los intentos del marcador</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Contacto con el titular</td><td>sí · IA 62-80 %, humanos 92-94 %</td><td>con los intentos del marcador</td></tr>
       
-        <tr><td>Compromiso con fecha y monto (PTP sobre titular)</td>
-        
-          <td><span class="mk si">●</span> IA 29 %, humanos 37 %</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Compromiso con fecha y monto (PTP sobre titular)</td><td>sí · IA 29 %, humanos 37 %</td><td>sí</td></tr>
       
-        <tr><td>Promesa cumplida y recaudo a 30 días</td>
-        
-          <td><span class="mk no">○</span> exige datos de pago</td>
-        
-          <td><span class="mk si">●</span> KPI principal</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Promesa cumplida y recaudo a 30 días</td><td>no · exige datos de pago</td><td>sí, KPI principal</td></tr>
       
-        <tr><td>Cure rate por tramo de mora</td>
-        
-          <td><span class="mk no">○</span> exige cartera</td>
-        
-          <td><span class="mk parcial">◐</span> a 90 días</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Cure rate por tramo de mora</td><td>no · exige cartera</td><td>a 90 días</td></tr>
       
-        <tr><td>Costo por peso recuperado</td>
-        
-          <td><span class="mk no">○</span> exige costos y recaudo</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Costo por peso recuperado</td><td>no · exige costos y recaudo</td><td>sí</td></tr>
       
-        <tr><td>Alertas de cumplimiento por canal</td>
-        
-          <td><span class="mk si">●</span> las cuatro de arriba</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-          <td><span class="mk si">●</span> en todas las llamadas</td>
-        
-        </tr>
+        <tr><td>Alertas de cumplimiento por canal</td><td>sí · las cuatro de arriba</td><td>sí</td></tr>
       
-        <tr><td>Horario y frecuencia de contacto (Ley 2300)</td>
-        
-          <td><span class="mk no">○</span> exige los registros del marcador</td>
-        
-          <td><span class="mk si">●</span></td>
-        
-          <td><span class="mk si">●</span></td>
-        
-        </tr>
+        <tr><td>Horario y frecuencia de contacto (Ley 2300)</td><td>no · exige los registros del marcador</td><td>sí</td></tr>
       
       </tbody>
     </table>
+    <p class="note">En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres primeros; los otros cuatro necesitan datos que la grabación no trae.</p>
   </section>
 
   <section>

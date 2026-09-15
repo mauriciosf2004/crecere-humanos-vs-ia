@@ -7,7 +7,7 @@
     "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
   "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA, así que esto describe cómo habla cada uno.",
-  "recomendacion": "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado de 356 cuentas por grupo.",
+  "recomendacion": "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.",
   "efectos": [
     {
       "etiqueta": "Se presenta como área jurídica",
@@ -90,10 +90,10 @@
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Las ocho conductas, sobre las 50 llamadas de cada canal. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.",
+  "forest_nota": "Las ocho conductas, sobre las 50 llamadas de cada canal: por eso el compromiso aparece aquí como −16 pp y en el hallazgo 1, sobre los contactos con titular, como −8 pp. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.",
   "cumplimiento": {
-    "rotulo": "Alerta para revisión de cumplimiento",
-    "salvedad": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
+    "rotulo": "Alertas para revisión de cumplimiento",
+    "salvedad": "No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta.",
     "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.",
     "filas": [
       {
@@ -130,11 +130,11 @@
     {
       "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %).",
       "why": "Son −8 pp, pero no está medido: con estas llamadas los datos admiten desde 27 pp menos hasta 14 pp más para la IA.",
-      "accion": "Medirlo: piloto aleatorizado de 356 cuentas por grupo, 2.700 USD al mes para 100.000 llamadas, decidido a los 30 días con el recaudo."
+      "accion": ""
     },
     {
       "claim": "Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.",
-      "why": "Por eso la comparación describe cómo habla cada canal y no cuál cobra mejor.",
+      "why": "Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la cartera que le tocó.",
       "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
   ],
@@ -154,110 +154,41 @@
   "kpis_banco": [
     {
       "kpi": "Contacto con el titular",
-      "hoy": [
-        "si",
-        "IA 62-80 %, humanos 92-94 %"
-      ],
-      "piloto": [
-        "si",
-        "con los intentos del marcador"
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "sí · IA 62-80 %, humanos 92-94 %",
+      "piloto": "con los intentos del marcador"
     },
     {
       "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-      "hoy": [
-        "si",
-        "IA 29 %, humanos 37 %"
-      ],
-      "piloto": [
-        "si",
-        ""
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "sí · IA 29 %, humanos 37 %",
+      "piloto": "sí"
     },
     {
       "kpi": "Promesa cumplida y recaudo a 30 días",
-      "hoy": [
-        "no",
-        "exige datos de pago"
-      ],
-      "piloto": [
-        "si",
-        "KPI principal"
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "no · exige datos de pago",
+      "piloto": "sí, KPI principal"
     },
     {
       "kpi": "Cure rate por tramo de mora",
-      "hoy": [
-        "no",
-        "exige cartera"
-      ],
-      "piloto": [
-        "parcial",
-        "a 90 días"
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "no · exige cartera",
+      "piloto": "a 90 días"
     },
     {
       "kpi": "Costo por peso recuperado",
-      "hoy": [
-        "no",
-        "exige costos y recaudo"
-      ],
-      "piloto": [
-        "si",
-        ""
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "no · exige costos y recaudo",
+      "piloto": "sí"
     },
     {
       "kpi": "Alertas de cumplimiento por canal",
-      "hoy": [
-        "si",
-        "las cuatro de arriba"
-      ],
-      "piloto": [
-        "si",
-        ""
-      ],
-      "produccion": [
-        "si",
-        "en todas las llamadas"
-      ]
+      "hoy": "sí · las cuatro de arriba",
+      "piloto": "sí"
     },
     {
       "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-      "hoy": [
-        "no",
-        "exige los registros del marcador"
-      ],
-      "piloto": [
-        "si",
-        ""
-      ],
-      "produccion": [
-        "si",
-        ""
-      ]
+      "hoy": "no · exige los registros del marcador",
+      "piloto": "sí"
     }
   ],
+  "kpis_banco_nota": "En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres primeros; los otros cuatro necesitan datos que la grabación no trae.",
   "escala": "Precios oficiales de lista, calculados en el repositorio; no incluye operar ningún canal. Un solo canal de audio baja a 1.500 USD y la analítica de proveedor sube a 6.000-6.700.",
   "palancas": [
     {

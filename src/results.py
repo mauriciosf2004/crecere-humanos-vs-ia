@@ -407,7 +407,7 @@ def build() -> dict:
         # recomendación sin costo es una opinión.
         "recomendacion": (
             "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la "
-            f"conversión con un piloto aleatorizado de {pilot['10']} cuentas por grupo."
+            "conversión con un piloto aleatorizado."
         ),
         "efectos": [
             {
@@ -423,7 +423,9 @@ def build() -> dict:
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
         "forest_nota": (
-            f"Las ocho conductas, sobre las {n} llamadas de cada canal. "
+            f"Las ocho conductas, sobre las {n} llamadas de cada canal: por eso el compromiso "
+            f"aparece aquí como {signed(commitment['diff_pp'])} pp y en el hallazgo 1, sobre los "
+            f"contactos con titular, como {titular_gap} pp. "
             "Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no "
             "concluyente con esta muestra · la línea es el margen de error del 95 %."
             + (
@@ -436,7 +438,7 @@ def build() -> dict:
             "rotulo": norms["rotulo"],
             # Pegada al título, al cuerpo de lectura: viaja con la tabla cuando alguien la
             # fotografía, que es como circulan estas cosas.
-            "salvedad": norms["advertencia"],
+            "salvedad": norms["salvedad"],
             # La tabla compara 50 contra 50, y los dos brazos no traen la misma cartera. Sin esta
             # línea, la comparación que el banco ve primero es la sucia. La defensa es más fuerte
             # que la salvedad: al restringir a gestiones nuevas, la promesa de beneficio
@@ -479,11 +481,7 @@ def build() -> dict:
                     f"admiten desde {abs(ptp.ci_low_pp):.0f} pp menos hasta "
                     f"{ptp.ci_high_pp:.0f} pp más para la IA."
                 ),
-                "accion": (
-                    f"Medirlo: piloto aleatorizado de {pilot['10']} cuentas por grupo, "
-                    f"{thousands(estereo)} USD al mes para {thousands(scale['llamadas_mes'])} "
-                    "llamadas, decidido a los 30 días con el recaudo."
-                ),
+                "accion": "",
             },
             {
                 # La decisión incómoda: quien armó la muestra es quien califica la prueba. Va
@@ -494,7 +492,8 @@ def build() -> dict:
                     "selección documentado."
                 ),
                 "why": (
-                    "Por eso la comparación describe cómo habla cada canal y no cuál cobra mejor."
+                    "Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la "
+                    "cartera que le tocó."
                 ),
                 "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
             },
@@ -527,51 +526,47 @@ def build() -> dict:
                 "kpi": "Contacto con el titular",
                 # Rango, no punto: las llamadas donde no se sabe quién contesta cuentan como
                 # «no titular», y son 9 en IA contra 1 en humanos. El punto solo es el piso.
-                "hoy": ["si", f"IA {contact_range['ia']}, humanos {contact_range['humano']}"],
-                "piloto": ["si", "con los intentos del marcador"],
-                "produccion": ["si", ""],
+                "hoy": f"sí · IA {contact_range['ia']}, humanos {contact_range['humano']}",
+                "piloto": "con los intentos del marcador",
             },
             {
                 "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-                "hoy": [
-                    "si",
-                    f"IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
-                    f"{pct(titular['humano']['k'], titular['humano']['n'])}",
-                ],
-                "piloto": ["si", ""],
-                "produccion": ["si", ""],
+                "hoy": (
+                    f"sí · IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
+                    f"{pct(titular['humano']['k'], titular['humano']['n'])}"
+                ),
+                "piloto": "sí",
             },
             {
                 "kpi": "Promesa cumplida y recaudo a 30 días",
-                "hoy": ["no", "exige datos de pago"],
-                "piloto": ["si", "KPI principal"],
-                "produccion": ["si", ""],
+                "hoy": "no · exige datos de pago",
+                "piloto": "sí, KPI principal",
             },
             {
                 "kpi": "Cure rate por tramo de mora",
-                "hoy": ["no", "exige cartera"],
-                "piloto": ["parcial", "a 90 días"],
-                "produccion": ["si", ""],
+                "hoy": "no · exige cartera",
+                "piloto": "a 90 días",
             },
             {
                 "kpi": "Costo por peso recuperado",
-                "hoy": ["no", "exige costos y recaudo"],
-                "piloto": ["si", ""],
-                "produccion": ["si", ""],
+                "hoy": "no · exige costos y recaudo",
+                "piloto": "sí",
             },
             {
                 "kpi": "Alertas de cumplimiento por canal",
-                "hoy": ["si", "las cuatro de arriba"],
-                "piloto": ["si", ""],
-                "produccion": ["si", "en todas las llamadas"],
+                "hoy": "sí · las cuatro de arriba",
+                "piloto": "sí",
             },
             {
                 "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-                "hoy": ["no", "exige los registros del marcador"],
-                "piloto": ["si", ""],
-                "produccion": ["si", ""],
+                "hoy": "no · exige los registros del marcador",
+                "piloto": "sí",
             },
         ],
+        "kpis_banco_nota": (
+            "En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres "
+            "primeros; los otros cuatro necesitan datos que la grabación no trae."
+        ),
         # El precio que encabeza es el de la configuración que este informe declara necesaria
         # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
         # decir en otra página que ese mínimo no sirve es precio de vitrina.

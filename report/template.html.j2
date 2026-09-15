@@ -52,7 +52,7 @@
     font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
   }
   /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; }
+  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:2.4mm; }
   h2 {
     font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
@@ -81,22 +81,19 @@
   .deal h2 { color:var(--ia); }
 
   /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
-  .risk {
-    border:1px solid var(--rule); border-left:3px solid var(--alerta); background:var(--wash);
-    padding:2.2mm 3mm 1.8mm;
-  }
-  .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
+  .risk { border-top:2.2px solid var(--ink); padding:2mm 0 0; margin-bottom:3mm; }
+  .risk h2 { color:var(--alerta); }
   /* La frase que protege a quien presenta el papel, pegada a la tabla y en cuerpo de
      lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
      reenvía es la tabla, nunca el pie. */
   .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
-  .risk tbody { counter-reset:hallazgo {{ hallazgos|length }}; }
+  .risk tbody { counter-reset:hallazgo; }
   .risk td:first-child { font-weight:600; }
   .risk tbody td:first-child::before {
     counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
     font-weight:400; color:var(--muted);
   }
-  .risk .note { margin:1mm 0 0; border-left-color:#e6d8d4; }
+  .risk .note { margin:1mm 0 0; }
 
   /* ── Tablas ───────────────────────────────────────────────────────────── */
   table { width:100%; border-collapse:collapse; font-size:8.3pt; }
@@ -110,12 +107,6 @@
   td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
   th.num { text-align:right; white-space:nowrap; }
   table.compact { width:78%; }
-  /* La marca es lo único de la página 2 que se ve sin leer: hace de puerta de entrada
-     donde antes había una losa de texto pareja. */
-  .mk { font-size:9pt; line-height:1; }
-  .mk.si { color:var(--ink); }
-  .mk.parcial { color:var(--muted); }
-  .mk.no { color:var(--null); }
 
   /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
   svg.forest { width:100%; height:auto; }
@@ -137,16 +128,15 @@
   .forest .row-value, .forest .row-label { stroke:none; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.findings { margin:0; padding:0; list-style:none; }
   ol.findings li {
-    counter-increment:f; padding:1mm 0 1mm 7mm; border-bottom:1px solid var(--rule);
+    padding:1mm 0 1mm 5.4mm; border-bottom:1px solid var(--rule);
     position:relative;
   }
   ol.findings li:last-child { border-bottom:0; }
   ol.findings li::before {
-    content:counter(f); position:absolute; left:0; top:1.2mm; font-family:var(--mono);
-    font-size:7.6pt; font-weight:700; color:var(--ia); border-bottom:1.4px solid var(--ia);
-    width:4.6mm; text-align:center; padding-bottom:.2mm;
+    content:""; position:absolute; left:0; top:2.1mm; width:3.4mm;
+    border-top:1.4px solid var(--ia);
   }
   ol.findings .claim { font-weight:620; }
   ol.findings .why { color:var(--muted); }
@@ -163,7 +153,7 @@
   ul.bullets li { margin-bottom:.7mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
-  .grid2 section { break-inside:avoid; margin-bottom:0; }
+  .grid2 section { break-inside:avoid; margin-bottom:1.5mm; }
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
@@ -185,16 +175,16 @@
 
   <section class="deal">
     <h2>La pregunta de negocio</h2>
-    <ol class="findings" start="1">
+    <ol class="findings">
       {% for f in hallazgos %}
       <li><span class="claim">{{ f.claim }}</span> <span class="why">{{ f.why }}</span>
-        <span class="action">→ {{ f.accion }}</span></li>
+        {% if f.accion %}<span class="action">→ {{ f.accion }}</span>{% endif %}</li>
       {% endfor %}
     </ol>
   </section>
 
   <section class="risk">
-    <h2>Alertas de cumplimiento</h2>
+    <h2>{{ cumplimiento.rotulo }}</h2>
     <p class="caveat">{{ cumplimiento.salvedad }}</p>
     <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
@@ -226,18 +216,14 @@
   <section>
     <h2 class="major">Lo que el banco necesita y cuándo lo tendrá</h2>
     <table>
-      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th>
-        <th>En producción</th></tr></thead>
+      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th></tr></thead>
       <tbody>
       {% for k in kpis_banco %}
-        <tr><td>{{ k.kpi }}</td>
-        {% for celda in [k.hoy, k.piloto, k.produccion] %}
-          <td><span class="mk {{ celda[0] }}">{{ {'si':'●','parcial':'◐','no':'○'}[celda[0]] }}</span>{% if celda[1] %} {{ celda[1] }}{% endif %}</td>
-        {% endfor %}
-        </tr>
+        <tr><td>{{ k.kpi }}</td><td>{{ k.hoy }}</td><td>{{ k.piloto }}</td></tr>
       {% endfor %}
       </tbody>
     </table>
+    <p class="note">{{ kpis_banco_nota }}</p>
   </section>
 
   <section>

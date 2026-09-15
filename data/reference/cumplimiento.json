@@ -1,6 +1,6 @@
 {
   "consultado": "2026-09-13",
-  "rotulo": "Alerta para revisión de cumplimiento",
+  "rotulo": "Alertas para revisión de cumplimiento",
   "advertencia": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
   "alertas": [
     {
@@ -68,5 +68,6 @@
         "https://normograma.crcom.gov.co/crc/compilacion/docs/ley_2300_2023.htm"
       ]
     }
-  ]
+  ],
+  "salvedad": "No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta."
 }
