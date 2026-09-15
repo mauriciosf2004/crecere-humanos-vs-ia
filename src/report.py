@@ -49,7 +49,7 @@ def render() -> Path:
         autoescape=True,
     )
     html = env.get_template("template.html.j2").render(
-        forest_svg=forest(rows, row_height=17), **results
+        forest_svg=forest(rows, row_height=15), **results
     )
     OUTPUT.write_text(html, encoding="utf-8")
     return OUTPUT

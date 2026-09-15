@@ -373,13 +373,27 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = CONSENSUS)
     adjusted_new = westfall_young(matrix[new], is_ai[new], np.random.default_rng(SEED + 1))
 
     n_ai, n_human = contrasts[0].n_ai, contrasts[0].n_human
+    # Tres suelos de sensibilidad, no uno. El del contraste suelto es el más optimista de los
+    # tres y publicarlo solo exagera lo que el estudio puede ver: la inferencia que el informe
+    # declara usar corrige por las ocho comparaciones, y el KPI comercial se mide sobre los
+    # contactos con titular, que son menos llamadas.
+    composition_rows = composition(rows)
+    titular = next(i for i in composition_rows if i["variable"] == "effective_contact")
+    floors = {
+        "suelto": minimum_detectable_effect(PLANNING_BASE, n_ai, n_human),
+        "familia": minimum_detectable_effect(
+            PLANNING_BASE, n_ai, n_human, alpha=0.05 / len(contrasts)
+        ),
+        "titular": minimum_detectable_effect(PLANNING_BASE, titular["k_ia"], titular["k_humano"]),
+    }
     payload = {
         "p_global": p_global,
         "fuente": source.name,
         "acuerdo_panel": panel_agreement(rows),
         "permutations": PERMUTATIONS,
         "seed": SEED,
-        "mde_pp": round(minimum_detectable_effect(PLANNING_BASE, n_ai, n_human), 1),
+        "mde_pp": round(floors["suelto"], 1),
+        "mde_suelos_pp": {k: round(v, 1) for k, v in floors.items()},
         "mde_tasa_base": PLANNING_BASE,
         "potencia_plan": PLANNING_POWER,
         "piloto_n_por_brazo": {
@@ -405,7 +419,7 @@ def export(p_global: float, contrasts: list[Contrast], source: Path = CONSENSUS)
             }
             for i, c in enumerate(contrasts)
         ],
-        "composicion": composition(rows),
+        "composicion": composition_rows,
         "duracion": duration_contrast(),
     }
     (PUBLIC / "effects.json").write_text(

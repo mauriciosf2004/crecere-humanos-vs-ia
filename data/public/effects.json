@@ -53,6 +53,11 @@
   "permutations": 10000,
   "seed": 20260915,
   "mde_pp": 29.0,
+  "mde_suelos_pp": {
+    "suelto": 29.0,
+    "familia": 36.8,
+    "titular": 33.4
+  },
   "mde_tasa_base": 0.3,
   "potencia_plan": 0.8,
   "piloto_n_por_brazo": {

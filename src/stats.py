@@ -118,13 +118,18 @@ def fisher_power(p1: float, p2: float, n1: int, n2: int, alpha: float = 0.05) ->
 
 
 def minimum_detectable_effect(
-    baseline: float, n1: int, n2: int, target_power: float = 0.80
+    baseline: float, n1: int, n2: int, target_power: float = 0.80, alpha: float = 0.05
 ) -> float:
-    """A cuántos puntos porcentuales del baseline hay que llegar para tener target_power."""
+    """A cuántos puntos porcentuales del baseline hay que llegar para tener target_power.
+
+    `alpha` es el nivel de cada contraste. Pasar 0,05/8 da el suelo real de la familia
+    corregida, que es más alto que el del contraste suelto: el informe publica los dos
+    porque publicar solo el optimista exagera la sensibilidad del estudio.
+    """
     low, high = baseline, 0.999
     for _ in range(20):
         mid = (low + high) / 2
-        if fisher_power(baseline, mid, n1, n2) < target_power:
+        if fisher_power(baseline, mid, n1, n2, alpha) < target_power:
             low = mid
         else:
             high = mid

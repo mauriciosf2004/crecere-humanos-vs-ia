@@ -66,4 +66,4 @@ check: lint test ## Todo lo que debe pasar antes de un commit
 # clean nunca toca data/: las transcripciones y extracciones no se versionan, costaron
 # 18 minutos de GPU y 4 USD, y un clean reflejo las destruiría sin vuelta atrás.
 clean: ## Borra cachés de herramientas y el HTML generado
-	rm -rf .pytest_cache .ruff_cache report/index.html
+	rm -rf .pytest_cache .ruff_cache

@@ -81,7 +81,9 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 19) -> str
     no se sostienen al comparar carteras equivalentes— van huecas y con línea discontinua,
     para que no se lean igual de firmes.
     """
-    label_width, pad = 206, 14
+    # 206 de 520 era el 40 % del ancho para rótulos que no lo necesitan: dejaba 27 mm de
+    # papel en blanco a la izquierda y estrechaba el área de trazado.
+    label_width, pad = 168, 12
     plot_left = label_width + pad
     plot_width = width - plot_left - 44
     height = row_height * len(rows) + 32

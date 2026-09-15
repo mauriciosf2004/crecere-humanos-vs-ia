@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <title>{{ meta.titulo }}</title>
 <style>
-  /* Geometría: A4 con 12 mm de margen. La caja útil es 186 x 273 mm; se trabaja
-     sobre 255 mm de alto para dejar aire y que nada quede al filo del corte. */
-  @page { size: A4; margin: 12mm; }
+  /* Geometría: A4 con 10 mm de margen. La caja útil es 190 x 277 mm; se trabaja
+     sobre 255 mm de alto para dejar aire y que nada quede al filo del corte.
+     El margen no es cosmético: con 12 mm la página 1 solo admitía 2 mm más de texto
+     antes de romperse en tres páginas, así que cualquier palabra tumbaba `make verify`.
+     10 mm deja más de 8 mm de holgura y sigue lejos de la zona no imprimible (≤6,4 mm). */
+  @page { size: A4; margin: 10mm; }
 
   /* Sistema visual: ficha de riesgo de cartera. Serif para la voz del informe, sans
      para la estructura y monoespaciada tabular para TODA cifra: eso alinea las columnas
@@ -14,7 +17,7 @@
      porque el archivo se abre sin conexión como adjunto de correo. */
   :root {
     --ink:#14181f; --muted:#6a6f78; --rule:#dfdbd4; --paper:#fff; --wash:#f7f4ef;
-    --ia:#1f3d7a; --humano:#a8631b; --null:#8e939b; --alerta:#8c2f23;
+    --ia:#1f3d7a; --humano:#a8631b; --null:#6f747c; --alerta:#8c2f23;
     --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -34,7 +37,7 @@
   }
   @media print {
     body { background:#fff; }
-    .page { margin:0; width:auto; min-height:268mm; break-after:page; }
+    .page { margin:0; width:auto; min-height:272mm; break-after:page; }
     .page:last-child { break-after:auto; }
   }
 
@@ -53,24 +56,26 @@
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
   }
   p { margin:0 0 1.5mm; }
+  p, li { orphans:2; widows:2; }
   section { margin-bottom:2.2mm; }
 
-  .verdict { font-family:var(--serif); font-size:10.8pt; line-height:1.3; margin:0 0 2.8mm; }
+  .verdict { font-family:var(--serif); font-size:11.6pt; line-height:1.3; margin:0 0 2.8mm;
+             border-left:2.5px solid var(--ink); padding-left:3mm; text-wrap:pretty; }
   .verdict strong { font-weight:650; }
 
   /* ── Cuadro de mando: la cifra, la etiqueta y la brecha dibujada ──────── */
   .kpis { display:grid; grid-template-columns:repeat({{ kpis|length }},1fr); gap:4mm; }
-  .kpi { border-top:2px solid var(--ia); padding-top:1.3mm; }
+  .kpi { border-top:2px solid var(--ia); padding-top:1.3mm;
+         display:flex; flex-direction:column; }
   .kpi.neg { border-top-color:var(--humano); }
   .kpi.null { border-top-color:var(--null); }
   .kpi .v {
-    font-family:var(--mono); font-size:13pt; font-weight:600; letter-spacing:-.03em;
+    font-family:var(--mono); font-size:15pt; font-weight:600; letter-spacing:-.03em;
     display:block; line-height:1.05;
   }
   .kpi.null .v { color:var(--muted); }
-  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm;
-            min-height:6.8mm; }
-  svg.gap { width:100%; height:3.2mm; margin-top:.7mm; display:block; }
+  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm; }
+  svg.gap { width:100%; height:3.2mm; margin-top:auto; padding-top:.7mm; display:block; }
   .gap-track { stroke:var(--rule); stroke-width:1.4; }
   .gap-span { stroke:#cfc9c0; stroke-width:1.4; }
   .gap-mark.ai { fill:var(--ia); }
@@ -85,7 +90,7 @@
     padding:2.2mm 3mm 1.8mm;
   }
   .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
-  .stamp { font-family:var(--mono); font-size:6.6pt; letter-spacing:.06em; color:var(--alerta);
+  .stamp { font-family:var(--mono); font-size:7pt; letter-spacing:.06em; color:var(--alerta);
            border:1px solid #d8bdb7; border-radius:1px; padding:.2mm 1mm; margin-left:1.6mm;
            text-transform:none; }
   .risk tbody { counter-reset:hallazgo; }
@@ -102,32 +107,32 @@
     text-align:left; font-weight:650; color:var(--muted); font-size:7pt; text-transform:uppercase;
     letter-spacing:.08em; padding:.8mm 1.4mm; border-bottom:1px solid var(--ink);
   }
-  td { padding:.7mm 1.4mm; border-bottom:1px solid var(--rule); vertical-align:top; }
+  td { padding:.7mm 1.4mm; border-bottom:1px solid var(--rule); vertical-align:top;
+       hyphens:none; }
   tr:last-child td { border-bottom:0; }
   td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
   th.num { text-align:right; white-space:nowrap; }
-  table.compact { width:64%; }
-
-  .tag { font-family:var(--mono); font-size:7pt; padding:.3mm 1.2mm; border-radius:1px;
-         background:#efece6; color:var(--muted); white-space:nowrap; }
-  .tag.ok { background:#e7eef0; color:#1f4f52; }
-  .tag.ko { background:#f4e7e3; color:var(--alerta); }
-  .tag.warn { background:#f6eddb; color:#7a5310; }
+  table.compact { width:78%; }
 
   /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
   svg.forest { width:100%; height:auto; }
   .forest .axis-zero { stroke:var(--ink); stroke-width:1.1; }
   .forest .axis-tick { stroke:var(--rule); stroke-width:1; }
-  .forest .axis-label { font-family:var(--mono); font-size:7px; fill:var(--muted); text-anchor:middle; }
-  .forest .axis-title { font-size:7px; fill:var(--muted); text-anchor:middle; }
+  .forest .axis-label { font-family:var(--mono); font-size:7.6px; fill:var(--muted); text-anchor:middle; }
+  .forest .axis-title { font-size:7.6px; fill:var(--muted); text-anchor:middle; }
   .forest .row-label { font-size:8.3px; fill:var(--ink); text-anchor:end; }
   .forest .row-value { font-family:var(--mono); font-size:8.3px; font-weight:600; text-anchor:end;
                        stroke:none; }
   .forest .ci { stroke-width:2; stroke-linecap:round; }
+  .forest .ci.null { stroke-width:1.1; }  /* la conclusividad no puede ir solo en el tono */
   .forest .pos { stroke:var(--ia); fill:var(--ia); }
   .forest .neg { stroke:var(--humano); fill:var(--humano); }
   .forest .null { stroke:var(--null); fill:var(--null); }
   .forest .pt.tentative { fill:var(--paper); stroke-width:1.8; }
+  /* .pos/.neg/.null llevan stroke para las líneas y los puntos, y por cascada se lo imponían
+     también al texto: a 8,3 px el contorno cerraba los ojos del 8 y del 6. Va después y con
+     la misma especificidad de clase, porque `.forest text` la perdía contra `.forest .neg`. */
+  .forest .row-value, .forest .row-label { stroke:none; }
   .forest .ci.tentative { stroke-dasharray:3 2; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
@@ -148,11 +153,17 @@
   ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
 
   /* ── Listas, notas y pie ──────────────────────────────────────────────── */
-  ul.levers, ul.bullets { margin:0; padding-left:3.6mm; }
+  ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
+  ul.levers li, ul.bullets li { position:relative; }
+  ul.levers li::before, ul.bullets li::before {
+    content:""; position:absolute; left:-2.6mm; top:1.5mm;
+    width:1mm; height:1mm; border-radius:50%; background:var(--muted);
+  }
   ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+  .grid2 { display:block; columns:2; column-gap:5mm; }
+  .grid2 section { break-inside:avoid; margin-bottom:0; }
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
@@ -239,17 +250,17 @@
       {% endfor %}
       </tbody>
     </table>
-    <p class="note">{{ composicion_nota|safe }}</p>
+    <p class="note">{{ composicion_nota }}</p>
   </section>
 
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <ul class="bullets">{% for m in metodo %}<li>{{ m|safe }}</li>{% endfor %}</ul>
+      <ul class="bullets">{% for m in metodo %}<li>{{ m }}</li>{% endfor %}</ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
-      <ul class="bullets">{% for l in limitaciones %}<li>{{ l|safe }}</li>{% endfor %}</ul>
+      <ul class="bullets">{% for l in limitaciones %}<li>{{ l }}</li>{% endfor %}</ul>
     </section>
   </div>
 

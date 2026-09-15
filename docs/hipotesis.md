@@ -52,8 +52,8 @@ Ocho, binarias, extraídas de la transcripción con cita textual obligatoria. So
 rúbrica de anotación y la familia del contraste, y por eso el tamaño está acotado: menos de
 seis desaprovecha el diseño, más de doce diluye el test global.
 
-Se evaluaron cuarenta y siete candidatas: ocho forman la familia, tres se conservan como contexto
-y treinta y cinco se descartaron. Los motivos están en `docs/decisiones.md`;
+Se evaluaron cuarenta y siete candidatas: ocho forman la familia, tres se conservan como contexto,
+una se fundió con otra y treinta y cinco se descartaron. Los motivos están en `docs/decisiones.md`;
 el más repetido fue un denominador condicional o una base insuficiente, y el más instructivo, el
 constructo ambiguo. Ejemplo real: un primer intento contaba "del área de
 embargos y judicializaciones" como amenaza al deudor, cuando es el nombre del departamento en

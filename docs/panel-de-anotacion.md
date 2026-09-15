@@ -87,6 +87,7 @@ con 6 llamadas; las aclaraciones de redacción están en `docs/decisiones.md` §
 guarda, vota, ancla y calcula los cortes.
 
 El panel es reanudable: si una corrida se interrumpe, se guardan las anotaciones que sí salieron
-y la siguiente se lanza con `args.jobs = [[brazo, uuid, rol], ...]`, solo con lo que falta. Así se
-completaron las 300 anotaciones del desenlace en dos tandas.
+y la siguiente se lanza con `args.jobs = [[brazo, uuid, rol], ...]`, solo con lo que falta. Los
+lotes se arman **por llamada, no por rol**: así cada lote terminado deja llamadas con sus tres
+votos, que ya dan consenso, en vez de tres brazos a medias que no dan ninguno.
 

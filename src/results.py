@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
@@ -60,6 +61,9 @@ def _typeset(value):
         return [_typeset(item) for item in value]
     if not isinstance(value, str):
         return value
+    # Una cita normativa partida de su número —«Ley / 1328»— es justo lo que el área de
+    # cumplimiento va a cotejar, así que el número viaja pegado a lo que nombra.
+    value = re.sub(r"\b(Ley|art\.|arts\.|CE|CGP art\.)\s+(?=\d)", rf"\1{NBSP}", value)
     for loose, tight in (
         (" %", f"{NBSP}%"),
         (" pp", f"{NBSP}pp"),
@@ -222,6 +226,7 @@ def build() -> dict:
     by_name = {item["variable"]: item for item in contrasts}
     context = {item["variable"]: item for item in effects["composicion"]}
     duration, mde, pilot = effects["duracion"], effects["mde_pp"], effects["piloto_n_por_brazo"]
+    floors = effects["mde_suelos_pp"]
 
     legal = by_name["legal_department_framing"]
     expiry = by_name["offer_expiry_claim"]
@@ -245,7 +250,6 @@ def build() -> dict:
         difference = 100 * (share(item, "ia") - share(item, "humano"))
         return f"{'IA' if difference > 0 else 'humanos'} +{abs(difference):.0f} pp"
 
-    gate = by_name["confidentiality_gate"]
     lote, estereo = (int(round(scale[k], -2)) for k in ("propio_lote", "propio_lote_estereo"))
     estandar, comprada = (int(round(scale[k], -2)) for k in ("propio_estandar", "comprada"))
     titular_gap = signed(
@@ -258,9 +262,47 @@ def build() -> dict:
     new_commitment = next(
         s for s in commitment["estratificado"]["estratos"] if s["estrato"] == "nuevo"
     )
+    # Las llamadas sin identificar cuentan como «no titular», así que la tasa publicada es el
+    # piso; el techo es contarlas todas como titular. Se publican las dos puntas.
+    contact_range = {
+        arm: (
+            f"{pct(contact[f'k_{arm}'], contact[f'n_{arm}']).rstrip(' %')}-"
+            f"{pct(contact[f'k_{arm}'] + contact[f'indeterminado_{arm}'], contact[f'n_{arm}'])}"
+        )
+        for arm in ("ia", "humano")
+    }
+    # Cota superior del denominador: ninguna llamada sin identificar tiene compromiso, así que
+    # contarlas todas como titular es el peor caso para cada brazo.
+    ptp_ceiling = {
+        arm: pct(titular[arm]["k"], titular[arm]["n"] + contact[f"indeterminado_{arm}"])
+        for arm in ("ia", "humano")
+    }
     nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
-    null_bound = max(max(abs(i["ci_low_pp"]), abs(i["ci_high_pp"])) for i in nulls)
     any_tentative = any(tentative(i) for i in contrasts)
+
+    # Las cuatro alertas se muestran sobre 50 y 50, y los brazos no traen la misma cartera.
+    # La defensa se calcula aquí para que la tabla no quede como la comparación sucia: el
+    # crédito no baja al quitar las renegociaciones, sube, que es lo contrario de lo que
+    # supondría quien la ataque.
+    new_alert = {
+        alert["variable"]: next(
+            s
+            for s in by_name[alert["variable"]]["estratificado"]["estratos"]
+            if s["estrato"] == "nuevo"
+        )
+        for alert in norms["alertas"]
+    }
+    _require(
+        all(by_name[v]["p_ajustado_nuevas"] < ALPHA for v in new_alert),
+        "las cuatro alertas se mantienen entre gestiones nuevas",
+    )
+    credit_new = new_alert["credit_benefit_promised"]
+    any_new = next(iter(new_alert.values()))
+    alerts_hold = (
+        f"Las cuatro se mantienen entre gestiones nuevas (IA {any_new['n_ia']}, humanos "
+        f"{any_new['n_humano']}), donde el beneficio crediticio en humanos sube a "
+        f"{pct(credit_new['k_humano'], credit_new['n_humano'])}."
+    )
 
     cells = agreement["resumen"]["celdas"]
     unanimous, total_cells = cells.get("3/3", 0), sum(cells.values())
@@ -316,16 +358,24 @@ def build() -> dict:
             f"{context_anchor['anclados']} de {context_anchor['positivos']} de contexto citan una "
             "frase textual de la llamada."
         ),
+        # Los dos brazos, no solo el humano: el conteo de compromisos depende del criterio de
+        # anotación, y publicar cómo cambia uno solo se lee como haber elegido el que conviene.
+        # Y son las 14 celdas *de compromiso*: sin unanimidad hay 58 en toda la rejilla.
         (
-            "Un solo modelo aceptaba asentimientos vagos: "
-            f"{single_pass['extraccion']['humano']} compromisos humanos donde el panel ve "
-            f"{single_pass['consenso']['humano']}. Las {heard} celdas sin unanimidad se "
-            "escucharon: se publica lo oído."
+            "Un solo modelo aceptaba asentimientos vagos: contaba "
+            f"{single_pass['extraccion']['humano']} y {single_pass['extraccion']['ia']} "
+            f"compromisos donde el panel ve {single_pass['consenso']['humano']} y "
+            f"{single_pass['consenso']['ia']}. Las {heard} celdas de compromiso sin unanimidad "
+            "se escucharon: manda lo oído."
         ),
+        # La dirección esperada se fijó mirando estas mismas llamadas. Decirlo y callar la
+        # consecuencia deja el flanco abierto; decirlo con la consecuencia lo cierra, porque
+        # los cuatro sostenidos superan el umbral incluso sin suponer dirección.
         (
             f"Test global por permutación ({p_text(effects['p_global'])}) y corrección por las "
-            f"{len(contrasts)} comparaciones (Westfall-Young). Sentido esperado fijado tras "
-            "explorar las mismas llamadas, antes del primer contraste."
+            f"{len(contrasts)} comparaciones (Westfall-Young). El sentido esperado se fijó "
+            "mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de "
+            "efecto e intervalo, no por el p-valor."
         ),
     ]
     if literal_rule:
@@ -343,12 +393,17 @@ def build() -> dict:
             "autor": "Mauricio Salas",
             "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia",
         },
+        # Cuál cobra mejor se dice como rango compatible, no como «no se detectó diferencia»:
+        # con esta muestra lo segundo se lee como empate, y el intervalo admite que la IA cierre
+        # bastantes menos compromisos. El argumento a favor de la IA que estaba aquí se cayó en
+        # la auditoría: se apoyaba en la única fila que el propio gráfico marca como no sostenida.
         "veredicto": (
             "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál "
             "cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en "
-            f"beneficios sobre el historial crediticio. A favor de la IA: verifica identidad en el "
-            f"{rate(gate, 'ia')} de sus llamadas, frente al {rate(gate, 'humano')}. En compromisos "
-            "de pago no se detectó diferencia. <strong>Decisión:</strong> corregir el guion de los "
+            "beneficios sobre el historial crediticio. Cuál cobra mejor no se midió: en "
+            f"compromisos de pago los datos admiten desde {abs(commitment['ci_low_pp']):.0f} pp "
+            f"menos hasta {commitment['ci_high_pp']:.0f} pp más para la IA. "
+            "<strong>Decisión:</strong> corregir el guion de los "
             "dos canales antes de escalar, y medir la conversión con un piloto aleatorizado."
         ),
         "kpis": [
@@ -375,7 +430,13 @@ def build() -> dict:
             },
             {
                 "valor": f"{rate(commitment, 'ia')} vs {rate(commitment, 'humano')}",
-                "etiqueta": f"compromiso de pago · no concluyente ({lead(commitment)})",
+                # La única tarjeta que lleva intervalo en vez de diferencia puntual: en un nulo
+                # el intervalo *es* el hallazgo, y un «+16 pp» suelto invita a leer un empate.
+                "etiqueta": (
+                    "compromiso de pago · no concluyente "
+                    f"({signed(commitment['ci_low_pp'])} a "
+                    f"{signed(commitment['ci_high_pp'])} pp)"
+                ),
                 "clase": "null",
                 "ia_pct": 100 * share(commitment, "ia"),
                 "humano_pct": 100 * share(commitment, "humano"),
@@ -401,7 +462,11 @@ def build() -> dict:
         ),
         "cumplimiento": {
             "rotulo": norms["rotulo"],
-            "advertencia": norms["advertencia"],
+            # La tabla compara 50 contra 50, y los dos brazos no traen la misma cartera. Sin esta
+            # línea, la comparación que el banco ve primero es la sucia. La defensa es más fuerte
+            # que la salvedad: al restringir a gestiones nuevas, la promesa de beneficio
+            # crediticio en humanos no baja, sube.
+            "advertencia": norms["advertencia"] + " " + alerts_hold,
             "filas": [
                 {
                     "conducta": alert["conducta"],
@@ -410,7 +475,14 @@ def build() -> dict:
                     "norma": alert["norma_corta"],
                     "accion": alert["accion"],
                 }
-                for alert in norms["alertas"]
+                # Por tamaño de la brecha, no por el orden del archivo de normas: es el mismo
+                # criterio que las tarjetas y el gráfico, y el que pide un informe de auditoría
+                # (los hallazgos se listan por significancia, no por orden de análisis).
+                for alert in sorted(
+                    norms["alertas"],
+                    key=lambda a: abs(by_name[a["variable"]]["diff_pp"]),
+                    reverse=True,
+                )
             ],
         },
         "hallazgos": [
@@ -423,10 +495,16 @@ def build() -> dict:
                     f"({pct(titular['humano']['k'], titular['humano']['n'])}): "
                     f"{titular_gap} pp, no concluyente."
                 ),
+                # El denominador excluye las llamadas donde no se sabe quién contesta, y son 9
+                # en IA contra 1 en humanos: esa asimetría infla la tasa de la IA. Se publica
+                # también el extremo contrario, que es el que un evaluador calcularía solo.
                 "why": (
                     "Entre gestiones nuevas, "
                     f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} y "
-                    f"{pct(new_commitment['k_humano'], new_commitment['n_humano'])}."
+                    f"{pct(new_commitment['k_humano'], new_commitment['n_humano'])}. Si las "
+                    f"{contact['indeterminado_ia']} llamadas de IA sin identificar fueran del "
+                    f"titular, {ptp_ceiling['ia']} y {ptp_ceiling['humano']}: la conclusión no "
+                    "cambia."
                 ),
                 "accion": (
                     f"Medirlo en un piloto: al menos {pilot['10']} cuentas por grupo para detectar "
@@ -434,11 +512,15 @@ def build() -> dict:
                 ),
             },
             {
+                # «Carteras distintas» afirmaba más de lo que el audio puede sostener: con solo
+                # la llamada no se distingue la cartera del guion. «Contextos distintos» es lo
+                # que el dato aguanta, y para la decisión —no comparar conversión— da igual cuál
+                # de las dos causas sea.
+                # El contacto con el titular ya va con sus dos denominadores en el hallazgo
+                # anterior: repetirlo aquí gastaba una línea de la página 1 sin añadir nada.
                 "claim": (
-                    f"Carteras distintas: el {rate(prior, 'humano')} de las llamadas humanas "
-                    "retomaba un acuerdo previo, ninguna de la IA; y la IA habló con el titular en "
-                    f"{contact['k_ia']} de {contact['n_ia']}, frente a {contact['k_humano']} de "
-                    f"{contact['n_humano']}."
+                    f"Contextos distintos: {prior['k_humano']} de {prior['n_humano']} llamadas "
+                    "humanas retoman un acuerdo previo y ninguna de la IA."
                 ),
                 "why": "",
                 "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
@@ -466,7 +548,9 @@ def build() -> dict:
         "kpis_banco": [
             {
                 "kpi": "Contacto con el titular",
-                "hoy": f"sí · IA {rate(contact, 'ia')}, humanos {rate(contact, 'humano')}",
+                # Rango, no punto: las llamadas donde no se sabe quién contesta cuentan como
+                # «no titular», y son 9 en IA contra 1 en humanos. El punto solo es el piso.
+                "hoy": (f"sí · IA {contact_range['ia']}, humanos {contact_range['humano']}"),
                 "piloto": "sí, con los intentos del marcador",
                 "produccion": "sí",
             },
@@ -510,13 +594,16 @@ def build() -> dict:
                 "produccion": "sí",
             },
         ],
+        # El precio que encabeza es el de la configuración que este informe declara necesaria
+        # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
+        # decir en otra página que ese mínimo no sirve es precio de vitrina.
         "escala": (
             "Medir esto en producción —transcribir, borrar los datos personales, anotar con la "
-            f"rúbrica y el tablero— cuesta desde {thousands(lote)} USD al mes para "
-            f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos "
-            f"({thousands(estereo)} con agente y deudor en canales separados; "
-            f"{thousands(estandar)} a precio estándar; {thousands(comprada)} si se compra la "
-            "analítica). No incluye "
+            f"rúbrica y el tablero— cuesta unos {thousands(estereo)} USD al mes para "
+            f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos, con "
+            f"agente y deudor en canales separados, que es lo que exige separar hablantes. Baja a "
+            f"{thousands(lote)} en un solo canal y sube a {thousands(comprada)}-"
+            f"{thousands(estandar)} con analítica de proveedor o a precio de lista. No incluye "
             "operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio."
         ),
         "palancas": [
@@ -553,9 +640,14 @@ def build() -> dict:
             ),
             "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
             f"Sin identificador de gestor ni criterio conocido para elegir las {2 * n} llamadas.",
+            # El suelo de sensibilidad depende del denominador y de la corrección: publicar solo
+            # el del contraste suelto es publicar el más optimista de los tres. El paréntesis
+            # anterior mezclaba este umbral con una cota de intervalo, y así leído insinuaba más
+            # sensibilidad donde hay menos.
             (
-                f"Con {n} llamadas por canal no se detectan diferencias menores a {mde:.0f} pp "
-                f"({signed(null_bound).lstrip('+')} pp donde no se esperaba dirección)."
+                f"Con {n} llamadas por canal no se detectan diferencias menores a {mde:.0f} pp; "
+                f"{floors['titular']:.0f} pp sobre los contactos con titular y "
+                f"{floors['familia']:.0f} pp al corregir por las {len(contrasts)} comparaciones."
             ),
         ],
     }

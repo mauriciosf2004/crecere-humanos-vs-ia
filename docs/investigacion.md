@@ -70,7 +70,7 @@ obstáculo principal no es el idioma: es la unidad de análisis.
 arregla lo de fondo: sin diarizar, puntuar la llamada mide el guion del agente. El de la IA trae
 léxico jurídico («embargos, judicializaciones»), así que un «deudor más negativo con la IA» sería un
 artefacto como el del §1. Tampoco la atribución por texto es neutral: el interlocutor quedó
-indeterminado en 19 llamadas de IA y en 3 humanas (§10).
+indeterminado en 9 llamadas de IA y en 1 humana (§10).
 
 **Licencias.** TASS dice «any commercial use of the Dataset is strictly prohibited», así que usar
 robertuito para una empresa es un riesgo real. De bge-m3-zeroshot, solo la variante `-c` tiene datos
