@@ -28,10 +28,24 @@ jobs:
       - name: Tests
         run: uv run pytest tests/ -q
 
+      # Un Linux limpio no trae ninguna de las fuentes del documento y cae en DejaVu, que es
+      # más ancha: el informe se iría a tres páginas por el instrumento, no por el contenido.
+      # Liberation es clon métrico de Times New Roman y Arial, que sí están en la pila.
       - name: Herramientas del entregable
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils
+          sudo apt-get install -y -qq poppler-utils fonts-liberation
+          mkdir -p ~/.config/fontconfig
+          cat > ~/.config/fontconfig/fonts.conf <<'CONF'
+          <?xml version="1.0"?>
+          <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+          <fontconfig>
+            <alias><family>serif</family><prefer><family>Liberation Serif</family></prefer></alias>
+            <alias><family>sans-serif</family><prefer><family>Liberation Sans</family></prefer></alias>
+            <alias><family>system-ui</family><prefer><family>Liberation Sans</family></prefer></alias>
+          </fontconfig>
+          CONF
+          fc-cache -f >/dev/null
           google-chrome --version
 
       # El informe se arma desde data/public/, que sí se versiona. Si alguien tocara una
