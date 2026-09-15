@@ -133,7 +133,7 @@ def load_rows(source: Path = CONSENSUS) -> list[dict]:
     ]
     if not rows:
         step = "make annotate" if source == CONSENSUS else "make extract"
-        raise FileNotFoundError(
+        raise SystemExit(
             f"No hay anotaciones en {source.relative_to(ROOT)}. Corre `{step}`, "
             "que necesita las transcripciones de `make transcribe`."
         )

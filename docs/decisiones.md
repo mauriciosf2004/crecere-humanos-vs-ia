@@ -362,10 +362,17 @@ efectos se quedó, más compacto. El límite de dos páginas no se negocia.
 ## 17. Escuchar las 14 celdas que el panel no resolvió
 
 El compromiso de pago es el KPI comercial del informe y hasta aquí descansaba en el acuerdo entre
-tres modelos. Se escucharon, una a una, **las 14 llamadas en que el panel no fue unánime**, elegidas
-con semilla fija y ordenadas al azar (`data/interim/hoja_escucha_compromisos.csv`). En esas celdas, y
-solo en esas, **el oído manda sobre el voto**: `apply_listening` en `src/annotate.py` reemplaza el
-nivel votado por el escuchado, con la misma disciplina que la regla literal del §14.
+tres modelos. Se escucharon, una a una, **las 14 llamadas en que el panel no fue unánime**. No es
+una muestra: son todas, un censo de las celdas de compromiso sin unanimidad. Lo que se sorteó con
+semilla fija fue el **orden** de escucha (`data/interim/hoja_escucha_compromisos.csv`), para que el
+cansancio y el arrastre no cayeran siempre en el mismo brazo. En esas celdas, y solo en esas, **el
+oído manda sobre el voto**: `apply_listening` en `src/annotate.py` reemplaza el nivel votado por el
+escuchado, con la misma disciplina que la regla literal del §14.
+
+La hoja llena se queda en `data/interim/` porque se indexa por nombre de audio y sus notas citan
+montos de llamadas concretas. Para que el paso no sea una caja negra desde un clon, `make annotate`
+publica el rastro sin contenido en **`data/public/escucha_compromisos.json`**: una fila por celda
+con el identificador hash, el brazo, lo que votó el panel y lo que se oyó.
 
 **Resultado.** Ocho de las catorce cambiaron de nivel: cinco humanas y tres de IA. Y aun así **el
 conteo publicado no se mueve**: 17 compromisos calificados en humanos y 9 en IA. Los cambios se

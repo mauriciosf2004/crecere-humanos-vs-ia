@@ -9,6 +9,14 @@ beneficios sobre el historial crediticio. Qué canal consigue más compromisos d
 saber con estas grabaciones: los humanos retomaban sobre todo acuerdos ya pactados y la IA abría
 gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al azar.
 
+Con cifras: se presenta como área jurídica en 43 de 50 llamadas de IA y 1 de 50 humanas; promete
+beneficio crediticio en 3 de 50 frente a 22 de 50; y el compromiso con fecha y monto va 9 de 31
+contactos con titular frente a 17 de 46, una diferencia que esta muestra no resuelve (el intervalo
+va de 32 puntos porcentuales abajo a 1 arriba).
+
+Desde un clon limpio, `make report` regenera `report/index.html` y `git status` queda vacío:
+ningún número del informe está escrito a mano.
+
 ## Las cuatro preguntas del encargo
 
 | Pregunta | Respuesta corta | Dónde está |
@@ -23,7 +31,8 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 1. `report/index.html` — el informe, dos páginas.
 2. `docs/hipotesis.md` — qué se quería entender, qué se esperaba, la tabla completa de las ocho hipótesis con su resultado, y el pre-registro del desenlace (§7).
 3. `docs/decisiones.md` — las decisiones que cambiaron el resultado, cada una con el dato que la sostiene.
-4. `src/analyze.py` — el contraste estadístico.
+4. `docs/panel-de-anotacion.md` — cómo anotan los tres agentes ciegos y por qué se vota 2 de 3.
+5. `src/analyze.py` — el contraste estadístico.
 
 `docs/variables-descartadas.md` lista las 39 candidatas que no entraron en la familia y por qué.
 
@@ -40,9 +49,7 @@ gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al a
 | Informe | `make report` | arma `results.json` y renderiza el HTML | `data/public/` |
 | Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas; probado en macOS (`CHROME=<ruta>` en otro sistema) | Chrome, `pdfinfo` |
 
-`make extract` es la pasada única original, de un solo modelo. Se conserva para compararla con el
-panel (`docs/decisiones.md`, §13) y como fuente de citas de la regla literal de fecha (§14): una cita
-suya solo cuenta si existe en la transcripción. Los audios los entrega Creceré y no se versionan.
+Los audios los entrega Creceré y no se versionan.
 
 `make check` pasa formato, linting y tests. `make help` lista todo.
 

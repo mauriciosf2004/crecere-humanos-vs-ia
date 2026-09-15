@@ -173,6 +173,30 @@ def listening() -> dict:
     return json.loads(LISTENING.read_text(encoding="utf-8"))
 
 
+def publish_listening(heard: dict) -> int:
+    """Publica el rastro auditable de la escucha, sin una palabra de las llamadas.
+
+    Desde un clon, la única validación externa del KPI comercial era una caja negra: el
+    archivo que la registra se indexa por nombre de audio y lleva notas con montos de
+    llamadas concretas, así que no se versiona. Lo que sí se puede publicar —y hace falta
+    para cotejar— es qué celda se escuchó, qué había votado el panel y qué se oyó. El
+    identificador es el mismo hash del nombre del archivo que usa todo `data/public/`.
+    """
+    rows = [
+        {
+            "call_id": call_id(key.split("/", 1)[1]),
+            "arm": key.split("/", 1)[0],
+            "panel": item["panel"],
+            "escuchado": item["valor"],
+        }
+        for key, item in sorted(heard.items())
+    ]
+    (PUBLIC / "escucha_compromisos.json").write_text(
+        json.dumps(rows, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return len(rows)
+
+
 def apply_listening(consensus: dict, arm: str, stem: str, heard: dict) -> bool:
     """Reemplaza el compromiso votado por lo que se oyó. Devuelve si cambió el nivel."""
     item = heard.get(f"{arm}/{stem}")
@@ -196,6 +220,8 @@ def consolidate() -> dict:
     agreement, complete, partial = Counter(), 0, 0
     adjusted = Counter()
     heard = listening()
+    if heard:
+        publish_listening(heard)
     reheard = Counter()
     for arm, stem in sorted(calls):
         rows = [

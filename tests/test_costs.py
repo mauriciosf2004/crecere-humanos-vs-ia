@@ -5,6 +5,7 @@ fijan el orden de magnitud que el informe le promete a un banco.
 """
 
 import json
+import re
 
 import pytest
 
@@ -33,9 +34,26 @@ def test_scale_costs_match_the_published_prices():
     assert scale["propio_lote"] == pytest.approx(1511, abs=5)
     assert scale["propio_estandar"] == pytest.approx(6711, abs=5)
     assert scale["comprada"] == pytest.approx(6000, abs=5)
-    # Autoalojar Whisper en GPU sale más barato que pagar la transcripción por minuto,
-    # pero su supuesto de velocidad no está verificado para telefonía de 8 kHz.
-    assert scale["whisper_l4"] < scale["propio_lote"] < scale["propio_estandar"]
+    assert scale["propio_lote"] < scale["propio_estandar"]
     # El estéreo dobla solo la transcripción, no el resto del pipeline.
     extra = scale["propio_lote_estereo"] - scale["propio_lote"]
     assert extra == pytest.approx(1200, abs=5)
+
+
+def test_every_scenario_formula_names_a_real_price():
+    """Las fórmulas en prosa de costos.json citan identificadores que existen.
+
+    El archivo describe cada escenario con su fórmula además de calcularla en Python. Si
+    alguien renombra una partida y no toca la prosa, el documento y el código dejan de decir
+    lo mismo sin que nada falle. Esto lo caza.
+    """
+    costos = json.loads((REFERENCE / "costos.json").read_text(encoding="utf-8"))
+    known = {p["id"] for p in costos["partidas"]} | set(costos["supuestos"])
+    known |= {f"canales.{k}" for k in costos["supuestos"]["canales"]}
+    # Las cantidades derivadas se definen en la propia nota («gib_texto = …»), así que
+    # cuentan como conocidas: lo que se persigue aquí es una partida renombrada.
+    known |= set(re.findall(r"([a-z_]\w+)\s*=", costos["supuestos"]["nota_formulas"]))
+    for scenario in costos["escenarios"]:
+        names = set(re.findall(r"[a-z_][a-z0-9_.]{3,}", scenario["formula"]))
+        unknown = {n for n in names if n not in known and not n.startswith("tramos")}
+        assert not unknown, f"{scenario['id']} cita lo que no existe: {sorted(unknown)}"

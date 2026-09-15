@@ -1,0 +1,86 @@
+[
+  {
+    "call_id": "6987e6d7d3e9",
+    "arm": "humano",
+    "panel": 2,
+    "escuchado": 2
+  },
+  {
+    "call_id": "c782aed56817",
+    "arm": "humano",
+    "panel": null,
+    "escuchado": 1
+  },
+  {
+    "call_id": "97e516a7fc91",
+    "arm": "humano",
+    "panel": 2,
+    "escuchado": 2
+  },
+  {
+    "call_id": "271929a77300",
+    "arm": "humano",
+    "panel": 0,
+    "escuchado": 1
+  },
+  {
+    "call_id": "b82d9211239b",
+    "arm": "humano",
+    "panel": 1,
+    "escuchado": 1
+  },
+  {
+    "call_id": "4fb3ce4b68a6",
+    "arm": "humano",
+    "panel": 1,
+    "escuchado": 2
+  },
+  {
+    "call_id": "67c0d6ae1450",
+    "arm": "humano",
+    "panel": 1,
+    "escuchado": 0
+  },
+  {
+    "call_id": "e47a7d8f10d8",
+    "arm": "humano",
+    "panel": 2,
+    "escuchado": 1
+  },
+  {
+    "call_id": "2d7aab3c042c",
+    "arm": "humano",
+    "panel": 2,
+    "escuchado": 2
+  },
+  {
+    "call_id": "bd282fa7b48e",
+    "arm": "ia",
+    "panel": 2,
+    "escuchado": 2
+  },
+  {
+    "call_id": "042d99e0a68a",
+    "arm": "ia",
+    "panel": 2,
+    "escuchado": 2
+  },
+  {
+    "call_id": "a0bb04448b22",
+    "arm": "ia",
+    "panel": 1,
+    "escuchado": 0
+  },
+  {
+    "call_id": "00050a5a5674",
+    "arm": "ia",
+    "panel": 1,
+    "escuchado": 2
+  },
+  {
+    "call_id": "2829a637135c",
+    "arm": "ia",
+    "panel": 2,
+    "escuchado": 1
+  }
+]

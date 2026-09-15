@@ -85,7 +85,10 @@ def collect() -> list[Track]:
     """Recorre data/raw/<brazo>/ y devuelve un Track por archivo."""
     tracks = [probe(path, arm) for arm in ARMS for path in sorted((RAW / arm).glob("*.wav"))]
     if not tracks:
-        raise FileNotFoundError(f"No hay audios en {RAW}. ¿Se movieron los originales?")
+        raise SystemExit(
+            "No hay audios en data/raw/{humano,ia}/: los entrega Creceré y no se "
+            "versionan. Ver README, «Qué hay en el repositorio y qué no»."
+        )
     return tracks
 
 

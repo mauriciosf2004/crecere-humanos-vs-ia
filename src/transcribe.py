@@ -86,6 +86,11 @@ def main() -> None:
     out = output_dir(args.model)
 
     audios = [(path, arm) for arm in ARMS for path in sorted((RAW / arm).glob("*.wav"))]
+    if not audios:
+        sys.exit(
+            "No hay audios en data/raw/{humano,ia}/: los entrega Creceré y no se "
+            "versionan. Ver README, «Qué hay en el repositorio y qué no»."
+        )
     started = time.monotonic()
     done = skipped = 0
 

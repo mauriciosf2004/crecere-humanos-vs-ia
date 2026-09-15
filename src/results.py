@@ -151,12 +151,6 @@ def scale_costs(costos: dict) -> dict:
         "propio_lote_estereo": base
         + calls * minutes * s["canales"]["estereo"] * price["stt_v2_lote_dinamico"]["precio"],
         "propio_estandar": base + tiers(price["stt_v2_estandar"], calls * minutes),
-        "whisper_l4": base
-        + calls
-        * minutes
-        / 60
-        / s["factor_tiempo_real_whisper_l4"]
-        * price["gpu_l4_g2_standard_8"]["precio"],
         "comprada": calls * minutes * price["cx_insights_voz_standard"]["precio"],
     }
 

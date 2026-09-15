@@ -170,6 +170,11 @@ def main() -> None:
     rubric = RUBRIC.read_text(encoding="utf-8")
     schema = SCHEMA.read_text(encoding="utf-8")
     jobs = [(path, arm) for arm in ARMS for path in sorted((TRANSCRIPTS / arm).glob("*.json"))]
+    if not jobs:
+        raise SystemExit(
+            "No hay transcripciones en data/interim/transcripts/: corre `make transcribe`, "
+            "que necesita los audios de data/raw/."
+        )
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         rows = list(pool.map(lambda job: extract(job[0], job[1], rubric, schema), jobs))
