@@ -6,32 +6,32 @@
     "autor": "Mauricio Salas",
     "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
-  "veredicto": "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica (IA 86 %, humanos 2 %) y dice que la oferta vence hoy (IA 54 %, humanos 2 %); los humanos prometen más beneficios crediticios (IA 6 %, humanos 44 %). En compromisos de pago no se detectó diferencia.",
+  "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en beneficios sobre el historial crediticio. A favor de la IA: verifica identidad en el 28 % de sus llamadas, frente al 2 %. En compromisos de pago no se detectó diferencia. <strong>Decisión:</strong> corregir el guion de los dos canales antes de escalar, y medir la conversión con un piloto aleatorizado.",
   "kpis": [
     {
       "valor": "86 % vs 2 %",
-      "etiqueta": "área jurídica · IA vs humanos",
+      "etiqueta": "área jurídica · IA +84 pp",
       "clase": "",
       "ia_pct": 86.0,
       "humano_pct": 2.0
     },
     {
       "valor": "54 % vs 2 %",
-      "etiqueta": "oferta que vence hoy",
+      "etiqueta": "la oferta vence hoy · IA +52 pp",
       "clase": "",
       "ia_pct": 54.0,
       "humano_pct": 2.0
     },
     {
       "valor": "6 % vs 44 %",
-      "etiqueta": "promesa de beneficio crediticio",
+      "etiqueta": "beneficio crediticio · humanos +38 pp",
       "clase": "neg",
       "ia_pct": 6.0,
       "humano_pct": 44.0
     },
     {
       "valor": "18 % vs 34 %",
-      "etiqueta": "compromiso de pago: no concluyente",
+      "etiqueta": "compromiso de pago · no concluyente (humanos +16 pp)",
       "clase": "null",
       "ia_pct": 18.0,
       "humano_pct": 34.0
@@ -156,12 +156,12 @@
   },
   "hallazgos": [
     {
-      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en el 29 % de las llamadas y los humanos en el 37 %.",
-      "why": "No concluyente. Entre gestiones nuevas, IA 18 % y humanos 25 %.",
+      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %): −8 pp, no concluyente.",
+      "why": "Entre gestiones nuevas, 18 % y 25 %.",
       "accion": "Medirlo en un piloto: al menos 356 cuentas por grupo para detectar 10 pp."
     },
     {
-      "claim": "Carteras distintas: el 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de la IA.",
+      "claim": "Carteras distintas: el 52 % de las llamadas humanas retomaba un acuerdo previo, ninguna de la IA; y la IA habló con el titular en 31 de 50, frente a 46 de 50.",
       "why": "",
       "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
@@ -223,11 +223,11 @@
       "produccion": "sí"
     }
   ],
-  "escala": "Con 100.000 llamadas de 4 minutos al mes, transcribir, borrar los datos personales, anotar con la rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
+  "escala": "Medir esto en producción —transcribir, borrar los datos personales, anotar con la rúbrica y el tablero— cuesta desde 1.500 USD al mes para 100.000 llamadas de 4 minutos (2.700 con agente y deudor en canales separados; 6.700 a precio estándar; 6.000 si se compra la analítica). No incluye operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
-      "detalle": "Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %)."
+      "detalle": "Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales."
     },
     {
       "titulo": "Un tercer grupo:",
@@ -239,9 +239,9 @@
     }
   ],
   "metodo": [
-    "Dos transcripciones por llamada, en este equipo. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas por separado, sin saber el canal; vale la mayoría.",
+    "Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal; vale la mayoría.",
     "1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.",
-    "Un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17. Las 14 celdas sin unanimidad se escucharon una a una: se publica lo oído.",
+    "Un solo modelo aceptaba asentimientos vagos: 25 compromisos humanos donde el panel ve 17. Las 14 celdas sin unanimidad se escucharon: se publica lo oído.",
     "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.",
     "En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras."
   ],
@@ -249,7 +249,6 @@
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",
     "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
     "Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.",
-    "Con 50 llamadas por canal, diferencias menores a 29 pp pueden pasar inadvertidas (tasa base 30 %).",
-    "En las variables sin diferencia esperada no se descartan hasta 24 pp."
+    "Con 50 llamadas por canal no se detectan diferencias menores a 29 pp (24 pp donde no se esperaba dirección)."
   ]
 }

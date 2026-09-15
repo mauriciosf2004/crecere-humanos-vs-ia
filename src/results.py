@@ -240,6 +240,21 @@ def build() -> dict:
     def points(item: dict) -> str:
         return signed(abs(item["diff_pp"])).lstrip("+")
 
+    def lead(item: dict) -> str:
+        """Quién va arriba y por cuánto: «IA +84 pp». Más claro que un signo para el lector."""
+        difference = 100 * (share(item, "ia") - share(item, "humano"))
+        return f"{'IA' if difference > 0 else 'humanos'} +{abs(difference):.0f} pp"
+
+    gate = by_name["confidentiality_gate"]
+    lote, estereo = (int(round(scale[k], -2)) for k in ("propio_lote", "propio_lote_estereo"))
+    estandar, comprada = (int(round(scale[k], -2)) for k in ("propio_estandar", "comprada"))
+    titular_gap = signed(
+        100
+        * (
+            titular["ia"]["k"] / titular["ia"]["n"]
+            - titular["humano"]["k"] / titular["humano"]["n"]
+        )
+    )
     new_commitment = next(
         s for s in commitment["estratificado"]["estratos"] if s["estrato"] == "nuevo"
     )
@@ -291,9 +306,9 @@ def build() -> dict:
     literal_by_arm = agreement["resumen"].get("ajustes_regla_literal", {})
     methods = [
         (
-            "Dos transcripciones por llamada, en este equipo. Tres anotadores "
-            f"({panel_models}) respondieron {questions} preguntas por separado, sin saber el "
-            "canal; vale la mayoría."
+            "Dos transcripciones locales por llamada. Tres anotadores "
+            f"({panel_models}) respondieron {questions} preguntas sin saber el canal; vale la "
+            "mayoría."
         ),
         (
             f"{thousands(unanimous)} de {thousands(total_cells)} respuestas unánimes; "
@@ -302,10 +317,10 @@ def build() -> dict:
             "frase textual de la llamada."
         ),
         (
-            "Un solo modelo aceptaba asentimientos vagos: veía "
+            "Un solo modelo aceptaba asentimientos vagos: "
             f"{single_pass['extraccion']['humano']} compromisos humanos donde el panel ve "
             f"{single_pass['consenso']['humano']}. Las {heard} celdas sin unanimidad se "
-            "escucharon una a una: se publica lo oído."
+            "escucharon: se publica lo oído."
         ),
         (
             f"Test global por permutación ({p_text(effects['p_global'])}) y corrección por las "
@@ -329,38 +344,38 @@ def build() -> dict:
             "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia",
         },
         "veredicto": (
-            "<strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra "
-            "cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica "
-            f"(IA {rate(legal, 'ia')}, humanos {rate(legal, 'humano')}) y dice que la oferta vence "
-            f"hoy (IA {rate(expiry, 'ia')}, humanos {rate(expiry, 'humano')}); los humanos "
-            f"prometen más beneficios crediticios (IA {rate(credit, 'ia')}, humanos "
-            f"{rate(credit, 'humano')}). En compromisos de pago no se detectó diferencia."
+            "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál "
+            "cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en "
+            f"beneficios sobre el historial crediticio. A favor de la IA: verifica identidad en el "
+            f"{rate(gate, 'ia')} de sus llamadas, frente al {rate(gate, 'humano')}. En compromisos "
+            "de pago no se detectó diferencia. <strong>Decisión:</strong> corregir el guion de los "
+            "dos canales antes de escalar, y medir la conversión con un piloto aleatorizado."
         ),
         "kpis": [
             {
                 "valor": f"{rate(legal, 'ia')} vs {rate(legal, 'humano')}",
-                "etiqueta": "área jurídica · IA vs humanos",
+                "etiqueta": f"área jurídica · {lead(legal)}",
                 "clase": "",
                 "ia_pct": 100 * share(legal, "ia"),
                 "humano_pct": 100 * share(legal, "humano"),
             },
             {
                 "valor": f"{rate(expiry, 'ia')} vs {rate(expiry, 'humano')}",
-                "etiqueta": "oferta que vence hoy",
+                "etiqueta": f"la oferta vence hoy · {lead(expiry)}",
                 "clase": "",
                 "ia_pct": 100 * share(expiry, "ia"),
                 "humano_pct": 100 * share(expiry, "humano"),
             },
             {
                 "valor": f"{rate(credit, 'ia')} vs {rate(credit, 'humano')}",
-                "etiqueta": "promesa de beneficio crediticio",
+                "etiqueta": f"beneficio crediticio · {lead(credit)}",
                 "clase": "neg",
                 "ia_pct": 100 * share(credit, "ia"),
                 "humano_pct": 100 * share(credit, "humano"),
             },
             {
                 "valor": f"{rate(commitment, 'ia')} vs {rate(commitment, 'humano')}",
-                "etiqueta": "compromiso de pago: no concluyente",
+                "etiqueta": f"compromiso de pago · no concluyente ({lead(commitment)})",
                 "clase": "null",
                 "ia_pct": 100 * share(commitment, "ia"),
                 "humano_pct": 100 * share(commitment, "humano"),
@@ -401,13 +416,16 @@ def build() -> dict:
         "hallazgos": [
             {
                 "claim": (
-                    "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en el "
-                    f"{pct(titular['ia']['k'], titular['ia']['n'])} de las llamadas y los humanos "
-                    f"en el {pct(titular['humano']['k'], titular['humano']['n'])}."
+                    "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en "
+                    f"{titular['ia']['k']} de {titular['ia']['n']} llamadas "
+                    f"({pct(titular['ia']['k'], titular['ia']['n'])}) y los humanos en "
+                    f"{titular['humano']['k']} de {titular['humano']['n']} "
+                    f"({pct(titular['humano']['k'], titular['humano']['n'])}): "
+                    f"{titular_gap} pp, no concluyente."
                 ),
                 "why": (
-                    "No concluyente. Entre gestiones nuevas, IA "
-                    f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} y humanos "
+                    "Entre gestiones nuevas, "
+                    f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} y "
                     f"{pct(new_commitment['k_humano'], new_commitment['n_humano'])}."
                 ),
                 "accion": (
@@ -418,7 +436,9 @@ def build() -> dict:
             {
                 "claim": (
                     f"Carteras distintas: el {rate(prior, 'humano')} de las llamadas humanas "
-                    "retomaba un acuerdo previo; ninguna de la IA."
+                    "retomaba un acuerdo previo, ninguna de la IA; y la IA habló con el titular en "
+                    f"{contact['k_ia']} de {contact['n_ia']}, frente a {contact['k_humano']} de "
+                    f"{contact['n_humano']}."
                 ),
                 "why": "",
                 "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
@@ -491,14 +511,13 @@ def build() -> dict:
             },
         ],
         "escala": (
-            f"Con {thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos al "
-            "mes, transcribir, borrar los datos personales, anotar con la rúbrica y el tablero "
-            f"cuestan desde {thousands(round(scale['propio_lote']))} USD al mes "
-            f"({thousands(round(scale['propio_lote_estereo']))} grabando agente y deudor en "
-            "canales separados). A precio estándar, "
-            f"{thousands(round(scale['propio_estandar']))}; la analítica comprada, "
-            f"{thousands(round(scale['comprada']))}. Precios oficiales, sin ingeniería: "
-            "data/reference/costos.json."
+            "Medir esto en producción —transcribir, borrar los datos personales, anotar con la "
+            f"rúbrica y el tablero— cuesta desde {thousands(lote)} USD al mes para "
+            f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos "
+            f"({thousands(estereo)} con agente y deudor en canales separados; "
+            f"{thousands(estandar)} a precio estándar; {thousands(comprada)} si se compra la "
+            "analítica). No incluye "
+            "operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio."
         ),
         "palancas": [
             {
@@ -507,7 +526,8 @@ def build() -> dict:
                     "Única forma de medir conversión sin que decida la cartera: "
                     f"{pilot['10']} cuentas por grupo para detectar 10 pp (tasa base "
                     f"{pct(round(100 * effects['mde_tasa_base']), 100)}, potencia "
-                    f"{pct(round(100 * effects['potencia_plan']), 100)})."
+                    f"{pct(round(100 * effects['potencia_plan']), 100)}). Se decide a los 30 días "
+                    "con el recaudo de cada cuenta asignada, no con promesas verbales."
                 ),
             },
             {
@@ -534,12 +554,8 @@ def build() -> dict:
             "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
             f"Sin identificador de gestor ni criterio conocido para elegir las {2 * n} llamadas.",
             (
-                f"Con {n} llamadas por canal, diferencias menores a {mde:.0f} pp pueden pasar "
-                f"inadvertidas (tasa base {pct(round(100 * effects['mde_tasa_base']), 100)})."
-            ),
-            (
-                f"En las variables sin diferencia esperada no se descartan hasta "
-                f"{signed(null_bound).lstrip('+')} pp."
+                f"Con {n} llamadas por canal no se detectan diferencias menores a {mde:.0f} pp "
+                f"({signed(null_bound).lstrip('+')} pp donde no se esperaba dirección)."
             ),
         ],
     }

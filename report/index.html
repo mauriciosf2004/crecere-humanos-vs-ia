@@ -53,9 +53,9 @@
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
   }
   p { margin:0 0 1.5mm; }
-  section { margin-bottom:2.6mm; }
+  section { margin-bottom:2.2mm; }
 
-  .verdict { font-family:var(--serif); font-size:11pt; line-height:1.33; margin:0 0 3.2mm; }
+  .verdict { font-family:var(--serif); font-size:10.8pt; line-height:1.3; margin:0 0 2.8mm; }
   .verdict strong { font-weight:650; }
 
   /* ── Cuadro de mando: la cifra, la etiqueta y la brecha dibujada ──────── */
@@ -68,7 +68,8 @@
     display:block; line-height:1.05;
   }
   .kpi.null .v { color:var(--muted); }
-  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm; }
+  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm;
+            min-height:6.8mm; }
   svg.gap { width:100%; height:3.2mm; margin-top:.7mm; display:block; }
   .gap-track { stroke:var(--rule); stroke-width:1.4; }
   .gap-span { stroke:#cfc9c0; stroke-width:1.4; }
@@ -84,7 +85,15 @@
     padding:2.2mm 3mm 1.8mm;
   }
   .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
+  .stamp { font-family:var(--mono); font-size:6.6pt; letter-spacing:.06em; color:var(--alerta);
+           border:1px solid #d8bdb7; border-radius:1px; padding:.2mm 1mm; margin-left:1.6mm;
+           text-transform:none; }
+  .risk tbody { counter-reset:hallazgo; }
   .risk td:first-child { font-weight:600; }
+  .risk tbody td:first-child::before {
+    counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
+    font-weight:400; color:var(--muted);
+  }
   .risk .note { margin:1mm 0 0; border-left-color:#e6d8d4; }
 
   /* ── Tablas ───────────────────────────────────────────────────────────── */
@@ -122,9 +131,10 @@
   .forest .ci.tentative { stroke-dasharray:3 2; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.findings { margin:0; padding:0; list-style:none;
+                counter-reset:f 4; }
   ol.findings li {
-    counter-increment:f; padding:1.2mm 0 1.2mm 7mm; border-bottom:1px solid var(--rule);
+    counter-increment:f; padding:1mm 0 1mm 7mm; border-bottom:1px solid var(--rule);
     position:relative;
   }
   ol.findings li:last-child { border-bottom:0; }
@@ -158,17 +168,17 @@
     <h1>Cobranza con agentes humanos y de IA: qué cambia en la gestión</h1>
   </header>
 
-  <p class="verdict"><strong>Sí hay diferencias estadísticamente sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se presenta como área jurídica (IA 86 %, humanos 2 %) y dice que la oferta vence hoy (IA 54 %, humanos 2 %); los humanos prometen más beneficios crediticios (IA 6 %, humanos 44 %). En compromisos de pago no se detectó diferencia.</p>
+  <p class="verdict"><strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en beneficios sobre el historial crediticio. A favor de la IA: verifica identidad en el 28 % de sus llamadas, frente al 2 %. En compromisos de pago no se detectó diferencia. <strong>Decisión:</strong> corregir el guion de los dos canales antes de escalar, y medir la conversión con un piloto aleatorizado.</p>
 
   <section>
     <div class="kpis">
-      <div class="kpi "><span class="v">86 % vs 2 %</span><span class="l">área jurídica · IA vs humanos</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 86 %, humanos 2 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="7.1" y1="6.5" x2="96.2" y2="6.5"/><path class="gap-mark human" d="M 7.1 2.9 L 10.7 6.5 L 7.1 10.1 L 3.5 6.5 Z"/><circle class="gap-mark ai" cx="96.2" cy="6.5" r="3.4"/></svg></div><div class="kpi "><span class="v">54 % vs 2 %</span><span class="l">oferta que vence hoy</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 54 %, humanos 2 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="7.1" y1="6.5" x2="62.2" y2="6.5"/><path class="gap-mark human" d="M 7.1 2.9 L 10.7 6.5 L 7.1 10.1 L 3.5 6.5 Z"/><circle class="gap-mark ai" cx="62.2" cy="6.5" r="3.4"/></svg></div><div class="kpi neg"><span class="v">6 % vs 44 %</span><span class="l">promesa de beneficio crediticio</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 6 %, humanos 44 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="11.4" y1="6.5" x2="51.6" y2="6.5"/><path class="gap-mark human" d="M 51.6 2.9 L 55.2 6.5 L 51.6 10.1 L 48.0 6.5 Z"/><circle class="gap-mark ai" cx="11.4" cy="6.5" r="3.4"/></svg></div><div class="kpi null"><span class="v">18 % vs 34 %</span><span class="l">compromiso de pago: no concluyente</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 18 %, humanos 34 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="24.1" y1="6.5" x2="41.0" y2="6.5"/><path class="gap-mark human" d="M 41.0 2.9 L 44.6 6.5 L 41.0 10.1 L 37.4 6.5 Z"/><circle class="gap-mark ai" cx="24.1" cy="6.5" r="3.4"/></svg></div>
+      <div class="kpi "><span class="v">86 % vs 2 %</span><span class="l">área jurídica · IA +84 pp</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 86 %, humanos 2 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="7.1" y1="6.5" x2="96.2" y2="6.5"/><path class="gap-mark human" d="M 7.1 2.9 L 10.7 6.5 L 7.1 10.1 L 3.5 6.5 Z"/><circle class="gap-mark ai" cx="96.2" cy="6.5" r="3.4"/></svg></div><div class="kpi "><span class="v">54 % vs 2 %</span><span class="l">la oferta vence hoy · IA +52 pp</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 54 %, humanos 2 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="7.1" y1="6.5" x2="62.2" y2="6.5"/><path class="gap-mark human" d="M 7.1 2.9 L 10.7 6.5 L 7.1 10.1 L 3.5 6.5 Z"/><circle class="gap-mark ai" cx="62.2" cy="6.5" r="3.4"/></svg></div><div class="kpi neg"><span class="v">6 % vs 44 %</span><span class="l">beneficio crediticio · humanos +38 pp</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 6 %, humanos 44 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="11.4" y1="6.5" x2="51.6" y2="6.5"/><path class="gap-mark human" d="M 51.6 2.9 L 55.2 6.5 L 51.6 10.1 L 48.0 6.5 Z"/><circle class="gap-mark ai" cx="11.4" cy="6.5" r="3.4"/></svg></div><div class="kpi null"><span class="v">18 % vs 34 %</span><span class="l">compromiso de pago · no concluyente (humanos +16 pp)</span><svg class="gap" viewBox="0 0 116 13" role="img" aria-label="IA 18 %, humanos 34 %"><line class="gap-track" x1="5" y1="6.5" x2="111" y2="6.5"/><line class="gap-span" x1="24.1" y1="6.5" x2="41.0" y2="6.5"/><path class="gap-mark human" d="M 41.0 2.9 L 44.6 6.5 L 41.0 10.1 L 37.4 6.5 Z"/><circle class="gap-mark ai" cx="24.1" cy="6.5" r="3.4"/></svg></div>
     </div>
-    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos, sobre 50 llamadas por canal</p>
+    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos · la barra va de 0 a 100 % de las llamadas del canal</p>
   </section>
 
   <section class="risk">
-    <h2>Alerta para revisión de cumplimiento</h2>
+    <h2>Hallazgos de cumplimiento <span class="stamp">Alerta para revisión de cumplimiento</span></h2>
     <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
         <th>Norma</th><th>Qué hacer</th></tr></thead>
@@ -193,58 +203,58 @@
 
   <section>
     <h2>Dónde difieren, y cuánto</h2>
-    <svg class="forest" viewBox="0 0 520 184" role="img">
-<line class="axis-tick" x1="220.0" y1="6" x2="220.0" y2="160"/>
-<text class="axis-label" x="220.0" y="171">−100</text>
-<line class="axis-zero" x1="348.0" y1="6" x2="348.0" y2="160"/>
-<text class="axis-label" x="348.0" y="171">0</text>
-<line class="axis-tick" x1="476.0" y1="6" x2="476.0" y2="160"/>
-<text class="axis-label" x="476.0" y="171">+100</text>
-<text class="axis-title" x="348.0" y="182">diferencia IA − humanos, en puntos porcentuales</text>
+    <svg class="forest" viewBox="0 0 520 168" role="img">
+<line class="axis-tick" x1="220.0" y1="6" x2="220.0" y2="144"/>
+<text class="axis-label" x="220.0" y="155">−100</text>
+<line class="axis-zero" x1="348.0" y1="6" x2="348.0" y2="144"/>
+<text class="axis-label" x="348.0" y="155">0</text>
+<line class="axis-tick" x1="476.0" y1="6" x2="476.0" y2="144"/>
+<text class="axis-label" x="476.0" y="155">+100</text>
+<text class="axis-title" x="348.0" y="166">diferencia IA − humanos, en puntos porcentuales</text>
 <text class="row-label" x="206" y="20.5">Se presenta como área jurídica</text>
 <line class="ci pos" x1="436.5" y1="17" x2="464.8" y2="17"/>
 <circle class="pt pos" cx="455.5" cy="17" r="3.8"/>
 <text class="row-value pos" x="516" y="20.5">+84</text>
-<text class="row-label" x="206" y="39.5">Dice que la oferta vence hoy</text>
-<line class="ci pos" x1="394.0" y1="36" x2="431.4" y2="36"/>
-<circle class="pt pos" cx="414.6" cy="36" r="3.8"/>
-<text class="row-value pos" x="516" y="39.5">+52</text>
-<text class="row-label" x="206" y="58.5">Plantea un proceso legal</text>
-<line class="ci pos" x1="376.4" y1="55" x2="414.6" y2="55"/>
-<circle class="pt pos" cx="396.6" cy="55" r="3.8"/>
-<text class="row-value pos" x="516" y="58.5">+38</text>
-<text class="row-label" x="206" y="77.5">Promete beneficio crediticio</text>
-<line class="ci neg" x1="281.1" y1="74" x2="320.4" y2="74"/>
-<path class="pt neg" d="M 299.4 69.8 L 303.6 74.0 L 299.4 78.2 L 295.2 74.0 Z"/>
-<text class="row-value neg" x="516" y="77.5">−38</text>
-<text class="row-label" x="206" y="96.5">Confidencialidad o identidad*</text>
-<line class="ci pos tentative" x1="364.0" y1="93" x2="398.9" y2="93"/>
-<circle class="pt pos tentative" cx="381.3" cy="93" r="3.8"/>
-<text class="row-value pos" x="516" y="96.5">+26</text>
-<text class="row-label" x="206" y="115.5">Compromiso con fecha y monto</text>
-<line class="ci null" x1="306.9" y1="112" x2="349.6" y2="112"/>
-<path class="pt null" d="M 327.5 107.8 L 331.7 112.0 L 327.5 116.2 L 323.3 112.0 Z"/>
-<text class="row-value null" x="516" y="115.5">−16</text>
-<text class="row-label" x="206" y="134.5">Ofrece cuotas o abono</text>
-<line class="ci null" x1="331.5" y1="131" x2="379.1" y2="131"/>
-<circle class="pt null" cx="355.7" cy="131" r="3.8"/>
-<text class="row-value null" x="516" y="134.5">+6</text>
-<text class="row-label" x="206" y="153.5">Propuesta con cifras</text>
-<line class="ci null" x1="321.6" y1="150" x2="369.5" y2="150"/>
-<path class="pt null" d="M 345.4 145.8 L 349.6 150.0 L 345.4 154.2 L 341.2 150.0 Z"/>
-<text class="row-value null" x="516" y="153.5">−2</text>
+<text class="row-label" x="206" y="37.5">Dice que la oferta vence hoy</text>
+<line class="ci pos" x1="394.0" y1="34" x2="431.4" y2="34"/>
+<circle class="pt pos" cx="414.6" cy="34" r="3.8"/>
+<text class="row-value pos" x="516" y="37.5">+52</text>
+<text class="row-label" x="206" y="54.5">Plantea un proceso legal</text>
+<line class="ci pos" x1="376.4" y1="51" x2="414.6" y2="51"/>
+<circle class="pt pos" cx="396.6" cy="51" r="3.8"/>
+<text class="row-value pos" x="516" y="54.5">+38</text>
+<text class="row-label" x="206" y="71.5">Promete beneficio crediticio</text>
+<line class="ci neg" x1="281.1" y1="68" x2="320.4" y2="68"/>
+<path class="pt neg" d="M 299.4 63.8 L 303.6 68.0 L 299.4 72.2 L 295.2 68.0 Z"/>
+<text class="row-value neg" x="516" y="71.5">−38</text>
+<text class="row-label" x="206" y="88.5">Confidencialidad o identidad*</text>
+<line class="ci pos tentative" x1="364.0" y1="85" x2="398.9" y2="85"/>
+<circle class="pt pos tentative" cx="381.3" cy="85" r="3.8"/>
+<text class="row-value pos" x="516" y="88.5">+26</text>
+<text class="row-label" x="206" y="105.5">Compromiso con fecha y monto</text>
+<line class="ci null" x1="306.9" y1="102" x2="349.6" y2="102"/>
+<path class="pt null" d="M 327.5 97.8 L 331.7 102.0 L 327.5 106.2 L 323.3 102.0 Z"/>
+<text class="row-value null" x="516" y="105.5">−16</text>
+<text class="row-label" x="206" y="122.5">Ofrece cuotas o abono</text>
+<line class="ci null" x1="331.5" y1="119" x2="379.1" y2="119"/>
+<circle class="pt null" cx="355.7" cy="119" r="3.8"/>
+<text class="row-value null" x="516" y="122.5">+6</text>
+<text class="row-label" x="206" y="139.5">Propuesta con cifras</text>
+<line class="ci null" x1="321.6" y1="136" x2="369.5" y2="136"/>
+<path class="pt null" d="M 345.4 131.8 L 349.6 136.0 L 345.4 140.2 L 341.2 136.0 Z"/>
+<text class="row-value null" x="516" y="139.5">−2</text>
 </svg>
     <p class="note">Azul y círculo: más en IA · ocre y rombo: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas.</p>
   </section>
 
   <section>
-    <h2>Hallazgos</h2>
+    <h2>Hallazgos comerciales</h2>
     <ol class="findings">
       
-      <li><span class="claim">Cuando contesta el titular, la IA cierra compromiso con fecha y monto en el 29 % de las llamadas y los humanos en el 37 %.</span> <span class="why">No concluyente. Entre gestiones nuevas, IA 18 % y humanos 25 %.</span>
+      <li><span class="claim">Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %): −8 pp, no concluyente.</span> <span class="why">Entre gestiones nuevas, 18 % y 25 %.</span>
         <span class="action">→ Medirlo en un piloto: al menos 356 cuentas por grupo para detectar 10 pp.</span></li>
       
-      <li><span class="claim">Carteras distintas: el 52 % de las llamadas humanas retomaba un acuerdo previo; ninguna de la IA.</span> <span class="why"></span>
+      <li><span class="claim">Carteras distintas: el 52 % de las llamadas humanas retomaba un acuerdo previo, ninguna de la IA; y la IA habló con el titular en 31 de 50, frente a 46 de 50.</span> <span class="why"></span>
         <span class="action">→ No comparar conversión entre canales sin asignar las cuentas al azar.</span></li>
       
     </ol>
@@ -301,20 +311,20 @@
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <ul class="bullets"><li>Dos transcripciones por llamada, en este equipo. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas por separado, sin saber el canal; vale la mayoría.</li><li>1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.</li><li>Un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17. Las 14 celdas sin unanimidad se escucharon una a una: se publica lo oído.</li><li>Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.</li><li>En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras.</li></ul>
+      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal; vale la mayoría.</li><li>1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.</li><li>Un solo modelo aceptaba asentimientos vagos: 25 compromisos humanos donde el panel ve 17. Las 14 celdas sin unanimidad se escucharon: se publica lo oído.</li><li>Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.</li><li>En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras.</li></ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
-      <ul class="bullets"><li>Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.</li><li>Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.</li><li>Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.</li><li>Con 50 llamadas por canal, diferencias menores a 29 pp pueden pasar inadvertidas (tasa base 30 %).</li><li>En las variables sin diferencia esperada no se descartan hasta 24 pp.</li></ul>
+      <ul class="bullets"><li>Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.</li><li>Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.</li><li>Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.</li><li>Con 50 llamadas por canal no se detectan diferencias menores a 29 pp (24 pp donde no se esperaba dirección).</li></ul>
     </section>
   </div>
 
   <section>
     <h2>Siguiente paso</h2>
     <ul class="levers">
-      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %).</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde.</li>
+      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales.</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde.</li>
     </ul>
-    <p class="note">Con 100.000 llamadas de 4 minutos al mes, transcribir, borrar los datos personales, anotar con la rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.</p>
+    <p class="note">Medir esto en producción —transcribir, borrar los datos personales, anotar con la rúbrica y el tablero— cuesta desde 1.500 USD al mes para 100.000 llamadas de 4 minutos (2.700 con agente y deudor en canales separados; 6.700 a precio estándar; 6.000 si se compra la analítica). No incluye operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio.</p>
   </section>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>2 / 2</span></footer>

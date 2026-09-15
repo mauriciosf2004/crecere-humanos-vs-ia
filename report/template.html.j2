@@ -53,9 +53,9 @@
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
   }
   p { margin:0 0 1.5mm; }
-  section { margin-bottom:2.6mm; }
+  section { margin-bottom:2.2mm; }
 
-  .verdict { font-family:var(--serif); font-size:11pt; line-height:1.33; margin:0 0 3.2mm; }
+  .verdict { font-family:var(--serif); font-size:10.8pt; line-height:1.3; margin:0 0 2.8mm; }
   .verdict strong { font-weight:650; }
 
   /* ── Cuadro de mando: la cifra, la etiqueta y la brecha dibujada ──────── */
@@ -68,7 +68,8 @@
     display:block; line-height:1.05;
   }
   .kpi.null .v { color:var(--muted); }
-  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm; }
+  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm;
+            min-height:6.8mm; }
   svg.gap { width:100%; height:3.2mm; margin-top:.7mm; display:block; }
   .gap-track { stroke:var(--rule); stroke-width:1.4; }
   .gap-span { stroke:#cfc9c0; stroke-width:1.4; }
@@ -84,7 +85,15 @@
     padding:2.2mm 3mm 1.8mm;
   }
   .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
+  .stamp { font-family:var(--mono); font-size:6.6pt; letter-spacing:.06em; color:var(--alerta);
+           border:1px solid #d8bdb7; border-radius:1px; padding:.2mm 1mm; margin-left:1.6mm;
+           text-transform:none; }
+  .risk tbody { counter-reset:hallazgo; }
   .risk td:first-child { font-weight:600; }
+  .risk tbody td:first-child::before {
+    counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
+    font-weight:400; color:var(--muted);
+  }
   .risk .note { margin:1mm 0 0; border-left-color:#e6d8d4; }
 
   /* ── Tablas ───────────────────────────────────────────────────────────── */
@@ -122,9 +131,10 @@
   .forest .ci.tentative { stroke-dasharray:3 2; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.findings { margin:0; padding:0; list-style:none;
+                counter-reset:f {{ cumplimiento.filas|length }}; }
   ol.findings li {
-    counter-increment:f; padding:1.2mm 0 1.2mm 7mm; border-bottom:1px solid var(--rule);
+    counter-increment:f; padding:1mm 0 1mm 7mm; border-bottom:1px solid var(--rule);
     position:relative;
   }
   ol.findings li:last-child { border-bottom:0; }
@@ -164,11 +174,11 @@
     <div class="kpis">
       {% for k in kpis %}<div class="kpi {{ k.clase }}"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span>{{ k.barra|safe }}</div>{% endfor %}
     </div>
-    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos, sobre 50 llamadas por canal</p>
+    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos · la barra va de 0 a 100 % de las llamadas del canal</p>
   </section>
 
   <section class="risk">
-    <h2>{{ cumplimiento.rotulo }}</h2>
+    <h2>Hallazgos de cumplimiento <span class="stamp">{{ cumplimiento.rotulo }}</span></h2>
     <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
         <th>Norma</th><th>Qué hacer</th></tr></thead>
@@ -189,7 +199,7 @@
   </section>
 
   <section>
-    <h2>Hallazgos</h2>
+    <h2>Hallazgos comerciales</h2>
     <ol class="findings">
       {% for f in hallazgos %}
       <li><span class="claim">{{ f.claim }}</span> <span class="why">{{ f.why }}</span>
