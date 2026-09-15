@@ -6,37 +6,8 @@
     "autor": "Mauricio Salas",
     "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
-  "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en beneficios sobre el historial crediticio. Cuál cobra mejor no se midió: en compromisos de pago los datos admiten desde 32 pp menos hasta 1 pp más para la IA. <strong>Decisión:</strong> corregir el guion de los dos canales antes de escalar, y medir la conversión con un piloto aleatorizado.",
-  "kpis": [
-    {
-      "valor": "86 % vs 2 %",
-      "etiqueta": "área jurídica · IA +84 pp",
-      "clase": "",
-      "ia_pct": 86.0,
-      "humano_pct": 2.0
-    },
-    {
-      "valor": "54 % vs 2 %",
-      "etiqueta": "la oferta vence hoy · IA +52 pp",
-      "clase": "",
-      "ia_pct": 54.0,
-      "humano_pct": 2.0
-    },
-    {
-      "valor": "6 % vs 44 %",
-      "etiqueta": "beneficio crediticio · humanos +38 pp",
-      "clase": "neg",
-      "ia_pct": 6.0,
-      "humano_pct": 44.0
-    },
-    {
-      "valor": "18 % vs 34 %",
-      "etiqueta": "compromiso de pago · no concluyente (−32 a +1 pp)",
-      "clase": "null",
-      "ia_pct": 18.0,
-      "humano_pct": 34.0
-    }
-  ],
+  "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA, así que esto describe cómo habla cada uno.",
+  "recomendacion": "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado de 356 cuentas por grupo.",
   "efectos": [
     {
       "etiqueta": "Se presenta como área jurídica",
@@ -79,7 +50,7 @@
       "n_humano": "22/50"
     },
     {
-      "etiqueta": "Confidencialidad o identidad*",
+      "etiqueta": "Confidencialidad o identidad · tentativo",
       "tentativo": true,
       "significativo": true,
       "diff_pp": 26.0,
@@ -119,10 +90,11 @@
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Azul y círculo: más en IA · ocre y rombo: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas.",
+  "forest_nota": "Las ocho conductas, sobre las 50 llamadas de cada canal. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.",
   "cumplimiento": {
     "rotulo": "Alerta para revisión de cumplimiento",
-    "advertencia": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal. Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.",
+    "salvedad": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
+    "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.",
     "filas": [
       {
         "conducta": "Se presenta como área jurídica",
@@ -156,13 +128,13 @@
   },
   "hallazgos": [
     {
-      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %): −8 pp, no concluyente.",
-      "why": "Entre gestiones nuevas, 18 % y 25 %. Si las 9 llamadas de IA sin identificar fueran del titular, 23 % y 36 %: la conclusión no cambia.",
-      "accion": "Medirlo en un piloto: al menos 356 cuentas por grupo para detectar 10 pp."
+      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %).",
+      "why": "Son −8 pp, pero no está medido: con estas llamadas los datos admiten desde 27 pp menos hasta 14 pp más para la IA.",
+      "accion": "Medirlo: piloto aleatorizado de 356 cuentas por grupo, 2.700 USD al mes para 100.000 llamadas, decidido a los 30 días con el recaudo."
     },
     {
-      "claim": "Contextos distintos: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA.",
-      "why": "",
+      "claim": "Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.",
+      "why": "Por eso la comparación describe cómo habla cada canal y no cuál cobra mejor.",
       "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
   ],
@@ -182,48 +154,111 @@
   "kpis_banco": [
     {
       "kpi": "Contacto con el titular",
-      "hoy": "sí · IA 62-80 %, humanos 92-94 %",
-      "piloto": "sí, con los intentos del marcador",
-      "produccion": "sí"
+      "hoy": [
+        "si",
+        "IA 62-80 %, humanos 92-94 %"
+      ],
+      "piloto": [
+        "si",
+        "con los intentos del marcador"
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     },
     {
       "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-      "hoy": "sí · IA 29 %, humanos 37 %",
-      "piloto": "sí",
-      "produccion": "sí"
+      "hoy": [
+        "si",
+        "IA 29 %, humanos 37 %"
+      ],
+      "piloto": [
+        "si",
+        ""
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     },
     {
       "kpi": "Promesa cumplida y recaudo a 30 días",
-      "hoy": "no: exige datos de pago",
-      "piloto": "sí, KPI principal",
-      "produccion": "sí"
+      "hoy": [
+        "no",
+        "exige datos de pago"
+      ],
+      "piloto": [
+        "si",
+        "KPI principal"
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     },
     {
       "kpi": "Cure rate por tramo de mora",
-      "hoy": "no: exige cartera",
-      "piloto": "a 90 días",
-      "produccion": "sí"
+      "hoy": [
+        "no",
+        "exige cartera"
+      ],
+      "piloto": [
+        "parcial",
+        "a 90 días"
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     },
     {
       "kpi": "Costo por peso recuperado",
-      "hoy": "no: exige costos y recaudo",
-      "piloto": "sí",
-      "produccion": "sí"
+      "hoy": [
+        "no",
+        "exige costos y recaudo"
+      ],
+      "piloto": [
+        "si",
+        ""
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     },
     {
       "kpi": "Alertas de cumplimiento por canal",
-      "hoy": "sí, las cuatro de arriba",
-      "piloto": "sí",
-      "produccion": "sí, en todas las llamadas"
+      "hoy": [
+        "si",
+        "las cuatro de arriba"
+      ],
+      "piloto": [
+        "si",
+        ""
+      ],
+      "produccion": [
+        "si",
+        "en todas las llamadas"
+      ]
     },
     {
       "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-      "hoy": "no: exige los registros del marcador",
-      "piloto": "sí",
-      "produccion": "sí"
+      "hoy": [
+        "no",
+        "exige los registros del marcador"
+      ],
+      "piloto": [
+        "si",
+        ""
+      ],
+      "produccion": [
+        "si",
+        ""
+      ]
     }
   ],
-  "escala": "Medir esto en producción —transcribir, borrar los datos personales, anotar con la rúbrica y el tablero— cuesta unos 2.700 USD al mes para 100.000 llamadas de 4 minutos, con agente y deudor en canales separados, que es lo que exige separar hablantes. Baja a 1.500 en un solo canal y sube a 6.000-6.700 con analítica de proveedor o a precio de lista. No incluye operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio.",
+  "escala": "Precios oficiales de lista, calculados en el repositorio; no incluye operar ningún canal. Un solo canal de audio baja a 1.500 USD y la analítica de proveedor sube a 6.000-6.700.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
@@ -234,6 +269,10 @@
       "detalle": "IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo."
     },
     {
+      "titulo": "Lo que cuesta medirlo.",
+      "detalle": "2.700 USD al mes para 100.000 llamadas de 4 minutos: transcribir, borrar los datos personales, anotar con la rúbrica y el tablero, con agente y deudor en canales separados."
+    },
+    {
       "titulo": "Un estándar común.",
       "detalle": "Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde."
     }
@@ -241,7 +280,7 @@
   "metodo": [
     "Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal; vale la mayoría.",
     "1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.",
-    "Un solo modelo aceptaba asentimientos vagos: contaba 25 y 11 compromisos donde el panel ve 17 y 9. Las 14 celdas de compromiso sin unanimidad se escucharon: manda lo oído.",
+    "El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.",
     "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor.",
     "En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras."
   ],

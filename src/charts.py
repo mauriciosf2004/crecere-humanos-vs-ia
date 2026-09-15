@@ -4,11 +4,9 @@ Van inline en el HTML, así que heredan el CSS del documento: el gráfico y la
 página son literalmente el mismo sistema visual, y no hay ningún recurso externo
 que falle cuando el evaluador abra el adjunto sin conexión.
 
-Dos formas, y cada una tiene un trabajo distinto. El forest plot muestra magnitud e
-incertidumbre a la vez, que es lo que un p-valor esconde. La barra de brecha pone a
-los dos canales sobre la misma escala de 0 a 100 para que la diferencia se vea antes
-de leer la cifra. Ninguna de las dos usa el color como único código: la dirección va
-también en la forma de la marca, así que el informe se lee impreso en blanco y negro.
+Una sola forma, porque solo una se gana su espacio: el forest plot muestra magnitud e
+incertidumbre a la vez, que es lo que un p-valor esconde. No usa el color como único
+código —la dirección va en la forma de la marca—, así que se lee fotocopiado.
 """
 
 from __future__ import annotations
@@ -27,7 +25,6 @@ class EffectRow:
     ci_high_pp: float
     n_ai: str
     n_human: str
-    tentative: bool = False
     significant: bool = False
 
 
@@ -51,35 +48,13 @@ def _diamond(x: float, y: float, r: float) -> str:
     )
 
 
-def gap_bar(ia: float, human: float, width: int = 116, height: int = 13) -> str:
-    """Los dos canales sobre una escala común de 0 a 100: la brecha antes que la cifra.
-
-    Círculo para la IA, rombo para los humanos, y el tramo entre ambos sombreado. Es la
-    misma gramática del forest plot, en miniatura, para que el lector aprenda a leer una
-    sola vez.
-    """
-    pad, y = 5, height / 2
-    span = width - 2 * pad
-    x_ai, x_human = pad + span * ia / 100, pad + span * human / 100
-    low, high = sorted((x_ai, x_human))
-    return (
-        f'<svg class="gap" viewBox="0 0 {width} {height}" role="img" '
-        f'aria-label="IA {ia:.0f} %, humanos {human:.0f} %">'
-        f'<line class="gap-track" x1="{pad}" y1="{y}" x2="{width - pad}" y2="{y}"/>'
-        f'<line class="gap-span" x1="{low:.1f}" y1="{y}" x2="{high:.1f}" y2="{y}"/>'
-        f'<path class="gap-mark human" d="{_diamond(x_human, y, 3.6)}"/>'
-        f'<circle class="gap-mark ai" cx="{x_ai:.1f}" cy="{y}" r="3.4"/>'
-        f"</svg>"
-    )
-
-
 def forest(rows: list[EffectRow], width: int = 520, row_height: int = 19) -> str:
     """Diferencias en puntos porcentuales con IC 95 %. El cero marcado es la referencia.
 
     La marca codifica la dirección además del color: círculo cuando la conducta es más
-    frecuente en la IA, rombo cuando lo es en los humanos. Las filas tentativas —las que
-    no se sostienen al comparar carteras equivalentes— van huecas y con línea discontinua,
-    para que no se lean igual de firmes.
+    frecuente en la IA, rombo cuando lo es en los humanos. El matiz de lo tentativo no se
+    dibuja: va como palabra en la etiqueta, porque cuatro codificaciones para el mismo
+    matiz obligaban a bajar a una nota al pie para descifrar un asterisco.
     """
     # 206 de 520 era el 40 % del ancho para rótulos que no lo necesitan: dejaba 27 mm de
     # papel en blanco a la izquierda y estrechaba el área de trazado.
@@ -116,16 +91,13 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 19) -> str
         # comparación y puede excluir el cero en una diferencia que, corregida por la
         # familia, no es concluyente. Pintarla de color contradiría a la tabla.
         cls = "null" if not row.significant else ("pos" if row.diff_pp > 0 else "neg")
-        mark = " tentative" if row.tentative else ""
 
         out.append(f'<text class="row-label" x="{label_width}" y="{y + 3.5}">{row.label}</text>')
-        out.append(
-            f'<line class="ci {cls}{mark}" x1="{x_low:.1f}" y1="{y}" x2="{x_high:.1f}" y2="{y}"/>'
-        )
+        out.append(f'<line class="ci {cls}" x1="{x_low:.1f}" y1="{y}" x2="{x_high:.1f}" y2="{y}"/>')
         if row.diff_pp < 0:
-            out.append(f'<path class="pt {cls}{mark}" d="{_diamond(x_point, y, 4.2)}"/>')
+            out.append(f'<path class="pt {cls}" d="{_diamond(x_point, y, 4.2)}"/>')
         else:
-            out.append(f'<circle class="pt {cls}{mark}" cx="{x_point:.1f}" cy="{y}" r="3.8"/>')
+            out.append(f'<circle class="pt {cls}" cx="{x_point:.1f}" cy="{y}" r="3.8"/>')
         out.append(
             f'<text class="row-value {cls}" x="{width - 4}" y="{y + 3.5}">'
             f"{signed(row.diff_pp)}</text>"

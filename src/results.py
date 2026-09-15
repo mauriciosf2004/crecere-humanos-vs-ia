@@ -17,6 +17,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 from src.charts import signed
+from src.stats import compare_proportions
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
@@ -189,7 +190,13 @@ def tentative(item: dict) -> bool:
 
 
 def label(item: dict) -> str:
-    return SHORT[item["variable"]] + ("*" if tentative(item) else "")
+    """La etiqueta del gráfico. Lo tentativo se dice con la palabra, no con un asterisco.
+
+    Antes se codificaba cuatro veces —color, forma, marca hueca y línea discontinua— un
+    matiz que cabe en una palabra, y encima obligaba a bajar a una nota al pie para saber
+    qué significaba el asterisco.
+    """
+    return SHORT[item["variable"]] + (" · tentativo" if tentative(item) else "")
 
 
 def status(item: dict) -> tuple[str, str]:
@@ -253,9 +260,14 @@ def build() -> dict:
             - titular["humano"]["k"] / titular["humano"]["n"]
         )
     )
-    new_commitment = next(
-        s for s in commitment["estratificado"]["estratos"] if s["estrato"] == "nuevo"
+    # El compromiso de pago aparecía cuatro veces en el pliego con cuatro parejas distintas
+    # de cifras, porque cada una usaba el denominador que le convenía. Se publica una sola:
+    # la del banco, sobre contactos con el titular, con SU intervalo. El de todas las llamadas
+    # no sirve aquí —es otro denominador— y reciclarlo sería inventar.
+    ptp = compare_proportions(
+        titular["ia"]["k"], titular["ia"]["n"], titular["humano"]["k"], titular["humano"]["n"]
     )
+
     # Las llamadas sin identificar cuentan como «no titular», así que la tasa publicada es el
     # piso; el techo es contarlas todas como titular. Se publican las dos puntas.
     contact_range = {
@@ -263,12 +275,6 @@ def build() -> dict:
             f"{pct(contact[f'k_{arm}'], contact[f'n_{arm}']).rstrip(' %')}-"
             f"{pct(contact[f'k_{arm}'] + contact[f'indeterminado_{arm}'], contact[f'n_{arm}'])}"
         )
-        for arm in ("ia", "humano")
-    }
-    # Cota superior del denominador: ninguna llamada sin identificar tiene compromiso, así que
-    # contarlas todas como titular es el peor caso para cada brazo.
-    ptp_ceiling = {
-        arm: pct(titular[arm]["k"], titular[arm]["n"] + contact[f"indeterminado_{arm}"])
         for arm in ("ia", "humano")
     }
     nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
@@ -303,6 +309,8 @@ def build() -> dict:
     literal_rule = sum(agreement["resumen"].get("ajustes_regla_literal", {}).values())
     heard = agreement["resumen"].get("celdas_escuchadas", 0)
     single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
+    extra_humano = single_pass["extraccion"]["humano"] - single_pass["consenso"]["humano"]
+    extra_ia = single_pass["extraccion"]["ia"] - single_pass["consenso"]["ia"]
     family_anchor, context_anchor = anchoring["total"], anchoring["total_contexto"]
     undetermined = prior["indeterminado_ia"] + prior["indeterminado_humano"]
 
@@ -356,11 +364,9 @@ def build() -> dict:
         # anotación, y publicar cómo cambia uno solo se lee como haber elegido el que conviene.
         # Y son las 14 celdas *de compromiso*: sin unanimidad hay 58 en toda la rejilla.
         (
-            "Un solo modelo aceptaba asentimientos vagos: contaba "
-            f"{single_pass['extraccion']['humano']} y {single_pass['extraccion']['ia']} "
-            f"compromisos donde el panel ve {single_pass['consenso']['humano']} y "
-            f"{single_pass['consenso']['ia']}. Las {heard} celdas de compromiso sin unanimidad "
-            "se escucharon: manda lo oído."
+            "El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos "
+            f"vagos y contaba {extra_humano} compromisos humanos y {extra_ia} de IA más que el "
+            f"panel. Las {heard} celdas sin unanimidad se escucharon una a una: manda lo oído."
         ),
         # La dirección esperada se fijó mirando estas mismas llamadas. Decirlo y callar la
         # consecuencia deja el flanco abierto; decirlo con la consecuencia lo cierra, porque
@@ -393,49 +399,16 @@ def build() -> dict:
         # la auditoría: se apoyaba en la única fila que el propio gráfico marca como no sostenida.
         "veredicto": (
             "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál "
-            "cobra mejor.</strong> La IA se apoya en lo jurídico y en la urgencia; los humanos, en "
-            "beneficios sobre el historial crediticio. Cuál cobra mejor no se midió: en "
-            f"compromisos de pago los datos admiten desde {abs(commitment['ci_low_pp']):.0f} pp "
-            f"menos hasta {commitment['ci_high_pp']:.0f} pp más para la IA. "
-            "<strong>Decisión:</strong> corregir el guion de los "
-            "dos canales antes de escalar, y medir la conversión con un piloto aleatorizado."
+            "cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: "
+            f"{prior['k_humano']} de {prior['n_humano']} llamadas humanas retoman un acuerdo "
+            "previo y ninguna de la IA, así que esto describe cómo habla cada uno."
         ),
-        "kpis": [
-            {
-                "valor": f"{rate(legal, 'ia')} vs {rate(legal, 'humano')}",
-                "etiqueta": f"área jurídica · {lead(legal)}",
-                "clase": "",
-                "ia_pct": 100 * share(legal, "ia"),
-                "humano_pct": 100 * share(legal, "humano"),
-            },
-            {
-                "valor": f"{rate(expiry, 'ia')} vs {rate(expiry, 'humano')}",
-                "etiqueta": f"la oferta vence hoy · {lead(expiry)}",
-                "clase": "",
-                "ia_pct": 100 * share(expiry, "ia"),
-                "humano_pct": 100 * share(expiry, "humano"),
-            },
-            {
-                "valor": f"{rate(credit, 'ia')} vs {rate(credit, 'humano')}",
-                "etiqueta": f"beneficio crediticio · {lead(credit)}",
-                "clase": "neg",
-                "ia_pct": 100 * share(credit, "ia"),
-                "humano_pct": 100 * share(credit, "humano"),
-            },
-            {
-                "valor": f"{rate(commitment, 'ia')} vs {rate(commitment, 'humano')}",
-                # La única tarjeta que lleva intervalo en vez de diferencia puntual: en un nulo
-                # el intervalo *es* el hallazgo, y un «+16 pp» suelto invita a leer un empate.
-                "etiqueta": (
-                    "compromiso de pago · no concluyente "
-                    f"({signed(commitment['ci_low_pp'])} a "
-                    f"{signed(commitment['ci_high_pp'])} pp)"
-                ),
-                "clase": "null",
-                "ia_pct": 100 * share(commitment, "ia"),
-                "humano_pct": 100 * share(commitment, "humano"),
-            },
-        ],
+        # Una línea, con peso y aire propio. Lleva las dos acciones y su precio, porque una
+        # recomendación sin costo es una opinión.
+        "recomendacion": (
+            "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la "
+            f"conversión con un piloto aleatorizado de {pilot['10']} cuentas por grupo."
+        ),
         "efectos": [
             {
                 "etiqueta": label(item),
@@ -450,17 +423,25 @@ def build() -> dict:
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
         "forest_nota": (
-            "Azul y círculo: más en IA · ocre y rombo: más en humanos · gris: no concluyente "
-            "con esta muestra · línea: margen de error 95 %."
-            + (" *Hueco: no se sostiene entre gestiones nuevas." if any_tentative else "")
+            f"Las ocho conductas, sobre las {n} llamadas de cada canal. "
+            "Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no "
+            "concluyente con esta muestra · la línea es el margen de error del 95 %."
+            + (
+                " «Tentativo»: difiere en el total, pero no entre gestiones nuevas."
+                if any_tentative
+                else ""
+            )
         ),
         "cumplimiento": {
             "rotulo": norms["rotulo"],
+            # Pegada al título, al cuerpo de lectura: viaja con la tabla cuando alguien la
+            # fotografía, que es como circulan estas cosas.
+            "salvedad": norms["advertencia"],
             # La tabla compara 50 contra 50, y los dos brazos no traen la misma cartera. Sin esta
             # línea, la comparación que el banco ve primero es la sucia. La defensa es más fuerte
             # que la salvedad: al restringir a gestiones nuevas, la promesa de beneficio
             # crediticio en humanos no baja, sube.
-            "advertencia": norms["advertencia"] + " " + alerts_hold,
+            "advertencia": alerts_hold,
             "filas": [
                 {
                     "conducta": alert["conducta"],
@@ -479,6 +460,9 @@ def build() -> dict:
                 )
             ],
         },
+        # Numerados 1 y 2: la pregunta que el cliente hizo va primero, y las alertas de
+        # cumplimiento siguen en 3-6. Antes la lista empezaba en «5» y el lector buscaba la
+        # página que faltaba.
         "hallazgos": [
             {
                 "claim": (
@@ -486,37 +470,32 @@ def build() -> dict:
                     f"{titular['ia']['k']} de {titular['ia']['n']} llamadas "
                     f"({pct(titular['ia']['k'], titular['ia']['n'])}) y los humanos en "
                     f"{titular['humano']['k']} de {titular['humano']['n']} "
-                    f"({pct(titular['humano']['k'], titular['humano']['n'])}): "
-                    f"{titular_gap} pp, no concluyente."
+                    f"({pct(titular['humano']['k'], titular['humano']['n'])})."
                 ),
-                # El denominador excluye las llamadas donde no se sabe quién contesta, y son 9
-                # en IA contra 1 en humanos: esa asimetría infla la tasa de la IA. Se publica
-                # también el extremo contrario, que es el que un evaluador calcularía solo.
+                # El intervalo en palabras, no un signo: es la única cifra que decide el negocio
+                # y la respuesta honesta es que esta muestra no la resuelve.
                 "why": (
-                    "Entre gestiones nuevas, "
-                    f"{pct(new_commitment['k_ia'], new_commitment['n_ia'])} y "
-                    f"{pct(new_commitment['k_humano'], new_commitment['n_humano'])}. Si las "
-                    f"{contact['indeterminado_ia']} llamadas de IA sin identificar fueran del "
-                    f"titular, {ptp_ceiling['ia']} y {ptp_ceiling['humano']}: la conclusión no "
-                    "cambia."
+                    f"Son {titular_gap} pp, pero no está medido: con estas llamadas los datos "
+                    f"admiten desde {abs(ptp.ci_low_pp):.0f} pp menos hasta "
+                    f"{ptp.ci_high_pp:.0f} pp más para la IA."
                 ),
                 "accion": (
-                    f"Medirlo en un piloto: al menos {pilot['10']} cuentas por grupo para detectar "
-                    "10 pp."
+                    f"Medirlo: piloto aleatorizado de {pilot['10']} cuentas por grupo, "
+                    f"{thousands(estereo)} USD al mes para {thousands(scale['llamadas_mes'])} "
+                    "llamadas, decidido a los 30 días con el recaudo."
                 ),
             },
             {
-                # «Carteras distintas» afirmaba más de lo que el audio puede sostener: con solo
-                # la llamada no se distingue la cartera del guion. «Contextos distintos» es lo
-                # que el dato aguanta, y para la decisión —no comparar conversión— da igual cuál
-                # de las dos causas sea.
-                # El contacto con el titular ya va con sus dos denominadores en el hallazgo
-                # anterior: repetirlo aquí gastaba una línea de la página 1 sin añadir nada.
+                # La decisión incómoda: quien armó la muestra es quien califica la prueba. Va
+                # arriba igual, porque es la premisa de la que cuelga toda la prudencia del
+                # informe. Se afirma sobre el diseño del dato, nunca sobre una persona.
                 "claim": (
-                    f"Contextos distintos: {prior['k_humano']} de {prior['n_humano']} llamadas "
-                    "humanas retoman un acuerdo previo y ninguna de la IA."
+                    f"Las {2 * n} llamadas llegaron sin asignación al azar ni criterio de "
+                    "selección documentado."
                 ),
-                "why": "",
+                "why": (
+                    "Por eso la comparación describe cómo habla cada canal y no cuál cobra mejor."
+                ),
                 "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
             },
         ],
@@ -539,66 +518,68 @@ def build() -> dict:
             + f"{duration['mediana_humano_s']:.0f} s en humanos, sin diferencia concluyente "
             + f"({p_text(duration['p_mann_whitney'])})."
         ),
+        # Matriz de marcas, no once celdas que dicen «sí». La tabla ocupaba el mejor tercio
+        # de la página 2 y a tamaño de vistazo producía una losa gris sin puerta de entrada;
+        # el patrón de marcas es lo único de esa hoja que se ve sin leer. Las cifras de «hoy»
+        # se quedan: son datos, no estados.
         "kpis_banco": [
             {
                 "kpi": "Contacto con el titular",
                 # Rango, no punto: las llamadas donde no se sabe quién contesta cuentan como
                 # «no titular», y son 9 en IA contra 1 en humanos. El punto solo es el piso.
-                "hoy": (f"sí · IA {contact_range['ia']}, humanos {contact_range['humano']}"),
-                "piloto": "sí, con los intentos del marcador",
-                "produccion": "sí",
+                "hoy": ["si", f"IA {contact_range['ia']}, humanos {contact_range['humano']}"],
+                "piloto": ["si", "con los intentos del marcador"],
+                "produccion": ["si", ""],
             },
             {
                 "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-                "hoy": (
-                    f"sí · IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
-                    f"{pct(titular['humano']['k'], titular['humano']['n'])}"
-                ),
-                "piloto": "sí",
-                "produccion": "sí",
+                "hoy": [
+                    "si",
+                    f"IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
+                    f"{pct(titular['humano']['k'], titular['humano']['n'])}",
+                ],
+                "piloto": ["si", ""],
+                "produccion": ["si", ""],
             },
             {
                 "kpi": "Promesa cumplida y recaudo a 30 días",
-                "hoy": "no: exige datos de pago",
-                "piloto": "sí, KPI principal",
-                "produccion": "sí",
+                "hoy": ["no", "exige datos de pago"],
+                "piloto": ["si", "KPI principal"],
+                "produccion": ["si", ""],
             },
             {
                 "kpi": "Cure rate por tramo de mora",
-                "hoy": "no: exige cartera",
-                "piloto": "a 90 días",
-                "produccion": "sí",
+                "hoy": ["no", "exige cartera"],
+                "piloto": ["parcial", "a 90 días"],
+                "produccion": ["si", ""],
             },
             {
                 "kpi": "Costo por peso recuperado",
-                "hoy": "no: exige costos y recaudo",
-                "piloto": "sí",
-                "produccion": "sí",
+                "hoy": ["no", "exige costos y recaudo"],
+                "piloto": ["si", ""],
+                "produccion": ["si", ""],
             },
             {
                 "kpi": "Alertas de cumplimiento por canal",
-                "hoy": "sí, las cuatro de arriba",
-                "piloto": "sí",
-                "produccion": "sí, en todas las llamadas",
+                "hoy": ["si", "las cuatro de arriba"],
+                "piloto": ["si", ""],
+                "produccion": ["si", "en todas las llamadas"],
             },
             {
                 "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-                "hoy": "no: exige los registros del marcador",
-                "piloto": "sí",
-                "produccion": "sí",
+                "hoy": ["no", "exige los registros del marcador"],
+                "piloto": ["si", ""],
+                "produccion": ["si", ""],
             },
         ],
         # El precio que encabeza es el de la configuración que este informe declara necesaria
         # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
         # decir en otra página que ese mínimo no sirve es precio de vitrina.
         "escala": (
-            "Medir esto en producción —transcribir, borrar los datos personales, anotar con la "
-            f"rúbrica y el tablero— cuesta unos {thousands(estereo)} USD al mes para "
-            f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos, con "
-            f"agente y deudor en canales separados, que es lo que exige separar hablantes. Baja a "
-            f"{thousands(lote)} en un solo canal y sube a {thousands(comprada)}-"
-            f"{thousands(estandar)} con analítica de proveedor o a precio de lista. No incluye "
-            "operar ningún canal. Precios oficiales de lista; el detalle, en el repositorio."
+            "Precios oficiales de lista, calculados en el repositorio; no incluye operar "
+            "ningún canal. Un solo canal de audio baja a "
+            f"{thousands(lote)} USD y la analítica de proveedor sube a "
+            f"{thousands(comprada)}-{thousands(estandar)}."
         ),
         "palancas": [
             {
@@ -616,6 +597,15 @@ def build() -> dict:
                 "detalle": (
                     "IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión "
                     "en vez de suponerlo."
+                ),
+            },
+            {
+                "titulo": "Lo que cuesta medirlo.",
+                "detalle": (
+                    f"{thousands(estereo)} USD al mes para "
+                    f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos: "
+                    "transcribir, borrar los datos personales, anotar con la rúbrica y el "
+                    "tablero, con agente y deudor en canales separados."
                 ),
             },
             {

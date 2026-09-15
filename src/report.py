@@ -12,7 +12,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from src.charts import EffectRow, forest, gap_bar
+from src.charts import EffectRow, forest
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "data" / "public" / "results.json"
@@ -23,12 +23,6 @@ OUTPUT = ROOT / "report" / "index.html"
 def render() -> Path:
     results = json.loads(RESULTS.read_text(encoding="utf-8"))
 
-    # La barra de brecha se dibuja aquí, no en results.json: es presentación, y el JSON
-    # guarda las dos tasas que la alimentan.
-    for kpi in results["kpis"]:
-        if "ia_pct" in kpi:
-            kpi["barra"] = gap_bar(kpi["ia_pct"], kpi["humano_pct"])
-
     rows = [
         EffectRow(
             label=e["etiqueta"],
@@ -37,7 +31,6 @@ def render() -> Path:
             ci_high_pp=e["ci_high_pp"],
             n_ai=e["n_ia"],
             n_human=e["n_humano"],
-            tentative=e["tentativo"],
             significant=e["significativo"],
         )
         for e in results["efectos"]

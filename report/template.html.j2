@@ -51,6 +51,8 @@
     font-family:var(--serif); font-size:20.5pt; line-height:1.04; letter-spacing:-.012em;
     font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
   }
+  /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
+  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; }
   h2 {
     font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
@@ -59,30 +61,24 @@
   p, li { orphans:2; widows:2; }
   section { margin-bottom:2.2mm; }
 
-  .verdict { font-family:var(--serif); font-size:11.6pt; line-height:1.3; margin:0 0 2.8mm;
-             border-left:2.5px solid var(--ink); padding-left:3mm; text-wrap:pretty; }
+  /* Sin filete lateral, a propósito: con él tenía traje de cita, y una cita se salta.
+     Los siete lectores del panel saltaron este párrafo. */
+  .verdict { font-family:var(--serif); font-size:11.6pt; line-height:1.3; margin:0 0 2.6mm;
+             text-wrap:pretty; }
   .verdict strong { font-weight:650; }
 
-  /* ── Cuadro de mando: la cifra, la etiqueta y la brecha dibujada ──────── */
-  .kpis { display:grid; grid-template-columns:repeat({{ kpis|length }},1fr); gap:4mm; }
-  .kpi { border-top:2px solid var(--ia); padding-top:1.3mm;
-         display:flex; flex-direction:column; }
-  .kpi.neg { border-top-color:var(--humano); }
-  .kpi.null { border-top-color:var(--null); }
-  .kpi .v {
-    font-family:var(--mono); font-size:15pt; font-weight:600; letter-spacing:-.03em;
-    display:block; line-height:1.05;
+  /* La única instrucción del documento. Antes vivía en la cuarta línea del párrafo de
+     arriba y nadie la encontraba; ahora tiene cuerpo, aire y una regla que la sostiene. */
+  .ask {
+    font-size:10.6pt; font-weight:600; line-height:1.28; margin:0 0 3.4mm;
+    padding:2.2mm 0 2.4mm; border-top:1.6px solid var(--ink);
+    border-bottom:1px solid var(--rule); text-wrap:pretty;
   }
-  .kpi.null .v { color:var(--muted); }
-  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm; }
-  svg.gap { width:100%; height:3.2mm; margin-top:auto; padding-top:.7mm; display:block; }
-  .gap-track { stroke:var(--rule); stroke-width:1.4; }
-  .gap-span { stroke:#cfc9c0; stroke-width:1.4; }
-  .gap-mark.ai { fill:var(--ia); }
-  .gap-mark.human { fill:var(--humano); }
-  .legend { font-size:7.2pt; color:var(--muted); margin:1mm 0 0; }
-  .legend .dot { color:var(--ia); }
-  .legend .dia { color:var(--humano); }
+
+  /* La pregunta que hizo el cliente, con el mismo peso que el bloque de riesgo: si solo
+     uno de los dos lleva filete y fondo, la página dice que el otro importa menos. */
+  .deal { border-left:3px solid var(--ia); padding:0 0 0 3mm; margin-bottom:3mm; }
+  .deal h2 { color:var(--ia); }
 
   /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
   .risk {
@@ -90,10 +86,11 @@
     padding:2.2mm 3mm 1.8mm;
   }
   .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
-  .stamp { font-family:var(--mono); font-size:7pt; letter-spacing:.06em; color:var(--alerta);
-           border:1px solid #d8bdb7; border-radius:1px; padding:.2mm 1mm; margin-left:1.6mm;
-           text-transform:none; }
-  .risk tbody { counter-reset:hallazgo; }
+  /* La frase que protege a quien presenta el papel, pegada a la tabla y en cuerpo de
+     lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
+     reenvía es la tabla, nunca el pie. */
+  .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
+  .risk tbody { counter-reset:hallazgo {{ hallazgos|length }}; }
   .risk td:first-child { font-weight:600; }
   .risk tbody td:first-child::before {
     counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
@@ -113,6 +110,12 @@
   td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
   th.num { text-align:right; white-space:nowrap; }
   table.compact { width:78%; }
+  /* La marca es lo único de la página 2 que se ve sin leer: hace de puerta de entrada
+     donde antes había una losa de texto pareja. */
+  .mk { font-size:9pt; line-height:1; }
+  .mk.si { color:var(--ink); }
+  .mk.parcial { color:var(--muted); }
+  .mk.no { color:var(--null); }
 
   /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
   svg.forest { width:100%; height:auto; }
@@ -128,16 +131,13 @@
   .forest .pos { stroke:var(--ia); fill:var(--ia); }
   .forest .neg { stroke:var(--humano); fill:var(--humano); }
   .forest .null { stroke:var(--null); fill:var(--null); }
-  .forest .pt.tentative { fill:var(--paper); stroke-width:1.8; }
   /* .pos/.neg/.null llevan stroke para las líneas y los puntos, y por cascada se lo imponían
      también al texto: a 8,3 px el contorno cerraba los ojos del 8 y del 6. Va después y con
      la misma especificidad de clase, porque `.forest text` la perdía contra `.forest .neg`. */
   .forest .row-value, .forest .row-label { stroke:none; }
-  .forest .ci.tentative { stroke-dasharray:3 2; }
 
   /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none;
-                counter-reset:f {{ cumplimiento.filas|length }}; }
+  ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
   ol.findings li {
     counter-increment:f; padding:1mm 0 1mm 7mm; border-bottom:1px solid var(--rule);
     position:relative;
@@ -181,18 +181,24 @@
 
   <p class="verdict">{{ veredicto|safe }}</p>
 
-  <section>
-    <div class="kpis">
-      {% for k in kpis %}<div class="kpi {{ k.clase }}"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span>{{ k.barra|safe }}</div>{% endfor %}
-    </div>
-    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos · la barra va de 0 a 100 % de las llamadas del canal</p>
+  <p class="ask">{{ recomendacion }}</p>
+
+  <section class="deal">
+    <h2>La pregunta de negocio</h2>
+    <ol class="findings" start="1">
+      {% for f in hallazgos %}
+      <li><span class="claim">{{ f.claim }}</span> <span class="why">{{ f.why }}</span>
+        <span class="action">→ {{ f.accion }}</span></li>
+      {% endfor %}
+    </ol>
   </section>
 
   <section class="risk">
-    <h2>Hallazgos de cumplimiento <span class="stamp">{{ cumplimiento.rotulo }}</span></h2>
+    <h2>Alertas de cumplimiento</h2>
+    <p class="caveat">{{ cumplimiento.salvedad }}</p>
     <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
-        <th>Norma</th><th>Qué hacer</th></tr></thead>
+        <th>Norma (Colombia)</th><th>Qué hacer</th></tr></thead>
       <tbody>
       {% for a in cumplimiento.filas %}
         <tr><td>{{ a.conducta }}</td><td class="num">{{ a.ia }}</td><td class="num">{{ a.humano }}</td>
@@ -204,19 +210,9 @@
   </section>
 
   <section>
-    <h2>Dónde difieren, y cuánto</h2>
+    <h2>Dónde difieren y dónde no</h2>
     {{ forest_svg|safe }}
     <p class="note">{{ forest_nota }}</p>
-  </section>
-
-  <section>
-    <h2>Hallazgos comerciales</h2>
-    <ol class="findings">
-      {% for f in hallazgos %}
-      <li><span class="claim">{{ f.claim }}</span> <span class="why">{{ f.why }}</span>
-        <span class="action">→ {{ f.accion }}</span></li>
-      {% endfor %}
-    </ol>
   </section>
 
   <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>1 / 2</span></footer>
@@ -228,13 +224,17 @@
   </header>
 
   <section>
-    <h2>Lo que el banco necesita y cuándo lo tendrá</h2>
+    <h2 class="major">Lo que el banco necesita y cuándo lo tendrá</h2>
     <table>
       <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th>
         <th>En producción</th></tr></thead>
       <tbody>
       {% for k in kpis_banco %}
-        <tr><td>{{ k.kpi }}</td><td>{{ k.hoy }}</td><td>{{ k.piloto }}</td><td>{{ k.produccion }}</td></tr>
+        <tr><td>{{ k.kpi }}</td>
+        {% for celda in [k.hoy, k.piloto, k.produccion] %}
+          <td><span class="mk {{ celda[0] }}">{{ {'si':'●','parcial':'◐','no':'○'}[celda[0]] }}</span>{% if celda[1] %} {{ celda[1] }}{% endif %}</td>
+        {% endfor %}
+        </tr>
       {% endfor %}
       </tbody>
     </table>
@@ -265,7 +265,7 @@
   </div>
 
   <section>
-    <h2>Siguiente paso</h2>
+    <h2 class="major">Siguiente paso</h2>
     <ul class="levers">
       {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
     </ul>
