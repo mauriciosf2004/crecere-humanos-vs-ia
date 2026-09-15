@@ -234,6 +234,9 @@ def build() -> dict:
     def rate(item: dict, arm: str) -> str:
         return pct(item[f"k_{arm}"], item[f"n_{arm}"])
 
+    def share(item: dict, arm: str) -> float:
+        return item[f"k_{arm}"] / item[f"n_{arm}"]
+
     def points(item: dict) -> str:
         return signed(abs(item["diff_pp"])).lstrip("+")
 
@@ -338,21 +341,29 @@ def build() -> dict:
                 "valor": f"{rate(legal, 'ia')} vs {rate(legal, 'humano')}",
                 "etiqueta": "área jurídica · IA vs humanos",
                 "clase": "",
+                "ia_pct": 100 * share(legal, "ia"),
+                "humano_pct": 100 * share(legal, "humano"),
             },
             {
                 "valor": f"{rate(expiry, 'ia')} vs {rate(expiry, 'humano')}",
                 "etiqueta": "oferta que vence hoy",
                 "clase": "",
+                "ia_pct": 100 * share(expiry, "ia"),
+                "humano_pct": 100 * share(expiry, "humano"),
             },
             {
                 "valor": f"{rate(credit, 'ia')} vs {rate(credit, 'humano')}",
                 "etiqueta": "promesa de beneficio crediticio",
                 "clase": "neg",
+                "ia_pct": 100 * share(credit, "ia"),
+                "humano_pct": 100 * share(credit, "humano"),
             },
             {
                 "valor": f"{rate(commitment, 'ia')} vs {rate(commitment, 'humano')}",
                 "etiqueta": "compromiso de pago: no concluyente",
                 "clase": "null",
+                "ia_pct": 100 * share(commitment, "ia"),
+                "humano_pct": 100 * share(commitment, "humano"),
             },
         ],
         "efectos": [
@@ -369,8 +380,8 @@ def build() -> dict:
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
         "forest_nota": (
-            "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra "
-            "· línea: margen de error 95 %."
+            "Azul y círculo: más en IA · ocre y rombo: más en humanos · gris: no concluyente "
+            "con esta muestra · línea: margen de error 95 %."
             + (" *Hueco: no se sostiene entre gestiones nuevas." if any_tentative else "")
         ),
         "cumplimiento": {
@@ -480,8 +491,8 @@ def build() -> dict:
             },
         ],
         "escala": (
-            "transcribir, borrar datos personales, anotar y el tablero cuestan desde "
-            "transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero "
+            f"Con {thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos al "
+            "mes, transcribir, borrar los datos personales, anotar con la rúbrica y el tablero "
             f"cuestan desde {thousands(round(scale['propio_lote']))} USD al mes "
             f"({thousands(round(scale['propio_lote_estereo']))} grabando agente y deudor en "
             "canales separados). A precio estándar, "

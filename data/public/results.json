@@ -11,22 +11,30 @@
     {
       "valor": "86 % vs 2 %",
       "etiqueta": "área jurídica · IA vs humanos",
-      "clase": ""
+      "clase": "",
+      "ia_pct": 86.0,
+      "humano_pct": 2.0
     },
     {
       "valor": "54 % vs 2 %",
       "etiqueta": "oferta que vence hoy",
-      "clase": ""
+      "clase": "",
+      "ia_pct": 54.0,
+      "humano_pct": 2.0
     },
     {
       "valor": "6 % vs 44 %",
       "etiqueta": "promesa de beneficio crediticio",
-      "clase": "neg"
+      "clase": "neg",
+      "ia_pct": 6.0,
+      "humano_pct": 44.0
     },
     {
       "valor": "18 % vs 34 %",
       "etiqueta": "compromiso de pago: no concluyente",
-      "clase": "null"
+      "clase": "null",
+      "ia_pct": 18.0,
+      "humano_pct": 34.0
     }
   ],
   "efectos": [
@@ -111,7 +119,7 @@
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Morado: más en IA · naranja: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas.",
+  "forest_nota": "Azul y círculo: más en IA · ocre y rombo: más en humanos · gris: no concluyente con esta muestra · línea: margen de error 95 %. *Hueco: no se sostiene entre gestiones nuevas.",
   "cumplimiento": {
     "rotulo": "Alerta para revisión de cumplimiento",
     "advertencia": "Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta; no es un juicio legal.",
@@ -215,7 +223,7 @@
       "produccion": "sí"
     }
   ],
-  "escala": "transcribir, borrar datos personales, anotar y el tablero cuestan desde transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
+  "escala": "Con 100.000 llamadas de 4 minutos al mes, transcribir, borrar los datos personales, anotar con la rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",

@@ -7,23 +7,29 @@
   /* Geometría: A4 con 12 mm de margen. La caja útil es 186 x 273 mm; se trabaja
      sobre 255 mm de alto para dejar aire y que nada quede al filo del corte. */
   @page { size: A4; margin: 12mm; }
+
+  /* Sistema visual: ficha de riesgo de cartera. Serif para la voz del informe, sans
+     para la estructura y monoespaciada tabular para TODA cifra: eso alinea las columnas
+     al comparar canales y le da el aire de libro de cartera. Solo fuentes del sistema,
+     porque el archivo se abre sin conexión como adjunto de correo. */
   :root {
-    --ink:#16161a; --muted:#6b6b75; --line:#e2e0e6; --bg:#fff;
-    --ai:#7047EB; --human:#F26ECF; --null:#9a97a3;
-    --pos:#7047EB; --neg:#c2410c;
+    --ink:#14181f; --muted:#6a6f78; --rule:#dfdbd4; --paper:#fff; --wash:#f7f4ef;
+    --ia:#1f3d7a; --humano:#a8631b; --null:#8e939b; --alerta:#8c2f23;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
   * { box-sizing:border-box; }
   html { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-scheme:light; }
   body {
-    margin:0; background:#f4f3f6; color:var(--ink);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size:9.6pt; line-height:1.38; font-variant-numeric: tabular-nums lining-nums;
+    margin:0; background:#e9e5de; color:var(--ink); font-family:var(--sans);
+    font-size:9.4pt; line-height:1.4; font-variant-numeric: tabular-nums lining-nums;
   }
   /* Sin overflow:hidden y con el pie en el flujo normal, a propósito: si el contenido
      desborda, fluye a una tercera página y `make verify` lo caza, en vez de recortarse o
      de quedar tapado por un pie posicionado encima. */
   .page {
-    width:186mm; min-height:255mm; padding:0; margin:8mm auto; background:var(--bg);
+    width:186mm; min-height:255mm; padding:0; margin:8mm auto; background:var(--paper);
     display:flex; flex-direction:column;
   }
   @media print {
@@ -31,73 +37,117 @@
     .page { margin:0; width:auto; min-height:268mm; break-after:page; }
     .page:last-child { break-after:auto; }
   }
-  h1 { text-wrap:balance; font-size:19pt; line-height:1.08; letter-spacing:-.022em; margin:0 0 3mm; }
-  h2 { font-size:9.4pt; letter-spacing:.05em; text-transform:uppercase;
-       color:var(--muted); margin:0 0 1.8mm; font-weight:650; }
-  p { margin:0 0 1.8mm; }
-  .eyebrow { font-size:8pt; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
-  .verdict { font-size:11pt; line-height:1.3; margin:0 0 4mm; }
-  .verdict strong { font-weight:680; }
-  header { border-bottom:1.5px solid var(--ink); padding-bottom:2.5mm; margin-bottom:4mm; }
 
-  .kpis { display:grid; grid-template-columns:repeat({{ kpis|length }},1fr); gap:3mm; margin-bottom:4mm; }
-  .kpi { border-top:2.5px solid var(--ai); padding-top:1.5mm; }
-  .kpi .v { font-size:15pt; font-weight:680; letter-spacing:-.03em; display:block; line-height:1.05; }
-  .kpi .l { font-size:8pt; color:var(--muted); display:block; margin-top:.8mm; }
+  /* ── Cabecera ─────────────────────────────────────────────────────────── */
+  header { border-bottom:1.6px solid var(--ink); padding-bottom:2.2mm; margin-bottom:3.2mm; }
+  .eyebrow {
+    font-family:var(--mono); font-size:7.2pt; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  h1 {
+    font-family:var(--serif); font-size:20.5pt; line-height:1.04; letter-spacing:-.012em;
+    font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
+  }
+  h2 {
+    font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
+  }
+  p { margin:0 0 1.5mm; }
+  section { margin-bottom:2.6mm; }
 
+  .verdict { font-family:var(--serif); font-size:11pt; line-height:1.33; margin:0 0 3.2mm; }
+  .verdict strong { font-weight:650; }
+
+  /* ── Cuadro de mando: la cifra, la etiqueta y la brecha dibujada ──────── */
+  .kpis { display:grid; grid-template-columns:repeat({{ kpis|length }},1fr); gap:4mm; }
+  .kpi { border-top:2px solid var(--ia); padding-top:1.3mm; }
+  .kpi.neg { border-top-color:var(--humano); }
+  .kpi.null { border-top-color:var(--null); }
+  .kpi .v {
+    font-family:var(--mono); font-size:13pt; font-weight:600; letter-spacing:-.03em;
+    display:block; line-height:1.05;
+  }
+  .kpi.null .v { color:var(--muted); }
+  .kpi .l { font-size:7.6pt; color:var(--muted); display:block; margin-top:.6mm; }
+  svg.gap { width:100%; height:3.2mm; margin-top:.7mm; display:block; }
+  .gap-track { stroke:var(--rule); stroke-width:1.4; }
+  .gap-span { stroke:#cfc9c0; stroke-width:1.4; }
+  .gap-mark.ai { fill:var(--ia); }
+  .gap-mark.human { fill:var(--humano); }
+  .legend { font-size:7.2pt; color:var(--muted); margin:1mm 0 0; }
+  .legend .dot { color:var(--ia); }
+  .legend .dia { color:var(--humano); }
+
+  /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
+  .risk {
+    border:1px solid var(--rule); border-left:3px solid var(--alerta); background:var(--wash);
+    padding:2.2mm 3mm 1.8mm;
+  }
+  .risk h2 { color:var(--alerta); border-bottom-color:#e6d8d4; }
+  .risk td:first-child { font-weight:600; }
+  .risk .note { margin:1mm 0 0; border-left-color:#e6d8d4; }
+
+  /* ── Tablas ───────────────────────────────────────────────────────────── */
+  table { width:100%; border-collapse:collapse; font-size:8.3pt; }
+  th {
+    text-align:left; font-weight:650; color:var(--muted); font-size:7pt; text-transform:uppercase;
+    letter-spacing:.08em; padding:.8mm 1.4mm; border-bottom:1px solid var(--ink);
+  }
+  td { padding:.7mm 1.4mm; border-bottom:1px solid var(--rule); vertical-align:top; }
+  tr:last-child td { border-bottom:0; }
+  td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
+  th.num { text-align:right; white-space:nowrap; }
+  table.compact { width:64%; }
+
+  .tag { font-family:var(--mono); font-size:7pt; padding:.3mm 1.2mm; border-radius:1px;
+         background:#efece6; color:var(--muted); white-space:nowrap; }
+  .tag.ok { background:#e7eef0; color:#1f4f52; }
+  .tag.ko { background:#f4e7e3; color:var(--alerta); }
+  .tag.warn { background:#f6eddb; color:#7a5310; }
+
+  /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
+  svg.forest { width:100%; height:auto; }
+  .forest .axis-zero { stroke:var(--ink); stroke-width:1.1; }
+  .forest .axis-tick { stroke:var(--rule); stroke-width:1; }
+  .forest .axis-label { font-family:var(--mono); font-size:7px; fill:var(--muted); text-anchor:middle; }
+  .forest .axis-title { font-size:7px; fill:var(--muted); text-anchor:middle; }
+  .forest .row-label { font-size:8.3px; fill:var(--ink); text-anchor:end; }
+  .forest .row-value { font-family:var(--mono); font-size:8.3px; font-weight:600; text-anchor:end;
+                       stroke:none; }
+  .forest .ci { stroke-width:2; stroke-linecap:round; }
+  .forest .pos { stroke:var(--ia); fill:var(--ia); }
+  .forest .neg { stroke:var(--humano); fill:var(--humano); }
+  .forest .null { stroke:var(--null); fill:var(--null); }
+  .forest .pt.tentative { fill:var(--paper); stroke-width:1.8; }
+  .forest .ci.tentative { stroke-dasharray:3 2; }
+
+  /* ── Hallazgos ────────────────────────────────────────────────────────── */
   ol.findings { margin:0; padding:0; list-style:none; counter-reset:f; }
-  ol.findings li { counter-increment:f; padding:1.3mm 0 1.3mm 8mm; border-bottom:1px solid var(--line);
-                   position:relative; }
+  ol.findings li {
+    counter-increment:f; padding:1.2mm 0 1.2mm 7mm; border-bottom:1px solid var(--rule);
+    position:relative;
+  }
   ol.findings li:last-child { border-bottom:0; }
-  ol.findings li::before { content:counter(f); position:absolute; left:0; top:1.4mm;
-    font-size:8pt; font-weight:700; color:var(--ai); border:1.2px solid var(--ai);
-    width:5mm; height:5mm; border-radius:50%; display:grid; place-items:center; }
+  ol.findings li::before {
+    content:counter(f); position:absolute; left:0; top:1.2mm; font-family:var(--mono);
+    font-size:7.6pt; font-weight:700; color:var(--ia); border-bottom:1.4px solid var(--ia);
+    width:4.6mm; text-align:center; padding-bottom:.2mm;
+  }
   ol.findings .claim { font-weight:620; }
   ol.findings .why { color:var(--muted); }
-  ol.findings .action { display:block; margin-top:.6mm; font-size:8.8pt; color:var(--ai); }
+  ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
 
-  table { width:100%; border-collapse:collapse; font-size:8.4pt; }
-  th { text-align:left; font-weight:620; color:var(--muted); font-size:7.6pt;
-       text-transform:uppercase; letter-spacing:.05em; padding:.9mm 1.4mm; border-bottom:1px solid var(--ink); }
-  td { padding:.7mm 1.4mm; border-bottom:1px solid var(--line); vertical-align:top; }
-  td.num, th.num { text-align:right; white-space:nowrap; }
-  .tag { font-size:7.4pt; padding:.3mm 1.2mm; border-radius:2px; background:#f0eef5; color:var(--muted);
-         white-space:nowrap; }
-  .tag.ok { background:#e8f3ee; color:#2f6f53; }
-  .tag.ko { background:#fbeee6; color:#9a3412; }
-  .tag.warn { background:#fdf1dc; color:#8a5300; }
-
-  svg.forest { width:100%; height:auto; }
-  .forest .axis-zero { stroke:var(--ink); stroke-width:1; }
-  .forest .axis-tick { stroke:var(--line); stroke-width:1; }
-  .forest .axis-label, .forest .axis-title { font-size:7.2px; fill:var(--muted); text-anchor:middle; }
-  .forest .row-label { font-size:8.4px; fill:var(--ink); text-anchor:end; }
-  .forest .row-value { font-size:8.4px; font-weight:650; text-anchor:end; }
-  .forest .ci { stroke-width:1.6; stroke-linecap:round; }
-  .forest .ci.pos, .forest .pt.pos, .forest .row-value.pos { stroke:var(--pos); fill:var(--pos); }
-  .forest .ci.neg, .forest .pt.neg, .forest .row-value.neg { stroke:var(--neg); fill:var(--neg); }
-  .forest .ci.null, .forest .pt.null, .forest .row-value.null { stroke:var(--null); fill:var(--null); }
-
-  .forest circle.pt.tentative { fill:#fff; stroke-width:1.6; }
-  .forest line.ci.tentative { stroke-dasharray:3 2; }
-  /* tabla estrecha: con solo dos cifras por fila, a ancho completo quedaban lejos de su etiqueta */
-  table.compact { width:62%; }
-  table.risk td:first-child { font-weight:600; }
-  ul.levers { margin:0; padding-left:4mm; }
-  ul.bullets { margin:0; padding-left:3.5mm; }
+  /* ── Listas, notas y pie ──────────────────────────────────────────────── */
+  ul.levers, ul.bullets { margin:0; padding-left:3.6mm; }
+  ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
-  .kpi.null { border-top-color:var(--null); }
-  .kpi.neg { border-top-color:var(--neg); }
-  footer a { color:inherit; text-decoration:none; }
-  .kpi.null .v { color:var(--muted); }
-  /* el color de la cifra va en el relleno: con trazo, el texto sale contorneado */
-  .forest .row-value.pos, .forest .row-value.neg, .forest .row-value.null { stroke:none; }
-  ul.levers li { margin-bottom:1.1mm; }
-  .note { font-size:8pt; color:var(--muted); border-left:2px solid var(--line); padding-left:2.5mm; }
-  footer { margin-top:auto; font-size:7.6pt; color:var(--muted);
-           border-top:1px solid var(--line); padding-top:1.5mm; display:flex; justify-content:space-between; }
+  .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
-  section { margin-bottom:2.3mm; }
+  footer {
+    margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
+    border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
+  }
+  footer a { color:inherit; text-decoration:none; }
 </style>
 </head>
 <body>
@@ -110,13 +160,16 @@
 
   <p class="verdict">{{ veredicto|safe }}</p>
 
-  <div class="kpis">
-    {% for k in kpis %}<div class="kpi {{ k.clase }}"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span></div>{% endfor %}
-  </div>
-
   <section>
-    <h2>{{ cumplimiento.rotulo|default('Alerta para revisión de cumplimiento') }}</h2>
-    <table class="risk">
+    <div class="kpis">
+      {% for k in kpis %}<div class="kpi {{ k.clase }}"><span class="v">{{ k.valor }}</span><span class="l">{{ k.etiqueta }}</span>{{ k.barra|safe }}</div>{% endfor %}
+    </div>
+    <p class="legend"><span class="dot">●</span> IA · <span class="dia">◆</span> humanos, sobre 50 llamadas por canal</p>
+  </section>
+
+  <section class="risk">
+    <h2>{{ cumplimiento.rotulo }}</h2>
+    <table>
       <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
         <th>Norma</th><th>Qué hacer</th></tr></thead>
       <tbody>
@@ -169,7 +222,7 @@
   <section>
     <h2>¿Eran llamadas comparables?</h2>
     <table class="compact">
-      <thead><tr><th>Contexto de la llamada</th><th class="num">IA</th><th class="num">Humano</th></tr></thead>
+      <thead><tr><th>Contexto de la llamada</th><th class="num">IA</th><th class="num">Humanos</th></tr></thead>
       <tbody>
       {% for c in composicion %}
         <tr><td>{{ c.etiqueta }}</td><td class="num">{{ c.ia }}</td><td class="num">{{ c.humano }}</td></tr>
