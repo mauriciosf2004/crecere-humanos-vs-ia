@@ -34,7 +34,7 @@ bd379d16ff03,humano,0,0,0,1,0,0,0,0,0,titular
 dd4656e5387e,humano,0,0,0,1,0,0,0,0,0,titular
 d8d8659eae50,humano,0,0,0,0,0,1,1,0,1,titular
 071c1ae657bf,humano,0,0,0,0,0,0,0,0,1,titular
-4fb3ce4b68a6,humano,0,0,0,0,0,0,0,0,1,titular
+4fb3ce4b68a6,humano,0,0,0,0,0,1,0,0,1,titular
 67c0d6ae1450,humano,0,0,0,1,0,0,1,0,0,titular
 b6e22b338efd,humano,0,0,0,1,0,1,1,0,0,titular
 a1cf7aac72c5,humano,0,0,0,1,0,1,1,1,0,titular
@@ -46,7 +46,7 @@ c66b11ee9b07,humano,0,0,0,1,0,1,1,1,0,titular
 3a06da8b8340,humano,0,0,0,1,0,1,1,0,1,titular
 7791622d2f63,humano,0,0,0,0,0,0,0,1,0,titular
 bdaf4ab14374,humano,0,0,0,1,0,0,1,0,1,titular
-e47a7d8f10d8,humano,0,0,0,0,0,1,1,1,1,titular
+e47a7d8f10d8,humano,0,0,0,0,0,0,1,1,1,titular
 4a40f3181631,humano,0,0,0,1,0,0,0,1,0,titular
 2d7aab3c042c,humano,0,0,0,0,0,1,0,0,0,titular
 8fca519b0739,ia,1,1,1,0,0,0,1,0,0,titular
@@ -87,11 +87,11 @@ b66423c42b43,ia,1,1,1,0,0,1,1,1,0,titular
 975a47c84d62,ia,0,0,0,0,0,0,0,0,0,tercero
 aa7a0f52b8b2,ia,1,1,1,0,0,1,1,1,0,titular
 71007f917994,ia,1,1,1,0,0,0,1,1,0,titular
-00050a5a5674,ia,1,1,1,0,0,0,1,1,0,titular
+00050a5a5674,ia,1,1,1,0,0,1,1,1,0,titular
 75f211ed7620,ia,0,0,0,0,0,0,0,0,0,no_determinable
 7d38ddfa56fc,ia,1,1,0,0,0,0,0,1,0,titular
 cbfa02e73a1f,ia,1,0,0,0,0,0,0,0,0,tercero
-2829a637135c,ia,1,1,1,0,1,1,1,0,0,titular
+2829a637135c,ia,1,1,1,0,1,0,1,0,0,titular
 b02b6342e729,ia,1,1,0,0,0,0,1,1,0,titular
 0a466183129e,ia,1,0,0,0,0,0,0,0,0,tercero
 f163e6bb1b81,ia,1,1,1,0,0,0,1,1,0,titular

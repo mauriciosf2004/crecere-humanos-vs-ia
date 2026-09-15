@@ -215,7 +215,7 @@
       "produccion": "sí"
     }
   ],
-  "escala": "transcribir, borrar datos personales, anotar y el tablero cuestan desde transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados, que es lo que habilita medir la voz). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
+  "escala": "transcribir, borrar datos personales, anotar y el tablero cuestan desde transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero cuestan desde 1.511 USD al mes (2.711 grabando agente y deudor en canales separados). A precio estándar, 6.711; la analítica comprada, 6.000. Precios oficiales, sin ingeniería: data/reference/costos.json.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
@@ -232,14 +232,14 @@
   ],
   "metodo": [
     "Dos transcripciones por llamada, en este equipo. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas por separado, sin saber el canal; vale la mayoría.",
-    "1.042 de 1.100 respuestas con voto unánime; 258 de 259 afirmativas y 103 de 103 de contexto se comprobaron contra una frase textual de la llamada.",
-    "Un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17.",
+    "1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.",
+    "Un solo modelo aceptaba asentimientos vagos: veía 25 compromisos humanos donde el panel ve 17. Las 14 celdas sin unanimidad se escucharon una a una: se publica lo oído.",
     "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). Sentido esperado fijado tras explorar las mismas llamadas, antes del primer contraste.",
     "En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras."
   ],
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",
-    "Objeciones y claridad exigen separar hablantes; un error ahí favorecería a la IA.",
+    "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
     "Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.",
     "Con 50 llamadas por canal, diferencias menores a 29 pp pueden pasar inadvertidas (tasa base 30 %).",
     "En las variables sin diferencia esperada no se descartan hasta 24 pp."

@@ -38,6 +38,7 @@ SECOND = INTERIM / "transcripts_large-v3"
 PANEL_INPUT = INTERIM / "panel_input"
 ANNOTATIONS = INTERIM / "annotations"
 CONSENSUS = INTERIM / "consensus"
+LISTENING = INTERIM / "escucha_compromisos.json"
 EXTRACTIONS = INTERIM / "extractions"
 PUBLIC = ROOT / "data" / "public"
 
@@ -47,6 +48,7 @@ PANEL = {"clasificador": "sonnet", "auditor": "opus", "reauditor": "opus"}
 # variable 10). El panel no la aceptó cuando la fecha era el vencimiento de la oferta
 # («vencería hoy mismo»). La regla escrita se aplica después del voto, sin volver a anotar.
 LITERAL_DATE_FIELD = "quantified_proposal_stated"
+COMMITMENT_FIELD = "qualified_payment_commitment"
 AMOUNT = re.compile(r"\d|\bmil\b|\bmill[oó]n", re.I)
 TODAY = re.compile(r"\bhoy\b", re.I)
 
@@ -159,12 +161,42 @@ def apply_literal_date_rule(consensus: dict, sources: list[dict], transcripts: l
     return False
 
 
+def listening() -> dict:
+    """Lo que el analista oyó en las celdas de compromiso que el panel no resolvió.
+
+    Las 14 celdas sin unanimidad se escucharon una a una (docs/decisiones.md §17). El oído humano
+    manda sobre el voto de los modelos en esas celdas y solo en esas: es la única validación
+    externa del KPI comercial. El archivo no se versiona porque se indexa por llamada.
+    """
+    if not LISTENING.exists():
+        return {}
+    return json.loads(LISTENING.read_text(encoding="utf-8"))
+
+
+def apply_listening(consensus: dict, arm: str, stem: str, heard: dict) -> bool:
+    """Reemplaza el compromiso votado por lo que se oyó. Devuelve si cambió el nivel."""
+    item = heard.get(f"{arm}/{stem}")
+    if item is None:
+        return False
+    cell = consensus.get(COMMITMENT_FIELD) or {}
+    before = _value(cell)
+    consensus[COMMITMENT_FIELD] = {
+        "value": item["valor"],
+        "quote_terms": cell.get("quote_terms"),
+        "quote_acceptance": cell.get("quote_acceptance"),
+    }
+    consensus.setdefault("_ajustes", {})[COMMITMENT_FIELD] = "escucha del analista"
+    return before != item["valor"]
+
+
 def consolidate() -> dict:
     """Vota cada llamada con las anotaciones disponibles y escribe su consenso."""
     names = fields()
     calls = {(p.parent.name, p.stem) for p in ANNOTATIONS.glob("*/*/*.json")}
     agreement, complete, partial = Counter(), 0, 0
     adjusted = Counter()
+    heard = listening()
+    reheard = Counter()
     for arm, stem in sorted(calls):
         rows = [
             json.loads(path.read_text(encoding="utf-8"))
@@ -180,6 +212,7 @@ def consolidate() -> dict:
         extra = [json.loads(original.read_text(encoding="utf-8"))] if original.exists() else []
         texts = transcripts_seen(arm, stem, CONSENSUS)
         adjusted[arm] += apply_literal_date_rule(consensus, rows + extra, texts)
+        reheard[arm] += apply_listening(consensus, arm, stem, heard)
         target = CONSENSUS / arm / f"{stem}.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(consensus, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -189,6 +222,8 @@ def consolidate() -> dict:
         "llamadas_con_dos_votos": partial,
         "celdas": dict(agreement),
         "ajustes_regla_literal": dict(adjusted),
+        "celdas_escuchadas": len(heard),
+        "cambios_por_escucha": dict(reheard),
     }
 
 

@@ -46,8 +46,9 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
   las 8; la de confidencialidad no (tentativa). Los compromisos de pago no difieren (9 vs 17).
 → Propuesta con cifras: rúbrica literal, «hoy» es fecha, solo con citas que existen en la
   transcripción (28 vs 29). Ver `docs/decisiones.md` §14.
-→ La hoja de escucha (`data/interim/hoja_escucha_compromisos.csv`) valida a oído las 14 celdas de
-  compromiso sin unanimidad. Su recuento va a `docs/decisiones.md`.
+→ Las 14 celdas de compromiso sin unanimidad **se escucharon** (§17): en ellas el oído manda sobre
+  el voto. Cambiaron 8 niveles y el conteo publicado no se movió (17 y 9). Acuerdo 10/14, AC1 0,43,
+  que es cota inferior porque son las celdas más difíciles por construcción.
 → **Desenlace y reacción del interlocutor**: segunda rúbrica (`src/rubric_desenlace.md`), panel de
   tres, cortes y regla de publicación congelados en `docs/hipotesis.md` §7. Es **exploratorio**:
   fuera de la familia de 8, sin Westfall-Young, con IC de Newcombe y validación a oído.

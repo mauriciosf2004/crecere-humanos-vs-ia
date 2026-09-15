@@ -15,6 +15,11 @@
     "ajustes_regla_literal": {
       "humano": 0,
       "ia": 9
+    },
+    "celdas_escuchadas": 14,
+    "cambios_por_escucha": {
+      "humano": 5,
+      "ia": 3
     }
   },
   "extraccion_vs_consenso": {

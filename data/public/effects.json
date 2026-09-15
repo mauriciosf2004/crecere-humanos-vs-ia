@@ -139,7 +139,7 @@
       "ci_high_pp": 52.067892089325426,
       "p_raw": 6.9994538061897515e-06,
       "p_ajustado": 0.00039996000399960006,
-      "p_ajustado_nuevas": 0.004999500049995001,
+      "p_ajustado_nuevas": 0.0051994800519948,
       "estratificado": {
         "estratos": [
           {
@@ -204,8 +204,8 @@
       "ci_low_pp": 12.473520596629475,
       "ci_high_pp": 39.763908077700506,
       "p_raw": 0.00038796407137255107,
-      "p_ajustado": 0.0206979302069793,
-      "p_ajustado_nuevas": 0.16628337166283372,
+      "p_ajustado": 0.020497950204979503,
+      "p_ajustado_nuevas": 0.16698330166983302,
       "estratificado": {
         "estratos": [
           {
@@ -238,7 +238,7 @@
       "ci_high_pp": 1.2465397415983792,
       "p_raw": 0.10954044613289907,
       "p_ajustado": 0.25997400259974,
-      "p_ajustado_nuevas": 0.7535246475352465,
+      "p_ajustado_nuevas": 0.7487251274872513,
       "estratificado": {
         "estratos": [
           {
@@ -271,7 +271,7 @@
       "ci_high_pp": 16.823582411067846,
       "p_raw": 1.0,
       "p_ajustado": 1.0,
-      "p_ajustado_nuevas": 0.49875012498750126,
+      "p_ajustado_nuevas": 0.49745025497450257,
       "estratificado": {
         "estratos": [
           {

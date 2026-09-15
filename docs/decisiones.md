@@ -359,3 +359,42 @@ que nadie pidió.
 **Qué salió a cambio.** La tabla de las ocho hipótesis pasó a `docs/hipotesis.md`; el gráfico de
 efectos se quedó, más compacto. El límite de dos páginas no se negocia.
 
+## 17. Escuchar las 14 celdas que el panel no resolvió
+
+El compromiso de pago es el KPI comercial del informe y hasta aquí descansaba en el acuerdo entre
+tres modelos. Se escucharon, una a una, **las 14 llamadas en que el panel no fue unánime**, elegidas
+con semilla fija y ordenadas al azar (`data/interim/hoja_escucha_compromisos.csv`). En esas celdas, y
+solo en esas, **el oído manda sobre el voto**: `apply_listening` en `src/annotate.py` reemplaza el
+nivel votado por el escuchado, con la misma disciplina que la regla literal del §14.
+
+**Resultado.** Ocho de las catorce cambiaron de nivel: cinco humanas y tres de IA. Y aun así **el
+conteo publicado no se mueve**: 17 compromisos calificados en humanos y 9 en IA. Los cambios se
+compensan entre sí, y esa es la mejor noticia posible para el titular, porque significa que no
+dependía de las celdas dudosas.
+
+| | Acuerdo con el panel | AC1 de Gwet |
+|---|---|---|
+| Las 14 celdas | 10 de 14 | 0,43 |
+| Solo humanas (9) | 7 de 9 | 0,56 |
+| Solo de IA (5) | 3 de 5 | 0,23 |
+
+**Cómo se lee ese acuerdo.** Es una **cota inferior, no el acuerdo del corpus**: estas 14 celdas son
+por construcción las más difíciles, las únicas donde tres anotadores no coincidieron. En las otras
+86 llamadas hubo unanimidad. Reportarlo como «el panel acierta el 71 %» sería un error de lectura.
+
+**Tres huecos de la rúbrica que solo aparecen al escuchar.** Cada discrepancia tuvo una causa
+identificable, y las tres son de la rúbrica, no del anotador:
+
+1. **Aceptación sujeta a aprobación.** El deudor acepta, pero el acuerdo queda «a que el comité
+   apruebe» (dos llamadas). La rúbrica no dice qué hacer con eso y el panel se partió.
+2. **Acuerdo cerrado en una llamada que no cierra.** Se pacta y después la conversación se enreda y
+   se cae, sin retractación explícita. La regla «cuenta el estado final» no alcanza.
+3. **El asentimiento del interlocutor.** «Ok, ok» mientras el agente explica cómo pagar suena a
+   aceptación al oído humano, aunque la rúbrica ya diga que no basta. Le falta un ejemplo trabajado.
+
+**Qué NO se hizo, a propósito.** No se cambió la rúbrica ni se volvió a anotar. Ajustar el criterio
+después de ver los datos es exactamente lo que fabrica hallazgos, y además obligaría a repetir las
+100 llamadas. Los tres huecos quedan como **rúbrica v2 para el piloto**: una categoría propia para la
+aceptación sujeta a aprobación, una regla para la llamada que termina sin confirmar, y un ejemplo del
+asentimiento que no cuenta.
+

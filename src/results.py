@@ -247,6 +247,7 @@ def build() -> dict:
     cells = agreement["resumen"]["celdas"]
     unanimous, total_cells = cells.get("3/3", 0), sum(cells.values())
     literal_rule = sum(agreement["resumen"].get("ajustes_regla_literal", {}).values())
+    heard = agreement["resumen"].get("celdas_escuchadas", 0)
     single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
     family_anchor, context_anchor = anchoring["total"], anchoring["total_contexto"]
     undetermined = prior["indeterminado_ia"] + prior["indeterminado_humano"]
@@ -270,6 +271,7 @@ def build() -> dict:
         single_pass["extraccion"]["humano"] > single_pass["consenso"]["humano"],
         "la pasada única sobrestimaba los compromisos humanos",
     )
+    _require(heard > 0, "las celdas dudosas de compromiso se escucharon")
     _require(prior["k_humano"] > prior["k_ia"], "los humanos retoman más acuerdos previos")
     _require(not any(significant(i) for i in nulls), "no se detectó diferencia en las nulas")
     _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
@@ -291,15 +293,16 @@ def build() -> dict:
             "canal; vale la mayoría."
         ),
         (
-            f"{thousands(unanimous)} de {thousands(total_cells)} respuestas con voto unánime; "
+            f"{thousands(unanimous)} de {thousands(total_cells)} respuestas unánimes; "
             f"{family_anchor['anclados']} de {family_anchor['positivos']} afirmativas y "
-            f"{context_anchor['anclados']} de {context_anchor['positivos']} de contexto se "
-            "comprobaron contra una frase textual de la llamada."
+            f"{context_anchor['anclados']} de {context_anchor['positivos']} de contexto citan una "
+            "frase textual de la llamada."
         ),
         (
             "Un solo modelo aceptaba asentimientos vagos: veía "
             f"{single_pass['extraccion']['humano']} compromisos humanos donde el panel ve "
-            f"{single_pass['consenso']['humano']}."
+            f"{single_pass['consenso']['humano']}. Las {heard} celdas sin unanimidad se "
+            "escucharon una a una: se publica lo oído."
         ),
         (
             f"Test global por permutación ({p_text(effects['p_global'])}) y corrección por las "
@@ -481,7 +484,7 @@ def build() -> dict:
             "transcribir, borrar datos personales, anotar con la misma rúbrica y el tablero "
             f"cuestan desde {thousands(round(scale['propio_lote']))} USD al mes "
             f"({thousands(round(scale['propio_lote_estereo']))} grabando agente y deudor en "
-            "canales separados, que es lo que habilita medir la voz). A precio estándar, "
+            "canales separados). A precio estándar, "
             f"{thousands(round(scale['propio_estandar']))}; la analítica comprada, "
             f"{thousands(round(scale['comprada']))}. Precios oficiales, sin ingeniería: "
             "data/reference/costos.json."
@@ -517,7 +520,7 @@ def build() -> dict:
                 "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el "
                 "compromiso es verbal, no un pago."
             ),
-            ("Objeciones y claridad exigen separar hablantes; un error ahí favorecería a la IA."),
+            "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
             f"Sin identificador de gestor ni criterio conocido para elegir las {2 * n} llamadas.",
             (
                 f"Con {n} llamadas por canal, diferencias menores a {mde:.0f} pp pueden pasar "
