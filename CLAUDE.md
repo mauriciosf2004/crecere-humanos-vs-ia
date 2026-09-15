@@ -52,6 +52,12 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
 → **Desenlace y reacción del interlocutor**: segunda rúbrica (`src/rubric_desenlace.md`), panel de
   tres, cortes y regla de publicación congelados en `docs/hipotesis.md` §7. Es **exploratorio**:
   fuera de la familia de 8, sin Westfall-Young, con IC de Newcombe y validación a oído.
+  **Las 300 anotaciones están completas.** Resultado en `docs/decisiones.md` §18: «termina en
+  positivo» da −28 pp en el total y −11 pp [−33, +8] entre gestiones nuevas, o sea que el
+  confundido de cartera reaparece con una rúbrica independiente. **Nada de esto entra al
+  informe**: la regla exige AC1 ≥ 0,6 y la escucha de 20 llamadas está sin hacer
+  (`data/interim/hoja_escucha_desenlace.csv`). La coherencia con la familia sí vale como
+  validación: 48/50 y 44/50, y los 9 compromisos de IA salen idénticos con las dos rúbricas.
 → El informe habla en KPIs de banco y rotula las cuatro conductas de riesgo como **alerta para
   revisión de cumplimiento**, nunca como infracción, y aplicada a los dos canales
   (`data/reference/cumplimiento.json`). Los costos a escala salen de `data/reference/costos.json`

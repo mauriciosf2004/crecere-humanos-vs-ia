@@ -405,3 +405,52 @@ después de ver los datos es exactamente lo que fabrica hallazgos, y además obl
 aceptación sujeta a aprobación, una regla para la llamada que termina sin confirmar, y un ejemplo del
 asentimiento que no cuenta.
 
+
+## 18. El desenlace, completo: qué dijo y por qué no entra al informe
+
+El panel de desenlace (`src/rubric_desenlace.md`, pre-registro en `docs/hipotesis.md` §7) ya está
+**completo: 300 anotaciones, 100 llamadas por los tres anotadores**. Antes de anotar se escribió
+esto: «Lo más probable es que el positivo salga no concluyente». Salió no concluyente.
+
+**Los cortes.** Total, con IC de Newcombe; y entre gestiones nuevas, que es el único estrato con
+llamadas de los dos brazos.
+
+| Corte | Total | Gestiones nuevas |
+|---|---|---|
+| Positivo (principal) | IA 9/24, humanos 23/40 · −20 pp [−42, +5] | IA 9/24, humanos 7/17 |
+| Positivo amplio | IA 11/24, humanos 28/40 · −24 pp [−46, +0] | IA 11/24, humanos 9/17 |
+| Positivo por llamada | IA 9/50, humanos 23/50 · **−28 pp [−44, −10]** | IA 9/50, humanos 7/24 · **−11 pp [−33, +8]** |
+| Peso de lo parcial | IA 2/9, humanos 5/23 | IA 2/9, humanos 0/7 |
+| Malestar al cierre | IA 10/34, humanos 7/45 · +14 pp [−4, +32] | IA 10/34, humanos 5/20 · +4 pp [−21, +26] |
+| Reconoce y ofrece | IA 15/19, humanos 9/22 | IA 15/19, humanos 2/9 |
+
+**El resultado que importa no es una diferencia: es su desaparición.** «Termina en positivo» es el
+único corte cuyo intervalo excluye el cero en el total (−28 pp), y al comparar solo gestiones nuevas
+se desploma a −11 pp con el cero dentro. Una segunda rúbrica, congelada aparte y anotada por un panel
+que no vio la primera, reproduce por su cuenta el confundido de cartera que el informe denuncia: los
+humanos no cierran mejor, arrancan de otra parte.
+
+**Coherencia con la familia (validación pre-registrada).** El positivo principal frente al compromiso
+calificado, llamada a llamada: coinciden en **48 de 50** en IA y **44 de 50** en humanos. La rúbrica
+independiente cuenta **9 desenlaces positivos en IA, exactamente los 9 compromisos** que publica el
+informe. En humanos encuentra 23 donde la familia cuenta 17: las 6 de diferencia terminan en acuerdo
+sin fecha o sin monto, que es justo lo que el nivel 2 exige y ellas no tienen. Es decir: la objeción
+de que el conteo de compromisos depende del criterio de anotación tiene respuesta, y la respuesta es
+que dos rúbricas distintas, con paneles distintos, dan el mismo número en el brazo de IA.
+
+**Anclaje.** Cada respuesta con contenido cita una frase que existe en la transcripción: 23/24 y
+39/40 en desenlace, 34/34 y 45/45 en estado al cierre, 19/19 y 20/22 en respuesta a la dificultad.
+Unanimidad del panel: 72, 74 y 88 de 100 según el campo.
+
+**Por qué no entra al informe.** La regla de publicación se congeló antes de anotar y dice: *un corte
+entra solo si su AC1 de Gwet llega a 0,6 en los dos brazos*, y ese AC1 se calcula escuchando 20
+llamadas, 10 por brazo, los últimos 90 segundos, sin ver el voto del panel. **Esa escucha no se ha
+hecho**, así que ningún corte pasa la puerta y todo esto se queda aquí, que es lo que la propia regla
+manda. La hoja está generada y esperando en `data/interim/hoja_escucha_desenlace.csv`
+(`make disposition` con `--listening-sheet`); `--agreement <hoja llena>` calcula el acuerdo y el AC1.
+
+Se deja constancia de lo que habría sido fácil y es lo que la regla prohíbe: el corte «reconoce y
+ofrece» dice que el agente de IA reconoce la dificultad y ofrece una alternativa en 15 de 19 casos
+frente a 9 de 22 de los humanos, y entre gestiones nuevas 15 de 19 frente a 2 de 9. Es la cifra más
+favorable a la IA de todo el trabajo, y **no se publica**: su denominador baja de 20, que el
+pre-registro reserva para conteos, y no tiene validación a oído.

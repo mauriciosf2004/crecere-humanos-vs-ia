@@ -187,6 +187,12 @@ de 20 en un brazo, solo se publican conteos.
 - **Piloto.** Después del piloto de 6 llamadas solo se admiten cambios de redacción, registrados en
   `docs/decisiones.md`; ningún cambio de categorías ni de cortes.
 
+**Resultado (añadido después de anotar las 300).** El positivo salió no concluyente, como se
+esperaba aquí. El único corte cuyo intervalo excluye el cero —positivo por llamada, −28 pp— pierde
+la diferencia al comparar solo gestiones nuevas (−11 pp [−33, +8]). Ningún corte pasa la regla de
+publicación, porque la escucha de las 20 llamadas que da el AC1 no se ha hecho. Todo el detalle,
+con la tabla de cortes y la coherencia con la familia, en `docs/decisiones.md` §18.
+
 **Expectativa honesta.** Potencia exacta de Fisher (α = 0,05 bilateral) con una tasa base del 35 %:
 
 | Diferencia real | Total, 50 frente a 50 | Gestiones nuevas, 50 frente a 24 |

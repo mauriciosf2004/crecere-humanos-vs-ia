@@ -1,0 +1,243 @@
+{
+  "preregistro": "docs/hipotesis.md §7",
+  "llamadas": {
+    "ia": 50,
+    "humano": 50
+  },
+  "acuerdo_panel": {
+    "final_disposition": {
+      "2/3": 26,
+      "3/3": 72,
+      "1/3": 2
+    },
+    "claims_already_paid": {
+      "3/3": 98,
+      "2/3": 2
+    },
+    "debtor_state_at_close": {
+      "2/3": 24,
+      "3/3": 74,
+      "1/3": 2
+    },
+    "difficulty_response": {
+      "3/3": 88,
+      "2/3": 12
+    }
+  },
+  "anclaje": {
+    "final_disposition": {
+      "ia": {
+        "con_valor": 24,
+        "anclados": 23
+      },
+      "humano": {
+        "con_valor": 40,
+        "anclados": 39
+      }
+    },
+    "claims_already_paid": {
+      "ia": {
+        "con_valor": 0,
+        "anclados": 0
+      },
+      "humano": {
+        "con_valor": 2,
+        "anclados": 2
+      }
+    },
+    "debtor_state_at_close": {
+      "ia": {
+        "con_valor": 34,
+        "anclados": 34
+      },
+      "humano": {
+        "con_valor": 45,
+        "anclados": 45
+      }
+    },
+    "difficulty_response": {
+      "ia": {
+        "con_valor": 19,
+        "anclados": 19
+      },
+      "humano": {
+        "con_valor": 22,
+        "anclados": 20
+      }
+    }
+  },
+  "cortes": {
+    "total": {
+      "positivo": {
+        "k_ia": 9,
+        "n_ia": 24,
+        "k_humano": 23,
+        "n_humano": 40,
+        "diff_pp": -19.999999999999996,
+        "ci_low_pp": -41.51170298403343,
+        "ci_high_pp": 5.017723991864276,
+        "p_fisher": 0.19629261962560973
+      },
+      "positivo_amplio": {
+        "k_ia": 11,
+        "n_ia": 24,
+        "k_humano": 28,
+        "n_humano": 40,
+        "diff_pp": -24.166666666666664,
+        "ci_low_pp": -45.710219442296534,
+        "ci_high_pp": 0.3808863309310073,
+        "p_fisher": 0.06814283251942044
+      },
+      "positivo_por_llamada": {
+        "k_ia": 9,
+        "n_ia": 50,
+        "k_humano": 23,
+        "n_humano": 50,
+        "diff_pp": -28.000000000000004,
+        "ci_low_pp": -43.89718302112643,
+        "ci_high_pp": -9.737224915515355,
+        "p_fisher": 0.004905316133982581
+      },
+      "peso_parcial": {
+        "k_ia": 2,
+        "n_ia": 9,
+        "k_humano": 5,
+        "n_humano": 23
+      },
+      "malestar_al_cierre": {
+        "k_ia": 10,
+        "n_ia": 34,
+        "k_humano": 7,
+        "n_humano": 45,
+        "diff_pp": 13.856209150326798,
+        "ci_low_pp": -4.396835312815606,
+        "ci_high_pp": 32.34404500654144,
+        "p_fisher": 0.1715596301271421
+      },
+      "reconoce_y_ofrece": {
+        "k_ia": 15,
+        "n_ia": 19,
+        "k_humano": 9,
+        "n_humano": 22
+      }
+    },
+    "gestiones_nuevas": {
+      "positivo": {
+        "k_ia": 9,
+        "n_ia": 24,
+        "k_humano": 7,
+        "n_humano": 17
+      },
+      "positivo_amplio": {
+        "k_ia": 11,
+        "n_ia": 24,
+        "k_humano": 9,
+        "n_humano": 17
+      },
+      "positivo_por_llamada": {
+        "k_ia": 9,
+        "n_ia": 50,
+        "k_humano": 7,
+        "n_humano": 24,
+        "diff_pp": -11.16666666666667,
+        "ci_low_pp": -32.79467651189087,
+        "ci_high_pp": 7.9868974990877835,
+        "p_fisher": 0.366598297124622
+      },
+      "peso_parcial": {
+        "k_ia": 2,
+        "n_ia": 9,
+        "k_humano": 0,
+        "n_humano": 7
+      },
+      "malestar_al_cierre": {
+        "k_ia": 10,
+        "n_ia": 34,
+        "k_humano": 5,
+        "n_humano": 20,
+        "diff_pp": 4.411764705882354,
+        "ci_low_pp": -20.81689042169123,
+        "ci_high_pp": 26.128666121633927,
+        "p_fisher": 1.0
+      },
+      "reconoce_y_ofrece": {
+        "k_ia": 15,
+        "n_ia": 19,
+        "k_humano": 2,
+        "n_humano": 9
+      }
+    }
+  },
+  "distribucion": {
+    "final_disposition": {
+      "ia": {
+        "sin_cierre": 8,
+        "None": 9,
+        "no_aplica": 17,
+        "rechazo_o_disputa": 5,
+        "acepta_total": 7,
+        "acepta_parcial": 2,
+        "acepta_vago": 2
+      },
+      "humano": {
+        "acepta_total": 13,
+        "no_aplica": 7,
+        "acepta_alcance_indeterminado": 5,
+        "acepta_vago": 5,
+        "acepta_parcial": 5,
+        "sin_cierre": 10,
+        "None": 3,
+        "rechazo_o_disputa": 2
+      }
+    },
+    "debtor_state_at_close": {
+      "ia": {
+        "evasivo": 9,
+        "None": 16,
+        "cooperativo": 15,
+        "molesto": 7,
+        "angustiado": 3
+      },
+      "humano": {
+        "evasivo": 4,
+        "cooperativo": 34,
+        "None": 5,
+        "angustiado": 4,
+        "molesto": 3
+      }
+    },
+    "difficulty_response": {
+      "ia": {
+        "reconoce_y_ofrece": 15,
+        "no_aplica": 31,
+        "insiste_o_presiona": 2,
+        "ofrece_sin_reconocer": 2
+      },
+      "humano": {
+        "ofrece_sin_reconocer": 8,
+        "no_aplica": 27,
+        "insiste_o_presiona": 4,
+        "reconoce_y_ofrece": 9,
+        "None": 1,
+        "reconoce_sin_ofrecer": 1
+      }
+    }
+  },
+  "declara_haber_pagado": {
+    "ia": 0,
+    "humano": 2
+  },
+  "coherencia_con_compromiso": {
+    "ia": {
+      "desenlace_0_compromiso_0": 40,
+      "desenlace_1_compromiso_1": 8,
+      "desenlace_1_compromiso_0": 1,
+      "desenlace_0_compromiso_1": 1
+    },
+    "humano": {
+      "desenlace_1_compromiso_1": 17,
+      "desenlace_0_compromiso_0": 27,
+      "desenlace_1_compromiso_0": 6
+    }
+  }
+}
