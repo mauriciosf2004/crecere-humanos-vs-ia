@@ -147,3 +147,24 @@ def sample_size_per_arm(base: float, delta: float, alpha: float = 0.05, power: f
     h = abs(2 * np.arcsin(np.sqrt(base + delta)) - 2 * np.arcsin(np.sqrt(base)))
     z = stats.norm.ppf(1 - alpha / 2) + stats.norm.ppf(power)
     return int(np.ceil(2 * (z / h) ** 2))
+
+
+def audit_sample_size(
+    agreement: float, half_width: float, population: int | None = None, alpha: float = 0.05
+) -> int:
+    """Llamadas a escuchar para conocer el acierto del panel con una precisión dada.
+
+    Es la función que responde la única pregunta que decide si este método sirve en
+    producción: ¿cuántas llamadas hay que oír cuando el mes trae cien mil en vez de cien?
+
+    La respuesta es que **el número casi no depende del tamaño del corpus**. La precisión
+    de una proporción va con la raíz del número absoluto de casos mirados, no con la
+    fracción del total: la corrección por población finita solo muerde cuando la muestra
+    es una parte apreciable de la población, y con cien mil llamadas no lo es. Auditar
+    cincuenta de cien es la mitad del trabajo; auditar cincuenta de cien mil es el 0,05 %,
+    y compra exactamente la misma certeza.
+    """
+    n = stats.norm.ppf(1 - alpha / 2) ** 2 * agreement * (1 - agreement) / half_width**2
+    if population is not None:
+        n = n / (1 + (n - 1) / population)
+    return int(np.ceil(n))

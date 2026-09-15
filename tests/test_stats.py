@@ -5,8 +5,10 @@ aquí cambiaría una conclusión del reporte sin que nadie lo note.
 """
 
 import numpy as np
+import pytest
 
 from src.stats import (
+    audit_sample_size,
     cliffs_delta,
     compare_proportions,
     fisher_power,
@@ -55,3 +57,28 @@ def test_sample_size_matches_cohen_table():
 def test_planning_is_less_conservative_than_exact_fisher():
     """Para el umbral que Fisher exacto sitúa en 50 por brazo, la aproximación pide menos."""
     assert sample_size_per_arm(0.30, 0.29) <= 50
+
+
+def test_audit_sample_size_barely_grows_with_the_corpus():
+    """La afirmación que sostiene el argumento de escala del informe.
+
+    Si esto dejara de ser cierto, la sección de control de calidad estaría mintiendo: el
+    costo humano de auditar dejaría de ser plano y el método no serviría en producción.
+    """
+    cien = audit_sample_size(0.85, 0.10, population=100)
+    cien_mil = audit_sample_size(0.85, 0.10, population=100_000)
+    diez_millones = audit_sample_size(0.85, 0.10, population=10_000_000)
+    # Multiplicar el corpus por cien mil no cambia la muestra ni en una llamada.
+    assert cien_mil == diez_millones
+    # Y frente a un corpus de cien, la muestra crece menos de un 50 %.
+    assert cien < cien_mil < 1.5 * cien
+    # Como fracción, el trabajo se desploma: del 34 % al 0,05 %.
+    assert cien / 100 > 0.3
+    assert cien_mil / 100_000 < 0.001
+
+
+def test_audit_sample_size_needs_four_times_the_calls_for_half_the_error():
+    """La precisión va con la raíz de la muestra: exigir el doble cuesta el cuádruple."""
+    assert audit_sample_size(0.85, 0.05) == pytest.approx(
+        4 * audit_sample_size(0.85, 0.10), rel=0.02
+    )

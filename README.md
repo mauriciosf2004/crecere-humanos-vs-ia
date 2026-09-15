@@ -1,5 +1,7 @@
 # Agentes humanos frente a agentes de IA en gestión de cobranza
 
+[![ci](https://github.com/mauriciosf2004/crecere-humanos-vs-ia/actions/workflows/ci.yml/badge.svg)](https://github.com/mauriciosf2004/crecere-humanos-vs-ia/actions/workflows/ci.yml)
+
 Prueba técnica para Creceré AI. Cien llamadas —50 de gestores humanos y 50 de un agente de IA—
 convertidas en datos para responder una pregunta: ¿hay diferencias sustentables en cómo gestionan?
 
@@ -32,9 +34,32 @@ ningún número del informe está escrito a mano.
 2. `docs/hipotesis.md` — qué se quería entender, qué se esperaba, la tabla completa de las ocho hipótesis con su resultado, y el pre-registro del desenlace (§7).
 3. `docs/decisiones.md` — las decisiones que cambiaron el resultado, cada una con el dato que la sostiene.
 4. `docs/panel-de-anotacion.md` — cómo anotan los tres agentes ciegos y por qué se vota 2 de 3.
-5. `src/analyze.py` — el contraste estadístico.
+5. `docs/control-de-calidad.md` — qué cuesta saber que esto sigue acertando con cien mil llamadas.
+6. `src/analyze.py` — el contraste estadístico.
 
 `docs/variables-descartadas.md` lista las 39 candidatas que no entraron en la familia y por qué.
+
+## Anotar con agentes, especificado
+
+Las cien llamadas no las etiquetó una persona ni una sola pasada de un modelo: las anotan **tres
+agentes ciegos** que no se ven entre sí, y cada celda se queda con la respuesta de al menos dos.
+El trabajo está especificado, no improvisado, y esa especificación es parte del repositorio:
+
+| Pieza | Qué gobierna |
+|---|---|
+| `CLAUDE.md` | El contrato del proyecto: qué se versiona y qué no, la regla de PII, la prohibición de escribir una cifra a mano, y la definición de «hecho» |
+| `src/rubric.md`, `src/rubric_desenlace.md` | Las dos rúbricas, congeladas antes de anotar; su huella entra en la caché, así que editarlas invalida las anotaciones |
+| `src/schema.json`, `src/schema_desenlace.json` | La salida válida: conjuntos cerrados, sin texto libre |
+| `workflows/panel-anotacion.js` | La orquestación: tres roles, dos modelos, reanudable por lotes |
+| `docs/hipotesis.md` | El pre-registro: hipótesis, cortes y regla de publicación, con fecha y commit |
+
+La disciplina que lo hace verificable es la misma en todas partes: **cada respuesta afirmativa
+obliga a citar una frase literal, y el código comprueba que esa frase exista en la
+transcripción**. 258 de 259 quedaron ancladas. Una etiqueta que no se puede anclar no entra.
+
+`src/results.py` cierra el círculo por el otro lado: la prosa del informe declara los supuestos
+de los que depende, y si el análisis deja de sostener una frase, el armado falla en vez de
+publicarla.
 
 ## Cómo está hecho
 

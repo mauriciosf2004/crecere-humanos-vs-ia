@@ -1,0 +1,54 @@
+# El repositorio se juzga por dos cosas: que el análisis sea correcto y que el entregable
+# salga bien. Esto comprueba las dos en cada push, y además la propiedad que sostiene todo
+# el informe: que ninguna de sus cifras esté escrita a mano.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Formato y linting
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+
+      - name: Tests
+        run: uv run pytest tests/ -q
+
+      - name: Herramientas del entregable
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          google-chrome --version
+
+      # El informe se arma desde data/public/, que sí se versiona. Si alguien tocara una
+      # cifra a mano en el HTML, este paso lo caza: el árbol queda sucio y falla.
+      - name: El informe se regenera idéntico
+        run: |
+          make report CHROME=/usr/bin/google-chrome
+          git diff --exit-code -- report/index.html data/public/results.json \
+            || { echo "El HTML commiteado no coincide con el que produce make report."; exit 1; }
+
+      - name: Puerta de las dos páginas
+        run: make verify CHROME=/usr/bin/google-chrome
+
+      # Son deudores reales. Ningún audio, transcripción o anotación cruda puede entrar.
+      - name: Nada de data/raw, interim ni processed
+        run: |
+          if git ls-files | grep -E '^data/(raw|interim|processed)/'; then
+            echo "Hay archivos con datos de llamadas versionados."; exit 1
+          fi
+          echo "Limpio."
