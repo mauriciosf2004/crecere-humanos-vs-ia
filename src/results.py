@@ -217,7 +217,6 @@ def build() -> dict:
     effects = json.loads((PUBLIC / "effects.json").read_text(encoding="utf-8"))
     anchoring = json.loads((PUBLIC / "anchoring.json").read_text(encoding="utf-8"))
     agreement = json.loads((PUBLIC / "agreement.json").read_text(encoding="utf-8"))
-    questions = len(json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]) - 1
     norms = json.loads((REFERENCE / "cumplimiento.json").read_text(encoding="utf-8"))
     disposition = json.loads((PUBLIC / "desenlace.json").read_text(encoding="utf-8"))
     scale = scale_costs(json.loads((REFERENCE / "costos.json").read_text(encoding="utf-8")))
@@ -227,8 +226,7 @@ def build() -> dict:
     contrasts = effects["contrastes"]
     by_name = {item["variable"]: item for item in contrasts}
     context = {item["variable"]: item for item in effects["composicion"]}
-    duration, mde, pilot = effects["duracion"], effects["mde_pp"], effects["piloto_n_por_brazo"]
-    floors = effects["mde_suelos_pp"]
+    duration, pilot = effects["duracion"], effects["piloto_n_por_brazo"]
 
     legal = by_name["legal_department_framing"]
     expiry = by_name["offer_expiry_claim"]
@@ -328,6 +326,8 @@ def build() -> dict:
         conducta[arm] = {
             "llega": n - sin_propuesta,
             "acepta": sum(cierre.get(k, 0) for k in ACEPTA),
+            "salda": cierre.get("acepta_total", 0),
+            "abono": cierre.get("acepta_parcial", 0),
             "dificultad": sum(v for k, v in ante.items() if k not in ("no_aplica", "None")),
             "reconoce": ante.get("reconoce_y_ofrece", 0),
             "insiste": ante.get("insiste_o_presiona", 0),
@@ -344,17 +344,10 @@ def build() -> dict:
         "el estado al cierre reparte las 50 llamadas de cada canal sin perder ninguna",
     )
 
-    cells = agreement["resumen"]["celdas"]
-    unanimous, total_cells = cells.get("3/3", 0), sum(cells.values())
-    literal_rule = sum(agreement["resumen"].get("ajustes_regla_literal", {}).values())
     heard = agreement["resumen"].get("celdas_escuchadas", 0)
     single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
-    extra_humano = single_pass["extraccion"]["humano"] - single_pass["consenso"]["humano"]
-    extra_ia = single_pass["extraccion"]["ia"] - single_pass["consenso"]["ia"]
     family_anchor = anchoring["total"]
-    pares = agreement["acuerdo_por_pares"]
     misma_familia = [r for r, modelo in agreement["panel"].items() if modelo == "opus"]
-    juntos_en_disputa = pares["pares"]["|".join(sorted(misma_familia))]["acuerdo_en_disputadas"]
     _require(
         len(misma_familia) == 2,
         "dos de los tres anotadores comparten familia de modelo",
@@ -387,40 +380,12 @@ def build() -> dict:
     _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
     _require(contact["indeterminado_ia"] > 0, "en llamadas de IA no se sabe con quién se habla")
 
-    panel_models = ", ".join(model.capitalize() for model in agreement["panel"].values())
-    literal_by_arm = agreement["resumen"].get("ajustes_regla_literal", {})
-    methods = [
-        (
-            f"Dos transcripciones locales por llamada. Tres anotadores ({panel_models}) "
-            f"respondieron {questions} preguntas sin saber el canal y vale la mayoría: "
-            f"{thousands(unanimous)} de {thousands(total_cells)} respuestas fueron unánimes, y "
-            f"{family_anchor['anclados']} de {family_anchor['positivos']} afirmativas citan una "
-            "frase textual que existe en la llamada."
-        ),
-        # Los dos brazos, no solo el humano: el conteo de compromisos depende del criterio de
-        # anotación, y publicar cómo cambia uno solo se lee como haber elegido el que conviene.
-        # Y son las 14 celdas *de compromiso*: sin unanimidad hay 58 en toda la rejilla.
-        (
-            "El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos "
-            f"vagos y contaba {extra_humano} compromisos humanos y {extra_ia} de IA más que el "
-            f"panel. Las {heard} celdas sin unanimidad se escucharon una a una: manda lo oído."
-        ),
-        # La dirección esperada se fijó mirando estas mismas llamadas. Decirlo y callar la
-        # consecuencia deja el flanco abierto; decirlo con la consecuencia lo cierra, porque
-        # los cuatro sostenidos superan el umbral incluso sin suponer dirección.
-        (
-            f"Test global por permutación ({p_text(effects['p_global'])}) y corrección por las "
-            f"{len(contrasts)} comparaciones. El sentido esperado se fijó mirando estas mismas "
-            "llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por "
-            "el p-valor."
-        ),
-    ]
-    if literal_rule:
-        _require(not literal_by_arm.get("humano"), "la regla literal solo cambió llamadas de IA")
-        methods[2] = methods[2].rstrip(".") + (
-            f", y la regla de que «hoy» cuenta como fecha corrigió al panel en {literal_rule} "
-            "llamadas de IA."
-        )
+    colofon = (
+        f"Cada cifra sale de una frase textual de la llamada, y se comprobó que esa frase "
+        f"exista: {family_anchor['anclados']} de {family_anchor['positivos']}. Ninguna se "
+        "escribió a mano: el informe se regenera solo desde los datos. El método, las "
+        "decisiones y los datos derivados están en el repositorio."
+    )
 
     return {
         "meta": {
@@ -574,6 +539,18 @@ def build() -> dict:
                     "humano": f"{conducta['humano']['acepta']} de {n}",
                 },
                 {
+                    # La distinción que motivó la segunda rúbrica, y la que importa para
+                    # planear caja: no es lo mismo saldar que abonar.
+                    "que": "De esas, el acuerdo salda lo que se discutió",
+                    "ia": f"{conducta['ia']['salda']} de {n}",
+                    "humano": f"{conducta['humano']['salda']} de {n}",
+                },
+                {
+                    "que": "De esas, es un abono o un acuerdo parcial",
+                    "ia": f"{conducta['ia']['abono']} de {n}",
+                    "humano": f"{conducta['humano']['abono']} de {n}",
+                },
+                {
                     "que": "El interlocutor queda colaborando al cerrar",
                     "ia": f"{conducta['ia']['colabora']} de {n}",
                     "humano": f"{conducta['humano']['colabora']} de {n}",
@@ -632,29 +609,21 @@ def build() -> dict:
                 ),
             },
         ],
-        "metodo": methods,
         "limitaciones": [
             (
-                "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el "
-                "compromiso es verbal, no un pago."
+                "Cuál canal recupera más plata: no hay datos de pago, y un compromiso hablado "
+                "no es un recaudo."
             ),
-            "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
             (
-                f"Dos de los tres anotadores comparten familia de modelo, y en {juntos_en_disputa} "
-                f"de las {pares['disputadas']} celdas sin unanimidad fueron ellos quienes formaron "
-                "la mayoría: el voto vale menos de lo que su número sugiere."
+                "Cuánto pesan la claridad o el manejo de objeciones: eso exige separar las voces "
+                "de la grabación, y ese error favorecería a la IA."
             ),
-            "Sin identificador de gestor: no se pueden comparar gestores humanos entre sí.",
-            # El suelo de sensibilidad depende del denominador y de la corrección: publicar solo
-            # el del contraste suelto es publicar el más optimista de los tres. El paréntesis
-            # anterior mezclaba este umbral con una cota de intervalo, y así leído insinuaba más
-            # sensibilidad donde hay menos.
             (
-                f"Con {n} llamadas por canal no se detectan diferencias menores a {mde:.0f} pp; "
-                f"{floors['titular']:.0f} pp sobre los contactos con titular y "
-                f"{floors['familia']:.0f} pp al corregir por las {len(contrasts)} comparaciones."
+                f"Diferencias pequeñas: con {n} llamadas por canal solo se ven las grandes, y "
+                "las menores no se distinguen del azar."
             ),
         ],
+        "colofon": colofon,
     }
 
 

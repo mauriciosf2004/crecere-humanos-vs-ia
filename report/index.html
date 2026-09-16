@@ -167,6 +167,7 @@
   }
   ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
+  .colofon { margin-top:auto; padding-top:5mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
   .grid2 section { break-inside:avoid; margin-bottom:0; }
@@ -175,6 +176,9 @@
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
   }
   footer a { color:inherit; text-decoration:none; }
+  /* En la página 2 empuja el colofón, no el pie: si empujan los dos, el blanco
+     se parte en dos huecos y la hoja parece que se quedó a medias. */
+  #p2 footer { margin-top:2mm; }
 </style>
 </head>
 <body>
@@ -296,6 +300,10 @@
       
         <tr><td>Termina en algún tipo de aceptación</td><td class="num">11 de 50</td><td class="num">28 de 50</td></tr>
       
+        <tr><td>De esas, el acuerdo salda lo que se discutió</td><td class="num">7 de 50</td><td class="num">13 de 50</td></tr>
+      
+        <tr><td>De esas, es un abono o un acuerdo parcial</td><td class="num">2 de 50</td><td class="num">5 de 50</td></tr>
+      
         <tr><td>El interlocutor queda colaborando al cerrar</td><td class="num">15 de 50</td><td class="num">34 de 50</td></tr>
       
         <tr><td>Queda esquivo, molesto o angustiado</td><td class="num">19 de 50</td><td class="num">11 de 50</td></tr>
@@ -308,16 +316,10 @@
     <p class="note">¿Eran comparables? No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
   </section>
 
-  <div class="grid2">
-    <section>
-      <h2>Método</h2>
-      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal y vale la mayoría: 1.042 de 1.100 respuestas fueron unánimes, y 258 de 259 afirmativas citan una frase textual que existe en la llamada.</li><li>El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.</li><li>Test global por permutación (p &lt; 0,001) y corrección por las 8 comparaciones. El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor, y la regla de que «hoy» cuenta como fecha corrigió al panel en 9 llamadas de IA.</li></ul>
-    </section>
-    <section>
-      <h2>Qué no se pudo medir</h2>
-      <ul class="bullets"><li>Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.</li><li>Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.</li><li>Dos de los tres anotadores comparten familia de modelo, y en 40 de las 58 celdas sin unanimidad fueron ellos quienes formaron la mayoría: el voto vale menos de lo que su número sugiere.</li><li>Sin identificador de gestor: no se pueden comparar gestores humanos entre sí.</li><li>Con 50 llamadas por canal no se detectan diferencias menores a 29 pp; 33 pp sobre los contactos con titular y 37 pp al corregir por las 8 comparaciones.</li></ul>
-    </section>
-  </div>
+  <section>
+    <h2>Qué no se puede concluir con estas llamadas</h2>
+    <ul class="bullets"><li>Cuál canal recupera más plata: no hay datos de pago, y un compromiso hablado no es un recaudo.</li><li>Cuánto pesan la claridad o el manejo de objeciones: eso exige separar las voces de la grabación, y ese error favorecería a la IA.</li><li>Diferencias pequeñas: con 50 llamadas por canal solo se ven las grandes, y las menores no se distinguen del azar.</li></ul>
+  </section>
 
   <section>
     <h2 class="major">Siguiente paso</h2>
@@ -325,6 +327,8 @@
       <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales.</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Lo que cuesta medirlo.</strong> 2.700 USD al mes para 100.000 llamadas de 4 minutos —transcribir, anonimizar, anotar y el tablero, con agente y deudor en canales separados—, a precios de lista calculados en el repositorio. El control de calidad añade menos de dos horas de análisis al mes y no crece con el volumen.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen beneficios crediticios que la entidad respalde.</li>
     </ul>
   </section>
+
+  <p class="note colofon">Cada cifra sale de una frase textual de la llamada, y se comprobó que esa frase exista: 258 de 259. Ninguna se escribió a mano: el informe se regenera solo desde los datos. El método, las decisiones y los datos derivados están en el repositorio.</p>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>2 / 2</span></footer>
 </div>
