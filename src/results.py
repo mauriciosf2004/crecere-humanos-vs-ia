@@ -200,6 +200,8 @@ def build() -> dict:
 
     credito_humano = guion["credit_benefit_promised"]["humano"]
     credito = by_name["credit_benefit_promised"]
+    estratos = {s["estrato"]: s for s in commitment["estratificado"]["estratos"]}
+    nuevo, previo = estratos["nuevo"], estratos["previo"]
 
     def by_deadline(acciones: list[dict]) -> list[dict]:
         """Las acciones agrupadas por plazo, en el orden en que aparecen: un plan se lee en
@@ -289,6 +291,16 @@ def build() -> dict:
     heard = agreement["resumen"].get("celdas_escuchadas", 0)
     single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
     family_anchor = anchoring["total"]
+    # El colofón va al pie de la página 2, y casi toda esa página sale de la rúbrica de
+    # desenlace, que ancla aparte: citar solo el anclaje de la familia avalaba la página
+    # equivocada. Se publican las dos rúbricas sumadas, calculadas.
+    anclaje_desenlace = disposition["anclaje"]
+    anclado = family_anchor["anclados"] + sum(
+        v[arm]["anclados"] for v in anclaje_desenlace.values() for arm in ("ia", "humano")
+    )
+    con_cita = family_anchor["positivos"] + sum(
+        v[arm]["con_valor"] for v in anclaje_desenlace.values() for arm in ("ia", "humano")
+    )
     misma_familia = [r for r, modelo in agreement["panel"].items() if modelo == "opus"]
     _require(
         len(misma_familia) == 2,
@@ -323,9 +335,9 @@ def build() -> dict:
     _require(contact["indeterminado_ia"] > 0, "en llamadas de IA no se sabe con quién se habla")
 
     colofon = (
-        "Cada cifra sale de una frase textual de la llamada y se comprobó que exista: "
-        f"{family_anchor['anclados']} de {family_anchor['positivos']}. Ninguna se escribió a "
-        "mano; el método está en el repositorio."
+        "Cada respuesta anotada cita una frase textual de la llamada, y se comprobó que exista: "
+        f"{anclado} de {con_cita}. Ninguna cifra se escribió a mano; el método está en el "
+        "repositorio."
     )
 
     acciones = [
@@ -335,7 +347,8 @@ def build() -> dict:
             # El reparto de cada alerta se calcula: "36 de 43" dice más que un porcentaje
             # y no obliga a redondear nada a mano.
             "cifra": (
-                f"{len(scripted)} de las 4 alertas de la IA son una sola frase repetida: "
+                f"{len(scripted)} de las {len(norms['alertas'])} alertas de la IA son una "
+                "sola frase repetida: "
                 + ", ".join(
                     f"{v['ia']['comparten_la_misma_frase']} de {v['ia']['positivos']}"
                     for v in scripted
@@ -364,7 +377,10 @@ def build() -> dict:
         },
         {
             "plazo": "90 días",
-            "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+            "que": (
+                "Medir la conversión con un piloto de cuentas asignadas al azar dentro de "
+                "cada tipo de gestión."
+            ),
             "cifra": (
                 f"Con {n} por canal solo se ven diferencias de {suelo:.0f} pp; con "
                 f"{pilot['10']} cuentas por grupo, de 10. Se decide con el recaudo a 30 días, "
@@ -503,9 +519,15 @@ def build() -> dict:
                         "human": commitment["k_humano"],
                     },
                 ],
+                # La última barra es la que más se malinterpreta: sin esto, cuatro barras humanas
+                # más largas se leen como un marcador, que es justo lo que el titular prohíbe.
+                # La aritmética es del propio estrato, sin afirmar una causa que no se midió.
                 "pie": (
-                    "Aceptación es lo que se dijo en la llamada, no plata recaudada: no hay datos "
-                    "de pago."
+                    f"Aceptación es lo que se dijo, no plata recaudada. De los "
+                    f"{commitment['k_humano']} compromisos humanos, {previo['k_humano']} salen de "
+                    f"las {previo['n_humano']} llamadas con acuerdo previo, que la IA nunca tuvo; "
+                    f"entre gestiones nuevas son {nuevo['k_humano']} de {nuevo['n_humano']} "
+                    f"frente a {nuevo['k_ia']} de {nuevo['n_ia']}."
                 ),
             },
             {
@@ -532,11 +554,9 @@ def build() -> dict:
                         ],
                     }
                 ],
-                "pie": (
-                    f"En {conducta['ia']['mudo']} de las {n} llamadas de la IA el interlocutor no "
-                    f"habla lo suficiente para saber cómo queda; en humanos, en "
-                    f"{conducta['humano']['mudo']}."
-                ),
+                # Sin pie: la leyenda de la barra ya dice «no habla lo suficiente para saberlo
+                # 16·5» tres centímetros más arriba, y repetirlo en prosa no añade nada.
+                "pie": "",
             },
             {
                 "titulo": "3 · Cuando el deudor dice que no puede pagar",
@@ -565,9 +585,13 @@ def build() -> dict:
                         ],
                     }
                 ],
+                # El único sitio del informe donde la IA sale mejor, y la regla de publicación
+                # congelada lo autoriza así: conteo descriptivo, nunca diferencia medida.
                 "pie": (
-                    "Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma "
-                    "regla, su largo ya dice cuántas son."
+                    f"Único bloque con otro denominador: {conducta['ia']['dificultad']} y "
+                    f"{conducta['humano']['dificultad']} de las {n}. La IA reconoce la dificultad "
+                    f"y ofrece alternativa en {conducta['ia']['reconoce']}, los humanos en "
+                    f"{conducta['humano']['reconoce']}: es un conteo, no una diferencia medida."
                 ),
             },
         ],

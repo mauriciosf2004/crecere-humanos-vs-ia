@@ -175,7 +175,7 @@
           "human": 17
         }
       ],
-      "pie": "Aceptación es lo que se dijo en la llamada, no plata recaudada: no hay datos de pago."
+      "pie": "Aceptación es lo que se dijo, no plata recaudada. De los 17 compromisos humanos, 11 salen de las 26 llamadas con acuerdo previo, que la IA nunca tuvo; entre gestiones nuevas son 6 de 24 frente a 9 de 50."
     },
     {
       "titulo": "2 · Cómo queda el interlocutor al cerrar",
@@ -201,7 +201,7 @@
           ]
         }
       ],
-      "pie": "En 16 de las 50 llamadas de la IA el interlocutor no habla lo suficiente para saber cómo queda; en humanos, en 5."
+      "pie": ""
     },
     {
       "titulo": "3 · Cuando el deudor dice que no puede pagar",
@@ -230,7 +230,7 @@
           ]
         }
       ],
-      "pie": "Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma regla, su largo ya dice cuántas son."
+      "pie": "Único bloque con otro denominador: 19 y 22 de las 50. La IA reconoce la dificultad y ofrece alternativa en 15, los humanos en 9: es un conteo, no una diferencia medida."
     }
   ],
   "cierre": [
@@ -267,7 +267,7 @@
       "acciones": [
         {
           "plazo": "90 días",
-          "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+          "que": "Medir la conversión con un piloto de cuentas asignadas al azar dentro de cada tipo de gestión.",
           "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas.",
           "n": 4
         },
@@ -298,7 +298,7 @@
     },
     {
       "plazo": "90 días",
-      "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+      "que": "Medir la conversión con un piloto de cuentas asignadas al azar dentro de cada tipo de gestión.",
       "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas."
     },
     {
@@ -307,5 +307,5 @@
       "cifra": "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede saber cuánto pesa cada uno."
     }
   ],
-  "colofon": "Cada cifra sale de una frase textual de la llamada y se comprobó que exista: 258 de 259. Ninguna se escribió a mano; el método está en el repositorio."
+  "colofon": "Cada respuesta anotada cita una frase textual de la llamada, y se comprobó que exista: 440 de 445. Ninguna cifra se escribió a mano; el método está en el repositorio."
 }

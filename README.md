@@ -85,7 +85,7 @@ de Claude Code, Chrome y `pdfinfo`.
 |---|---|---|
 | Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, veredicto |
 | Explicación: ¿qué explica las diferencias? | El guion (encuadre de embargos, vencimiento, el pago como forma de evitar un proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
-| Conducta: ¿qué hace mejor cada uno? | La IA se presenta como área de embargos y dice que la oferta vence hoy; los humanos ofrecen más salidas de centrales de riesgo | informe, veredicto |
+| Conducta: ¿qué hace mejor cada uno? | La IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas donde el deudor dice que no puede pagar, frente a 9 de 22 de los humanos; los humanos leen mejor el caso, pero ofrecen salir de centrales de riesgo en 22 de 50 | informe, página 2 |
 | Mejora: ¿qué cambiar? | Un piloto con asignación al azar, una variante de la IA sin anuncio legal ni vencimiento y un estándar común para los dos canales | informe, «Qué hacer, en orden» |
 
 ## Por dónde empezar

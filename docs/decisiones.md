@@ -464,11 +464,13 @@ bloques sobre una sola regla de 0 a 50, sin intervalos, sin p-valores y sin decl
 puerta del AC1 existe para comparar; contar lo que dijo cada llamada no la necesita. La hoja está generada y esperando en `data/interim/hoja_escucha_desenlace.csv`
 (`make disposition` con `--listening-sheet`); `--agreement <hoja llena>` calcula el acuerdo y el AC1.
 
-Se deja constancia de lo que habría sido fácil y es lo que la regla prohíbe: el corte «reconoce y
-ofrece» dice que el agente de IA reconoce la dificultad y ofrece una alternativa en 15 de 19 casos
-frente a 9 de 22 de los humanos, y entre gestiones nuevas 15 de 19 frente a 2 de 9. Es la cifra más
-favorable a la IA de todo el trabajo, y **no se publica**: su denominador baja de 20, que el
-pre-registro reserva para conteos, y no tiene validación a oído.
+La cifra más favorable a la IA de todo el trabajo cae justo aquí, y sirve para ver dónde pasa la
+frontera. El agente de IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas
+frente a 9 de 22 de los humanos, y entre gestiones nuevas 15 de 19 frente a 2 de 9. El **conteo**
+se publica al pie de la página 2 del informe, rotulado como conteo y no como diferencia, porque es
+lo que el pre-registro manda cuando un denominador baja de 20. La **diferencia** —el corte, con su
+intervalo— no se publica: no tiene validación a oído. Habría sido fácil enseñarla y llamarla
+hallazgo; es exactamente lo que la regla prohíbe.
 
 
 ## 19. La maqueta, delegada con un brief y aceptada por una puerta

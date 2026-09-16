@@ -118,13 +118,18 @@ el cuello de botella: es la partida más pequeña del presupuesto.
 
 ## La regla que se cumplió aunque costara
 
-La segunda rúbrica —desenlace y reacción del interlocutor— tiene sus 300 anotaciones completas y
-**no está en el informe**. La regla de publicación se escribió antes de anotar y exige un AC1 de
-Gwet de al menos 0,6 en los dos brazos, que sale de la capa 4, y esa escucha no se hizo.
+La segunda rúbrica —desenlace y reacción del interlocutor— tiene sus 300 anotaciones completas, y
+la regla de publicación, escrita antes de anotar, la parte en dos. Un **corte** —una diferencia
+entre brazos con su intervalo— exige un AC1 de Gwet de al menos 0,6 en los dos brazos, que sale de
+la capa 4; esa escucha no se hizo, así que ninguno entra. Las **distribuciones** entran «como
+barras descriptivas, sin test por categoría», y eso es la página 2 del informe.
 
-El dato que se quedó fuera es el más favorable al agente de IA de todo el trabajo: reconoce la
-dificultad y ofrece una alternativa en 15 de 19 casos, frente a 9 de 22 de los humanos. Se
-documenta en `docs/decisiones.md` §18 y no se publica.
+Que la regla no se dobla se ve en que corta en las dos direcciones sobre el mismo dato: el más
+favorable al agente de IA de todo el trabajo. Ante una dificultad, la IA reconoce y ofrece una
+alternativa en 15 de 19 llamadas y los humanos en 9 de 22. Ese **conteo se publica**, al pie de la
+página 2, porque el pre-registro lo autoriza palabra por palabra. La **diferencia** que ese conteo
+insinúa —y el corte «termina en positivo», que daba −28 pp— **no se publica**, porque le falta el
+AC1 que la regla exige. El detalle está en `docs/decisiones.md` §18.
 
 Una regla de calidad que solo se aplica cuando el resultado no gusta no es una regla.
 

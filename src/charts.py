@@ -129,6 +129,24 @@ class Stage:
                 raise ValueError(f"{self.label}: las partes {parts} no suman {total}")
 
 
+# A 7,2 px sobre 520 unidades caben ~113 caracteres por línea. El límite no es estético:
+# un <text> de SVG no parte línea sola, así que lo que sobra se sale del gráfico sin avisar.
+CAPTION_CHARS = 110
+CAPTION_LINE = 9.5
+
+
+def wrap(text: str, chars: int = CAPTION_CHARS) -> list[str]:
+    """Parte un pie en líneas de como mucho `chars` caracteres, sin cortar palabras."""
+    lines, line = [], ""
+    for word in text.split():
+        if line and len(line) + 1 + len(word) > chars:
+            lines.append(line)
+            line = word
+        else:
+            line = f"{line} {word}".strip()
+    return lines + [line] if line else lines
+
+
 def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: int = 520) -> str:
     """Tres paneles sobre una sola regla de 0 a `n` llamadas, dibujada una vez arriba.
 
@@ -154,7 +172,7 @@ def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: in
     height = 30 + sum(
         title_h
         + sum(2 * bar_h + gap_ch + gap_stage + (legend_h if s.parts_ia else 0) for s in stages)
-        + (caption_h if caption else 4)
+        + (caption_h + CAPTION_LINE * (len(wrap(caption)) - 1) if caption else 4)
         + 6
         for _, stages, caption in panels
     )
@@ -242,8 +260,13 @@ def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: in
                 y += legend_h
             y += gap_stage
         if caption:
-            out.append(f'<text class="rc-caption" x="0" y="{y + 2:.1f}">{caption}</text>')
-            y += caption_h
+            lines = wrap(caption)
+            for k, line in enumerate(lines):
+                out.append(
+                    f'<text class="rc-caption" x="0" y="{y + 2 + k * CAPTION_LINE:.1f}">'
+                    f"{line}</text>"
+                )
+            y += caption_h + CAPTION_LINE * (len(lines) - 1)
         else:
             y += 4
         y += 6
