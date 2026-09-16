@@ -91,8 +91,6 @@
 
   /* La pregunta que hizo el cliente, con el mismo peso que el bloque de riesgo: si solo
      uno de los dos lleva filete y fondo, la página dice que el otro importa menos. */
-  .deal { border-left:3px solid var(--ia); padding:0 0 0 3mm; margin-bottom:3mm; }
-  .deal h2 { color:var(--ia); }
 
   /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
   .risk { border-top:2.2px solid var(--ink); padding:2mm 0 0; margin-bottom:3mm; }
@@ -101,8 +99,16 @@
      lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
      reenvía es la tabla, nunca el pie. */
   .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
+  /* La cita literal debajo del rótulo: es la evidencia, y por eso el rótulo ya no puede
+     decir más de lo que ella sostiene. Cursiva y un punto menos, para que se lea como voz. */
+  .risk .conducta { font-weight:600; }
+  .risk .cita { display:block; font-style:italic; color:var(--muted); font-size:7.8pt;
+                margin-top:.3mm; }
+  .risk .arreglo { display:block; color:var(--ia); margin-top:.3mm; }
+  .risk .norma { display:block; font-family:var(--mono); font-size:6.9pt; color:var(--muted);
+                 margin-top:.4mm; }
   .risk tbody { counter-reset:hallazgo; }
-  .risk td:first-child { font-weight:600; }
+
   .risk tbody td:first-child::before {
     counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
     font-weight:400; color:var(--muted);
@@ -156,6 +162,18 @@
   ol.findings .why { color:var(--muted); }
   ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
 
+  /* ── El cierre: cinco acciones, el número grande, el plazo como etiqueta ────── */
+  ol.actions { margin:0; padding:0; list-style:none; counter-reset:a; }
+  ol.actions li { counter-increment:a; position:relative; padding:1.2mm 0 1.2mm 9mm;
+                  border-bottom:1px solid var(--rule); }
+  ol.actions li:last-child { border-bottom:0; }
+  ol.actions li::before { content:counter(a); position:absolute; left:0; top:1.4mm;
+    font-family:var(--display); font-size:13pt; font-weight:600; color:var(--ink); line-height:1; }
+  ol.actions .plazo { display:block; font-family:var(--display); font-size:6.8pt; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--marca-tinta); }
+  ol.actions .que { display:block; font-weight:600; font-size:9.6pt; margin-top:.3mm; }
+  ol.actions .cifra { display:block; color:var(--muted); font-size:8.6pt; margin-top:.3mm; }
+
   /* ── Listas, notas y pie ──────────────────────────────────────────────── */
   ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
   ul.levers li, ul.bullets li { position:relative; }
@@ -165,7 +183,7 @@
   }
   ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
-  .colofon { margin-top:auto; padding-top:5mm; }
+  .colofon { margin-top:3mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
   .grid2 section { break-inside:avoid; margin-bottom:0; }
@@ -191,26 +209,17 @@
 
   <p class="ask">{{ recomendacion }}</p>
 
-  <section class="deal">
-    <h2>La pregunta de negocio</h2>
-    <ol class="findings">
-      {% for f in hallazgos %}
-      <li><span class="claim">{{ f.claim }}</span> <span class="why">{{ f.why }}</span>
-        {% if f.accion %}<span class="action">→ {{ f.accion }}</span>{% endif %}</li>
-      {% endfor %}
-    </ol>
-  </section>
-
   <section class="risk">
     <h2>{{ cumplimiento.rotulo }}</h2>
     <p class="caveat">{{ cumplimiento.salvedad }}</p>
     <table>
-      <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
-        <th>Norma (Colombia)</th><th>Qué hacer</th></tr></thead>
+      <thead><tr><th>Lo que se dijo</th><th class="num">IA</th><th class="num">Humanos</th>
+        <th>Qué hacer</th></tr></thead>
       <tbody>
       {% for a in cumplimiento.filas %}
-        <tr><td>{{ a.conducta }}</td><td class="num">{{ a.ia }}</td><td class="num">{{ a.humano }}</td>
-            <td>{{ a.norma }}</td><td>{{ a.accion }}</td></tr>
+        <tr><td><span class="conducta">{{ a.conducta }}</span>{% if a.cita %}<span class="cita">«{{ a.cita }}»</span>{% endif %}</td>
+            <td class="num">{{ a.ia }}</td><td class="num">{{ a.humano }}</td>
+            <td>{{ a.accion }} <span class="arreglo">{{ a.arreglo }}</span><span class="norma">{{ a.norma }}</span></td></tr>
       {% endfor %}
       </tbody>
     </table>
@@ -228,7 +237,7 @@
 
 <div class="page" id="p2">
   <header>
-    <div class="eyebrow">Evidencia y método</div>
+    <div class="eyebrow">La llamada, de principio a fin</div>
   </header>
 
   <section>
@@ -251,11 +260,14 @@
     <ul class="bullets">{% for l in limitaciones %}<li>{{ l }}</li>{% endfor %}</ul>
   </section>
 
-  <section>
-    <h2 class="major">Siguiente paso</h2>
-    <ul class="levers">
-      {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
-    </ul>
+  <section class="close">
+    <h2 class="major">Qué hacer, en orden</h2>
+    <ol class="actions">
+      {% for a in acciones %}
+      <li><span class="plazo">{{ a.plazo }}</span><span class="que">{{ a.que }}</span>
+        <span class="cifra">{{ a.cifra }}</span></li>
+      {% endfor %}
+    </ol>
   </section>
 
   <p class="note colofon">{{ colofon }}</p>

@@ -330,15 +330,16 @@ conductas: gestiona contacto, acuerdos, cumplimiento de esos acuerdos, costo y r
 La investigación (`docs/investigacion.md`, §5 y §6) mostró que el hallazgo con más peso para él no es
 comercial sino normativo, así que la página 1 cambió en tres cosas.
 
-**Las cuatro conductas de riesgo se presentan con su norma.** Presentarse como área jurídica,
-anunciar un proceso legal, decir que la oferta vence hoy y prometer un beneficio en el historial
+**Las cuatro conductas de riesgo se presentan con su norma.** Presentarse desde un área de
+embargos, presentar el pago como forma de evitar un proceso legal, decir que la oferta vence hoy
+y ofrecer la salida de centrales de riesgo
 crediticio salen ahora en una tabla con la cifra de cada canal, la norma y la acción. Tres decisiones
 sostienen ese bloque:
 
 - **Se rotula «alerta para revisión de cumplimiento», nunca «infracción».** Depende de si el área
   existe, de si el proceso está previsto y de las condiciones reales de la oferta, y nada de eso se
   puede saber desde la grabación.
-- **Se aplica a los dos canales.** Los humanos prometen beneficios crediticios en el 44 % de sus
+- **Se aplica a los dos canales.** Los humanos ofrecen salir de centrales en el 44 % de sus
   llamadas. Un semáforo que solo mirara a la IA sería un sesgo, y el evaluador es su proveedor.
 - **Cada norma se verificó en su texto**, y el archivo `data/reference/cumplimiento.json` guarda la
   fuente y el nivel de verificación de cada una. El informe no cita leyes que el repositorio no

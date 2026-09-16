@@ -93,8 +93,6 @@
 
   /* La pregunta que hizo el cliente, con el mismo peso que el bloque de riesgo: si solo
      uno de los dos lleva filete y fondo, la página dice que el otro importa menos. */
-  .deal { border-left:3px solid var(--ia); padding:0 0 0 3mm; margin-bottom:3mm; }
-  .deal h2 { color:var(--ia); }
 
   /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
   .risk { border-top:2.2px solid var(--ink); padding:2mm 0 0; margin-bottom:3mm; }
@@ -103,8 +101,16 @@
      lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
      reenvía es la tabla, nunca el pie. */
   .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
+  /* La cita literal debajo del rótulo: es la evidencia, y por eso el rótulo ya no puede
+     decir más de lo que ella sostiene. Cursiva y un punto menos, para que se lea como voz. */
+  .risk .conducta { font-weight:600; }
+  .risk .cita { display:block; font-style:italic; color:var(--muted); font-size:7.8pt;
+                margin-top:.3mm; }
+  .risk .arreglo { display:block; color:var(--ia); margin-top:.3mm; }
+  .risk .norma { display:block; font-family:var(--mono); font-size:6.9pt; color:var(--muted);
+                 margin-top:.4mm; }
   .risk tbody { counter-reset:hallazgo; }
-  .risk td:first-child { font-weight:600; }
+
   .risk tbody td:first-child::before {
     counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
     font-weight:400; color:var(--muted);
@@ -158,6 +164,18 @@
   ol.findings .why { color:var(--muted); }
   ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
 
+  /* ── El cierre: cinco acciones, el número grande, el plazo como etiqueta ────── */
+  ol.actions { margin:0; padding:0; list-style:none; counter-reset:a; }
+  ol.actions li { counter-increment:a; position:relative; padding:1.2mm 0 1.2mm 9mm;
+                  border-bottom:1px solid var(--rule); }
+  ol.actions li:last-child { border-bottom:0; }
+  ol.actions li::before { content:counter(a); position:absolute; left:0; top:1.4mm;
+    font-family:var(--display); font-size:13pt; font-weight:600; color:var(--ink); line-height:1; }
+  ol.actions .plazo { display:block; font-family:var(--display); font-size:6.8pt; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--marca-tinta); }
+  ol.actions .que { display:block; font-weight:600; font-size:9.6pt; margin-top:.3mm; }
+  ol.actions .cifra { display:block; color:var(--muted); font-size:8.6pt; margin-top:.3mm; }
+
   /* ── Listas, notas y pie ──────────────────────────────────────────────── */
   ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
   ul.levers li, ul.bullets li { position:relative; }
@@ -167,7 +185,7 @@
   }
   ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
-  .colofon { margin-top:auto; padding-top:5mm; }
+  .colofon { margin-top:3mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
   .grid2 section { break-inside:avoid; margin-bottom:0; }
@@ -193,42 +211,33 @@
 
   <p class="ask">Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.</p>
 
-  <section class="deal">
-    <h2>La pregunta de negocio</h2>
-    <ol class="findings">
-      
-      <li><span class="claim">Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %).</span> <span class="why">Son −8 pp, pero no está medido: con estas llamadas los datos admiten desde 27 pp menos hasta 14 pp más para la IA.</span>
-        </li>
-      
-      <li><span class="claim">Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.</span> <span class="why">Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la cartera que le tocó.</span>
-        <span class="action">→ No comparar conversión entre canales sin asignar las cuentas al azar.</span></li>
-      
-    </ol>
-  </section>
-
   <section class="risk">
     <h2>Alertas para revisión de cumplimiento</h2>
     <p class="caveat">No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta.</p>
     <table>
-      <thead><tr><th>Conducta</th><th class="num">IA</th><th class="num">Humanos</th>
-        <th>Norma (Colombia)</th><th>Qué hacer</th></tr></thead>
+      <thead><tr><th>Lo que se dijo</th><th class="num">IA</th><th class="num">Humanos</th>
+        <th>Qué hacer</th></tr></thead>
       <tbody>
       
-        <tr><td>Se presenta como área de embargos</td><td class="num">86 %</td><td class="num">2 %</td>
-            <td>SFC CE 048/2008; Ley 1328 art. 3 c</td><td>Confirmar con el banco que el área existe y gestiona esa cartera.</td></tr>
+        <tr><td><span class="conducta">Se presenta como área de embargos</span><span class="cita">«Lo llamo del área de embargos, judicializaciones y alivios financieros»</span></td>
+            <td class="num">43 de 50</td><td class="num">1 de 50</td>
+            <td>Confirmar con el banco que el área existe y gestiona esa cartera. <span class="arreglo">36 de 43 son la misma frase: se edita el guion.</span><span class="norma">SFC CE 048/2008; Ley 1328 art. 3 c</span></td></tr>
       
-        <tr><td>Dice que la oferta vence hoy</td><td class="num">54 %</td><td class="num">2 %</td>
-            <td>Ley 1328 art. 3 c</td><td>Contrastar la caducidad con la matriz de condonaciones vigente.</td></tr>
+        <tr><td><span class="conducta">Dice que la oferta vence hoy</span><span class="cita">«Es una propuesta por tiempo limitado que vencería hoy mismo»</span></td>
+            <td class="num">27 de 50</td><td class="num">1 de 50</td>
+            <td>Contrastar la caducidad con la matriz de condonaciones vigente. <span class="arreglo">27 de 27 son la misma frase: se edita el guion.</span><span class="norma">Ley 1328 art. 3 c</span></td></tr>
       
-        <tr><td>Pagar evita un proceso legal</td><td class="num">42 %</td><td class="num">4 %</td>
-            <td>CGP art. 599; Ley 1328 art. 3 c</td><td>Verificar que el proceso esté previsto antes de anunciarlo en el guion.</td></tr>
+        <tr><td><span class="conducta">Pagar evita un proceso legal</span><span class="cita">«Y evitar así un proceso legal muy costoso en tiempo y plata para usted y nosotros»</span></td>
+            <td class="num">21 de 50</td><td class="num">2 de 50</td>
+            <td>Verificar que el proceso esté previsto antes de anunciarlo en el guion. <span class="arreglo">20 de 21 son la misma frase: se edita el guion.</span><span class="norma">CGP art. 599; Ley 1328 art. 3 c</span></td></tr>
       
-        <tr><td>Ofrece salir de centrales de riesgo</td><td class="num">6 %</td><td class="num">44 %</td>
-            <td>Ley 1266 arts. 13 y 18 (mod. Ley 2157)</td><td>Alinear el guion con los plazos de permanencia del reporte.</td></tr>
+        <tr><td><span class="conducta">Ofrece salir de centrales de riesgo</span><span class="cita">«borrar su historial negativo ante centrales de riesgo»</span></td>
+            <td class="num">3 de 50</td><td class="num">22 de 50</td>
+            <td>Alinear el guion con los plazos de permanencia del reporte. <span class="arreglo">22 menciones en 18 formulaciones: es formación, no guion.</span><span class="norma">Ley 1266 arts. 13 y 18 (mod. Ley 2157)</span></td></tr>
       
       </tbody>
     </table>
-    <p class="note">Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %. En la IA, 3 de las 4 son una sola frase de guion repetida (83-100 % de sus positivos comparten la oración): se corrigen editando el guion. En humanos, las 22 menciones del beneficio crediticio son 18 formulaciones distintas: eso es formación, no guion.</p>
+    <p class="note">Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.</p>
   </section>
 
   <section>
@@ -274,7 +283,7 @@
 <path class="pt null" d="M 325.0 117.8 L 329.2 122.0 L 325.0 126.2 L 320.8 122.0 Z"/>
 <text class="row-value null" x="516" y="125.5">−2</text>
 </svg>
-    <p class="note">Las ocho conductas, sobre las 50 llamadas de cada canal: por eso el compromiso aparece aquí como −16 pp y en el hallazgo 1, sobre los contactos con titular, como −8 pp. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.</p>
+    <p class="note">Sobre las 50 llamadas de cada canal. Círculo: más en IA · rombo: más en humanos · gris: no concluyente · la línea es el margen de error del 95 %. «Tentativo»: no se sostiene entre gestiones nuevas.</p>
   </section>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>1 / 2</span></footer>
@@ -282,7 +291,7 @@
 
 <div class="page" id="p2">
   <header>
-    <div class="eyebrow">Evidencia y método</div>
+    <div class="eyebrow">La llamada, de principio a fin</div>
   </header>
 
   <section>
@@ -313,7 +322,7 @@
       </tbody>
     </table>
     <p class="note">Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. Son conteos, no tasas: con estos denominadores una diferencia así no se distingue del ruido.</p>
-    <p class="note">¿Eran comparables? No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
+    <p class="note">¿Eran comparables? No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, parecida.</p>
   </section>
 
   <section>
@@ -321,11 +330,26 @@
     <ul class="bullets"><li>Cuál canal recupera más plata: no hay datos de pago, y un compromiso hablado no es un recaudo.</li><li>Cuánto pesan la claridad o el manejo de objeciones: eso exige separar las voces de la grabación, y ese error favorecería a la IA.</li><li>Diferencias pequeñas: con 50 llamadas por canal solo se ven las grandes, y las menores no se distinguen del azar.</li></ul>
   </section>
 
-  <section>
-    <h2 class="major">Siguiente paso</h2>
-    <ul class="levers">
-      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales.</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Lo que cuesta medirlo.</strong> 2.700 USD al mes para 100.000 llamadas de 4 minutos —transcribir, anonimizar, anotar y el tablero, con agente y deudor en canales separados—, a precios de lista calculados en el repositorio. El control de calidad añade menos de dos horas de análisis al mes y no crece con el volumen.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen beneficios crediticios que la entidad respalde.</li>
-    </ul>
+  <section class="close">
+    <h2 class="major">Qué hacer, en orden</h2>
+    <ol class="actions">
+      
+      <li><span class="plazo">Esta semana, sin costo</span><span class="que">Editar tres frases del guion de la IA.</span>
+        <span class="cifra">3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos.</span></li>
+      
+      <li><span class="plazo">Esta semana, sin costo</span><span class="que">Confirmar con quién se habla antes de negociar, en los dos canales.</span>
+        <span class="cifra">La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta.</span></li>
+      
+      <li><span class="plazo">Este trimestre</span><span class="que">Formar al equipo humano en qué se puede prometer sobre el reporte.</span>
+        <span class="cifra">22 menciones en 18 formulaciones distintas: no es guion, es criterio.</span></li>
+      
+      <li><span class="plazo">90 días</span><span class="que">Medir la conversión con un piloto de cuentas asignadas al azar.</span>
+        <span class="cifra">356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales.</span></li>
+      
+      <li><span class="plazo">90 días</span><span class="que">Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.</span>
+        <span class="cifra">Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo.</span></li>
+      
+    </ol>
   </section>
 
   <p class="note colofon">Cada cifra sale de una frase textual de la llamada, y se comprobó que esa frase exista: 258 de 259. Ninguna se escribió a mano: el informe se regenera solo desde los datos. El método, las decisiones y los datos derivados están en el repositorio.</p>

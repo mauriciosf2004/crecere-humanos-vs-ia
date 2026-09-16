@@ -290,6 +290,59 @@ def script_concentration() -> dict:
     return out
 
 
+# Lo que puede delatar a un deudor dentro de una frase: cifras, nombres tachados, tratamientos.
+# Una cita que lo contenga no se publica aunque sea la más repetida.
+PII_EN_CITA = re.compile(r"\d|\*{2,}|\bse[ñn]or|\bse[ñn]ora|\bdon\b|\bdo[ñn]a\b", re.I)
+
+
+def alert_quotes() -> list[dict]:
+    """Una cita de guion por alerta de cumplimiento, publicable: lo que el agente dijo.
+
+    Es la única forma de que el rótulo de una alerta no pueda decir más de lo que las
+    llamadas sostienen: si la celda lleva la frase literal, la paráfrasis no manda. La regla
+    del proyecto lo autoriza —las frases de guion del agente se pueden citar— y hasta ahora
+    no se había usado.
+
+    Se elige de forma determinista la cita más repetida en el brazo con más positivos, se
+    comprueba de nuevo que exista en la transcripción de la llamada de la que salió, y se
+    descarta si contiene algo que pueda identificar a alguien. Si no queda ninguna, la fila
+    va sin cita: no se redacta una.
+    """
+    from src.anchoring import is_anchored, transcripts_seen
+
+    out = []
+    for name in ALERTAS:
+        candidatas: Counter = Counter()
+        origen: dict[str, tuple[str, str]] = {}
+        totales = {"ia": 0, "humano": 0}
+        for arm in ("ia", "humano"):
+            for path in (CONSENSUS / arm).glob("*.json"):
+                row = json.loads(path.read_text(encoding="utf-8"))
+                cell = row.get(name) or {}
+                if not (isinstance(cell, dict) and _value(cell)):
+                    continue
+                totales[arm] += 1
+                for k, v in cell.items():
+                    if k.startswith("quote") and v:
+                        texto = re.sub(r"\s+", " ", str(v)).strip().rstrip(".")
+                        clave = texto.lower()
+                        candidatas[(arm, clave)] += 1
+                        origen.setdefault((arm, clave), (texto, path.stem))
+        arm = max(totales, key=totales.get)
+        cita = ""
+        for (a, clave), _ in candidatas.most_common():
+            if a != arm:
+                continue
+            texto, stem = origen[(a, clave)]
+            if PII_EN_CITA.search(texto):
+                continue
+            if any(is_anchored(texto, t) for t in transcripts_seen(a, stem, CONSENSUS)):
+                cita = texto
+                break
+        out.append({"variable": name, "brazo": arm, "cita": cita, "positivos": totales[arm]})
+    return out
+
+
 def consolidate() -> dict:
     """Vota cada llamada con las anotaciones disponibles y escribe su consenso."""
     names = fields()
@@ -403,6 +456,9 @@ def main() -> None:
         )
     agreement = agreement_with_extraction(fields())
     PUBLIC.mkdir(parents=True, exist_ok=True)
+    (PUBLIC / "citas_alertas.json").write_text(
+        json.dumps(alert_quotes(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     (PUBLIC / "agreement.json").write_text(
         json.dumps(
             {

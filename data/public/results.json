@@ -90,55 +90,51 @@
       "n_humano": "29/50"
     }
   ],
-  "forest_nota": "Las ocho conductas, sobre las 50 llamadas de cada canal: por eso el compromiso aparece aquí como −16 pp y en el hallazgo 1, sobre los contactos con titular, como −8 pp. Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no concluyente con esta muestra · la línea es el margen de error del 95 %. «Tentativo»: difiere en el total, pero no entre gestiones nuevas.",
+  "forest_nota": "Sobre las 50 llamadas de cada canal. Círculo: más en IA · rombo: más en humanos · gris: no concluyente · la línea es el margen de error del 95 %. «Tentativo»: no se sostiene entre gestiones nuevas.",
   "cumplimiento": {
     "rotulo": "Alertas para revisión de cumplimiento",
     "salvedad": "No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta.",
-    "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %. En la IA, 3 de las 4 son una sola frase de guion repetida (83-100 % de sus positivos comparten la oración): se corrigen editando el guion. En humanos, las 22 menciones del beneficio crediticio son 18 formulaciones distintas: eso es formación, no guion.",
+    "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.",
     "filas": [
       {
         "conducta": "Se presenta como área de embargos",
-        "ia": "86 %",
-        "humano": "2 %",
+        "cita": "Lo llamo del área de embargos, judicializaciones y alivios financieros",
+        "ia": "43 de 50",
+        "humano": "1 de 50",
         "norma": "SFC CE 048/2008; Ley 1328 art. 3 c",
-        "accion": "Confirmar con el banco que el área existe y gestiona esa cartera."
+        "accion": "Confirmar con el banco que el área existe y gestiona esa cartera.",
+        "arreglo": "36 de 43 son la misma frase: se edita el guion."
       },
       {
         "conducta": "Dice que la oferta vence hoy",
-        "ia": "54 %",
-        "humano": "2 %",
+        "cita": "Es una propuesta por tiempo limitado que vencería hoy mismo",
+        "ia": "27 de 50",
+        "humano": "1 de 50",
         "norma": "Ley 1328 art. 3 c",
-        "accion": "Contrastar la caducidad con la matriz de condonaciones vigente."
+        "accion": "Contrastar la caducidad con la matriz de condonaciones vigente.",
+        "arreglo": "27 de 27 son la misma frase: se edita el guion."
       },
       {
         "conducta": "Pagar evita un proceso legal",
-        "ia": "42 %",
-        "humano": "4 %",
+        "cita": "Y evitar así un proceso legal muy costoso en tiempo y plata para usted y nosotros",
+        "ia": "21 de 50",
+        "humano": "2 de 50",
         "norma": "CGP art. 599; Ley 1328 art. 3 c",
-        "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion."
+        "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion.",
+        "arreglo": "20 de 21 son la misma frase: se edita el guion."
       },
       {
         "conducta": "Ofrece salir de centrales de riesgo",
-        "ia": "6 %",
-        "humano": "44 %",
+        "cita": "borrar su historial negativo ante centrales de riesgo",
+        "ia": "3 de 50",
+        "humano": "22 de 50",
         "norma": "Ley 1266 arts. 13 y 18 (mod. Ley 2157)",
-        "accion": "Alinear el guion con los plazos de permanencia del reporte."
+        "accion": "Alinear el guion con los plazos de permanencia del reporte.",
+        "arreglo": "22 menciones en 18 formulaciones: es formación, no guion."
       }
     ]
   },
-  "hallazgos": [
-    {
-      "claim": "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en 9 de 31 llamadas (29 %) y los humanos en 17 de 46 (37 %).",
-      "why": "Son −8 pp, pero no está medido: con estas llamadas los datos admiten desde 27 pp menos hasta 14 pp más para la IA.",
-      "accion": ""
-    },
-    {
-      "claim": "Las 100 llamadas llegaron sin asignación al azar ni criterio de selección documentado.",
-      "why": "Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la cartera que le tocó.",
-      "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
-    }
-  ],
-  "comparabilidad": "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
+  "comparabilidad": "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, parecida.",
   "conducta": {
     "titulo": "Cómo reacciona cada canal",
     "filas": [
@@ -190,22 +186,31 @@
     ],
     "nota": "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. Son conteos, no tasas: con estos denominadores una diferencia así no se distingue del ruido."
   },
-  "palancas": [
+  "acciones": [
     {
-      "titulo": "Un piloto con asignación al azar.",
-      "detalle": "Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales."
+      "plazo": "Esta semana, sin costo",
+      "que": "Editar tres frases del guion de la IA.",
+      "cifra": "3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos."
     },
     {
-      "titulo": "Un tercer grupo:",
-      "detalle": "IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo."
+      "plazo": "Esta semana, sin costo",
+      "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
+      "cifra": "La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta."
     },
     {
-      "titulo": "Lo que cuesta medirlo.",
-      "detalle": "2.700 USD al mes para 100.000 llamadas de 4 minutos —transcribir, anonimizar, anotar y el tablero, con agente y deudor en canales separados—, a precios de lista calculados en el repositorio. El control de calidad añade menos de dos horas de análisis al mes y no crece con el volumen."
+      "plazo": "Este trimestre",
+      "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
+      "cifra": "22 menciones en 18 formulaciones distintas: no es guion, es criterio."
     },
     {
-      "titulo": "Un estándar común.",
-      "detalle": "Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen beneficios crediticios que la entidad respalde."
+      "plazo": "90 días",
+      "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+      "cifra": "356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales."
+    },
+    {
+      "plazo": "90 días",
+      "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
+      "cifra": "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
     }
   ],
   "limitaciones": [

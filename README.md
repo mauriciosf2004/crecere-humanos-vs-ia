@@ -1,32 +1,90 @@
 # Agentes humanos frente a agentes de IA en gestión de cobranza
 
 [![ci](https://github.com/mauriciosf2004/crecere-humanos-vs-ia/actions/workflows/ci.yml/badge.svg)](https://github.com/mauriciosf2004/crecere-humanos-vs-ia/actions/workflows/ci.yml)
+[![informe](https://img.shields.io/badge/informe-2_p%C3%A1ginas-7a2c68)](https://mauriciosf2004.github.io/crecere-humanos-vs-ia/report/)
 
 Prueba técnica para Creceré AI. Cien llamadas —50 de gestores humanos y 50 de un agente de IA—
 convertidas en datos para responder una pregunta: ¿hay diferencias sustentables en cómo gestionan?
 
 **Respuesta corta.** Sí, pero dicen cómo cobra cada canal, no cuál cobra mejor. La IA se presenta
-como área jurídica y afirma que la oferta vence hoy; en las llamadas humanas se prometen
-beneficios sobre el historial crediticio. Qué canal consigue más compromisos de pago no se puede
+desde un área de embargos y afirma que la oferta vence hoy; en las llamadas humanas se ofrece
+sacar al deudor de centrales de riesgo. Qué canal consigue más compromisos de pago no se puede
 saber con estas grabaciones: los humanos retomaban sobre todo acuerdos ya pactados y la IA abría
 gestiones nuevas. El siguiente paso es un piloto con asignación de cuentas al azar.
 
-Con cifras: se presenta como área jurídica en 43 de 50 llamadas de IA y 1 de 50 humanas; promete
-beneficio crediticio en 3 de 50 frente a 22 de 50; y el compromiso con fecha y monto va 9 de 31
-contactos con titular frente a 17 de 46, una diferencia que esta muestra no resuelve (el intervalo
-va de 32 puntos porcentuales abajo a 1 arriba).
+Con cifras: se presenta como área de embargos en 43 de 50 llamadas de IA y 1 de 50 humanas;
+ofrece salir de centrales de riesgo en 3 de 50 frente a 22 de 50; y 3 de las 4 conductas de riesgo
+de la IA son una sola frase de guion repetida, así que se corrigen editándola.
 
 Desde un clon limpio, `make report` regenera `report/index.html` y `git status` queda vacío:
 ningún número del informe está escrito a mano.
+
+## De una llamada al informe
+
+```mermaid
+flowchart TD
+    subgraph priv["data/raw · data/interim · data/processed — no sale del disco"]
+        A["100 llamadas WAV<br/>50 IA · 50 humano · 8 kHz mono<br/>make inventory"]
+        B["Transcripción local, dos pasadas<br/>whisper.cpp, dos modelos<br/>make transcribe"]
+        P1["Panel de conducta · 8 variables<br/>3 agentes ciegos, voto 2 de 3<br/>workflows/panel-anotacion.js"]
+        P2["Panel de desenlace · exploratorio<br/>rúbrica aparte, los mismos 3 roles<br/>make disposition"]
+        Q{"Puerta de evidencia<br/>¿la cita literal existe<br/>en la transcripción?<br/>make anchoring"}
+        X["La etiqueta no entra"]
+        C["Consenso<br/>una fila por llamada"]
+        E["Escucha humana del audio"]
+    end
+
+    PII["Puerta de PII · whitelist de columnas<br/>hooks/pre-push y CI bloquean el push<br/>si aparece raw, interim o processed"]
+
+    subgraph pub["data/public + report/ — esto es lo que hay en GitHub"]
+        S["Contraste de la familia<br/>test global, luego Westfall-Young<br/>make analyze"]
+        D["Desenlace y reacción<br/>conteos, fuera de la familia"]
+        R["results.json<br/>toda cifra del informe, calculada"]
+        H["report/index.html<br/>2 páginas, para el banco<br/>make report"]
+    end
+
+    V["Puerta del entregable<br/>2 páginas exactas y el HTML<br/>se regenera idéntico<br/>make verify · CI en cada push"]
+
+    A --> B
+    B --> P1
+    B --> P2
+    P1 --> Q
+    P2 --> Q
+    Q -- "no" --> X
+    Q -- "sí" --> C
+    C -. "14 celdas sin unanimidad" .-> E
+    E -. "el oído manda sobre el voto" .-> C
+    C --> PII
+    PII --> S
+    PII --> D
+    S --> R
+    D --> R
+    R --> H
+    H --> V
+
+    classDef puerta fill:#7a2c68,stroke:#59203f,color:#ffffff
+    classDef entrega fill:#1f3d7a,stroke:#16294f,color:#ffffff
+    classDef descarte fill:none,stroke:#8b949e,color:#8b949e,stroke-dasharray:4 4
+    class Q,PII,V puerta
+    class H entrega
+    class X descarte
+    style priv fill:none,stroke:#8b949e,stroke-dasharray:6 4
+    style pub fill:none,stroke:#7a2c68
+```
+
+Las tres cajas magenta son puertas que fallan y paran el trabajo. En este corpus, 258 de 259 citas
+quedaron ancladas; la que no, no entró. Desde un clon limpio corren `make report`, `make verify` y
+`make check`; `make help` lista todo. El resto necesita los audios, `ffmpeg`, `whisper-cli`, el CLI
+de Claude Code, Chrome y `pdfinfo`.
 
 ## Las cuatro preguntas del encargo
 
 | Pregunta | Respuesta corta | Dónde está |
 |---|---|---|
-| Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, hallazgo 5 |
-| Explicación: ¿qué explica las diferencias? | El guion (encuadre jurídico, vencimiento, anuncio de proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
-| Conducta: ¿qué hace mejor cada uno? | La IA se presenta como área jurídica y dice que la oferta vence hoy; los humanos prometen más beneficios crediticios | informe, veredicto |
-| Mejora: ¿qué cambiar? | Un piloto con asignación al azar, una variante de la IA sin anuncio legal ni vencimiento y un estándar común para los dos canales | informe, siguiente paso |
+| Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, veredicto |
+| Explicación: ¿qué explica las diferencias? | El guion (encuadre de embargos, vencimiento, el pago como forma de evitar un proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
+| Conducta: ¿qué hace mejor cada uno? | La IA se presenta como área de embargos y dice que la oferta vence hoy; los humanos ofrecen más salidas de centrales de riesgo | informe, veredicto |
+| Mejora: ¿qué cambiar? | Un piloto con asignación al azar, una variante de la IA sin anuncio legal ni vencimiento y un estándar común para los dos canales | informe, «Qué hacer, en orden» |
 
 ## Por dónde empezar
 
@@ -41,9 +99,8 @@ ningún número del informe está escrito a mano.
 
 ## Anotar con agentes, especificado
 
-Las cien llamadas no las etiquetó una persona ni una sola pasada de un modelo: las anotan **tres
-agentes ciegos** que no se ven entre sí, y cada celda se queda con la respuesta de al menos dos.
-El trabajo está especificado, no improvisado, y esa especificación es parte del repositorio:
+El trabajo de anotación está especificado, no improvisado, y esa especificación es parte del
+repositorio:
 
 | Pieza | Qué gobierna |
 |---|---|
@@ -77,35 +134,29 @@ ver `report/fonts/LICENSE.txt`) y solo en títulos y rótulos. Embebida, el info
 igual en cualquier máquina: sin eso, un Linux sin las caras del sistema cae en una más ancha y se
 va a tres páginas, que es justo lo que CI detectó.
 
-## Cómo está hecho
-
-| Paso | Comando | Qué hace | Necesita |
-|---|---|---|---|
-| Inventario | `make inventory` | formato y duración de cada audio | audios |
-| Transcripción | `make transcribe` y `uv run python -m src.transcribe --model large-v3` | dos pasadas locales con whisper.cpp | audios, `whisper-cli`, modelos ggml en `~/.whisper-models/` |
-| Panel | `uv run python -m src.annotate --stage` → `workflows/panel-anotacion.js` (tool Workflow de Claude Code) → `uv run python -m src.annotate --from-workflow <salida>` | tres agentes ciegos anotan cada llamada, se vota por mayoría y se aplica la regla literal de fecha | transcripciones, extracciones (`make extract`), Claude Code |
-| Contraste | `make analyze` | test global y Westfall-Young sobre el consenso, en el total y dentro de las gestiones nuevas | consenso del panel |
-| Anclaje | `make anchoring` | comprueba que cada cita existe en las transcripciones | consenso del panel |
-| Desenlace | panel con `src/rubric_desenlace.md` → `make disposition` | cómo termina la llamada (incluido el acuerdo parcial) y cómo responde el interlocutor; exploratorio, pre-registrado en `docs/hipotesis.md` §7 y con su resultado en `docs/decisiones.md` §18 | transcripciones, Claude Code |
-| Informe | `make report` | arma `results.json` y renderiza el HTML | `data/public/` |
-| Puerta | `make verify` | falla si el informe no ocupa exactamente dos páginas; probado en macOS (`CHROME=<ruta>` en otro sistema) | Chrome, `pdfinfo` |
-
-Los audios los entrega Creceré y no se versionan.
-
-`make check` pasa formato, linting y tests. `make help` lista todo.
-
 ## Qué hay en el repositorio y qué no
 
-Las llamadas son de deudores reales. Los audios, las transcripciones y las anotaciones del modelo
-(`data/raw`, `data/interim`, `data/processed`) **no se versionan**. Lo que sí está es
-`data/public/`: variables derivadas y conteos, sin una palabra del texto de ninguna llamada. La
-tabla analítica completa, una fila por llamada, es `data/public/features.csv`.
+```
+src/               análisis: inventory → transcribe → annotate → analyze → anchoring → disposition → results → report
+src/rubric*.md     las dos rúbricas y su salida válida (schema*.json), congeladas antes de anotar
+workflows/         la orquestación del panel de tres agentes
+docs/              hipótesis pre-registradas, decisiones, control de calidad, variables descartadas
+data/public/       lo único con datos que se versiona: conteos y variables derivadas, sin texto de llamadas
+data/reference/    precios y normas, con su fuente
+report/            template.html.j2 e index.html, el entregable; fonts/ con Poppins y su licencia
+hooks/pre-push     bloquea el push si aparece data/raw, interim o processed
+tests/             estadística, voto del panel, anclaje, costos, informe
+data/raw|interim|processed   audios, transcripciones y anotaciones de deudores reales. NO se versionan
+```
 
-Desde un clon limpio funcionan `make report`, `make verify` y `make check`. Transcribir y extraer
-requiere los audios originales.
+La tabla analítica completa, una fila por llamada, es `data/public/features.csv`.
 
 ## Requisitos
 
 Python 3.11 o superior con [uv](https://docs.astral.sh/uv/). Para el pipeline completo, además:
 `ffmpeg`, `whisper-cli` (paquete `whisper-cpp` de Homebrew), el CLI de Claude Code, Google Chrome
 y `pdfinfo` (poppler).
+
+Antes de tocar nada: `git config core.hooksPath hooks`. Activa el hook que bloquea cualquier push
+con datos de llamadas —es la única comprobación del proyecto que no se puede deshacer, y CI llega
+tarde para ella.

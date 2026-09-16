@@ -17,7 +17,6 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 from src.charts import signed
-from src.stats import compare_proportions
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
@@ -219,8 +218,7 @@ def build() -> dict:
     agreement = json.loads((PUBLIC / "agreement.json").read_text(encoding="utf-8"))
     norms = json.loads((REFERENCE / "cumplimiento.json").read_text(encoding="utf-8"))
     disposition = json.loads((PUBLIC / "desenlace.json").read_text(encoding="utf-8"))
-    scale = scale_costs(json.loads((REFERENCE / "costos.json").read_text(encoding="utf-8")))
-    titular = on_titular()
+    quotes = {q["variable"]: q for q in json.loads((PUBLIC / "citas_alertas.json").read_text())}
     _require(effects["fuente"] == "consensus", "los datos son el consenso del panel")
 
     contrasts = effects["contrastes"]
@@ -238,34 +236,6 @@ def build() -> dict:
 
     def rate(item: dict, arm: str) -> str:
         return pct(item[f"k_{arm}"], item[f"n_{arm}"])
-
-    def share(item: dict, arm: str) -> float:
-        return item[f"k_{arm}"] / item[f"n_{arm}"]
-
-    def points(item: dict) -> str:
-        return signed(abs(item["diff_pp"])).lstrip("+")
-
-    def lead(item: dict) -> str:
-        """Quién va arriba y por cuánto: «IA +84 pp». Más claro que un signo para el lector."""
-        difference = 100 * (share(item, "ia") - share(item, "humano"))
-        return f"{'IA' if difference > 0 else 'humanos'} +{abs(difference):.0f} pp"
-
-    lote, estereo = (int(round(scale[k], -2)) for k in ("propio_lote", "propio_lote_estereo"))
-    estandar, comprada = (int(round(scale[k], -2)) for k in ("propio_estandar", "comprada"))
-    titular_gap = signed(
-        100
-        * (
-            titular["ia"]["k"] / titular["ia"]["n"]
-            - titular["humano"]["k"] / titular["humano"]["n"]
-        )
-    )
-    # El compromiso de pago aparecía cuatro veces en el pliego con cuatro parejas distintas
-    # de cifras, porque cada una usaba el denominador que le convenía. Se publica una sola:
-    # la del banco, sobre contactos con el titular, con SU intervalo. El de todas las llamadas
-    # no sirve aquí —es otro denominador— y reciclarlo sería inventar.
-    ptp = compare_proportions(
-        titular["ia"]["k"], titular["ia"]["n"], titular["humano"]["k"], titular["humano"]["n"]
-    )
 
     nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
     any_tentative = any(tentative(i) for i in contrasts)
@@ -289,24 +259,35 @@ def build() -> dict:
         if name != "credit_benefit_promised"
         and v["ia"]["comparten_la_misma_frase"] / v["ia"]["positivos"] >= 0.8
     ]
-    humano_credito = guion["credit_benefit_promised"]["humano"]
-    minimo_guion = min(
-        int(100 * v["ia"]["comparten_la_misma_frase"] / v["ia"]["positivos"]) for v in scripted
-    )
     _require(
         len(scripted) == 3,
         "las tres conductas de la IA son una misma frase de guion repetida",
     )
     credit_new = new_alert["credit_benefit_promised"]
     any_new = next(iter(new_alert.values()))
-    guion_nota = (
-        f"En la IA, {len(scripted)} de las 4 son una sola frase de guion repetida "
-        f"({minimo_guion}-100 % de sus positivos comparten la oración): se corrigen editando "
-        "el guion. En "
-        f"humanos, las {humano_credito['positivos']} menciones del beneficio crediticio son "
-        f"{humano_credito['positivos'] - humano_credito['comparten_la_misma_frase']} "
-        "formulaciones distintas: eso es formación, no guion."
-    )
+
+    credito_humano = guion["credit_benefit_promised"]["humano"]
+
+    def counts(item: dict, arm: str) -> str:
+        """«43 de 50»: el mismo denominador que todo lo demás del informe, a la vista."""
+        return f"{item[f'k_{arm}']} de {item[f'n_{arm}']}"
+
+    def fix_for(variable: str) -> str:
+        """Editar una línea o formar a un equipo: lo decide cuánto se repite la frase."""
+        g = guion[variable]
+        arm = "ia" if g["ia"]["positivos"] >= g["humano"]["positivos"] else "humano"
+        share = g[arm]["comparten_la_misma_frase"] / g[arm]["positivos"]
+        if share >= 0.8:
+            return (
+                f"{g[arm]['comparten_la_misma_frase']} de {g[arm]['positivos']} son la misma "
+                "frase: se edita el guion."
+            )
+        return (
+            f"{g[arm]['positivos']} menciones en "
+            f"{g[arm]['positivos'] - g[arm]['comparten_la_misma_frase']} formulaciones: es "
+            "formación, no guion."
+        )
+
     alerts_hold = (
         f"Las cuatro se mantienen entre gestiones nuevas (IA {any_new['n_ia']}, humanos "
         f"{any_new['n_humano']}), donde el beneficio crediticio en humanos sube a "
@@ -425,16 +406,9 @@ def build() -> dict:
             for item in sorted(contrasts, key=lambda i: -abs(i["diff_pp"]))
         ],
         "forest_nota": (
-            f"Las ocho conductas, sobre las {n} llamadas de cada canal: por eso el compromiso "
-            f"aparece aquí como {signed(commitment['diff_pp'])} pp y en el hallazgo 1, sobre los "
-            f"contactos con titular, como {titular_gap} pp. "
-            "Círculo: más en IA · rombo: más en humanos · marca clara y línea fina: no "
-            "concluyente con esta muestra · la línea es el margen de error del 95 %."
-            + (
-                " «Tentativo»: difiere en el total, pero no entre gestiones nuevas."
-                if any_tentative
-                else ""
-            )
+            f"Sobre las {n} llamadas de cada canal. Círculo: más en IA · rombo: más en humanos "
+            "· gris: no concluyente · la línea es el margen de error del 95 %."
+            + (" «Tentativo»: no se sostiene entre gestiones nuevas." if any_tentative else "")
         ),
         "cumplimiento": {
             "rotulo": norms["rotulo"],
@@ -445,14 +419,16 @@ def build() -> dict:
             # línea, la comparación que el banco ve primero es la sucia. La defensa es más fuerte
             # que la salvedad: al restringir a gestiones nuevas, la promesa de beneficio
             # crediticio en humanos no baja, sube.
-            "advertencia": alerts_hold + " " + guion_nota,
+            "advertencia": alerts_hold,
             "filas": [
                 {
                     "conducta": alert["conducta"],
-                    "ia": rate(by_name[alert["variable"]], "ia"),
-                    "humano": rate(by_name[alert["variable"]], "humano"),
+                    "cita": quotes[alert["variable"]]["cita"],
+                    "ia": counts(by_name[alert["variable"]], "ia"),
+                    "humano": counts(by_name[alert["variable"]], "humano"),
                     "norma": alert["norma_corta"],
                     "accion": alert["accion"],
+                    "arreglo": fix_for(alert["variable"]),
                 }
                 # Por tamaño de la brecha, no por el orden del archivo de normas: es el mismo
                 # criterio que las tarjetas y el gráfico, y el que pide un informe de auditoría
@@ -467,39 +443,6 @@ def build() -> dict:
         # Numerados 1 y 2: la pregunta que el cliente hizo va primero, y las alertas de
         # cumplimiento siguen en 3-6. Antes la lista empezaba en «5» y el lector buscaba la
         # página que faltaba.
-        "hallazgos": [
-            {
-                "claim": (
-                    "Cuando contesta el titular, la IA cierra compromiso con fecha y monto en "
-                    f"{titular['ia']['k']} de {titular['ia']['n']} llamadas "
-                    f"({pct(titular['ia']['k'], titular['ia']['n'])}) y los humanos en "
-                    f"{titular['humano']['k']} de {titular['humano']['n']} "
-                    f"({pct(titular['humano']['k'], titular['humano']['n'])})."
-                ),
-                # El intervalo en palabras, no un signo: es la única cifra que decide el negocio
-                # y la respuesta honesta es que esta muestra no la resuelve.
-                "why": (
-                    f"Son {titular_gap} pp, pero no está medido: con estas llamadas los datos "
-                    f"admiten desde {abs(ptp.ci_low_pp):.0f} pp menos hasta "
-                    f"{ptp.ci_high_pp:.0f} pp más para la IA."
-                ),
-                "accion": "",
-            },
-            {
-                # La decisión incómoda: quien armó la muestra es quien califica la prueba. Va
-                # arriba igual, porque es la premisa de la que cuelga toda la prudencia del
-                # informe. Se afirma sobre el diseño del dato, nunca sobre una persona.
-                "claim": (
-                    f"Las {2 * n} llamadas llegaron sin asignación al azar ni criterio de "
-                    "selección documentado."
-                ),
-                "why": (
-                    "Sin aleatorizar, cualquier diferencia de conversión mezcla el canal con la "
-                    "cartera que le tocó."
-                ),
-                "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
-            },
-        ],
         "comparabilidad": (
             "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que "
             "puede reflejar la cartera o el guion."
@@ -507,8 +450,7 @@ def build() -> dict:
             + f"({contact['indeterminado_humano']} "
             + ("humana)." if contact["indeterminado_humano"] == 1 else "humanas).")
             + f" Duración mediana: {duration['mediana_ia_s']:.0f} s en IA y "
-            + f"{duration['mediana_humano_s']:.0f} s en humanos, sin diferencia concluyente "
-            + f"({p_text(duration['p_mann_whitney'])})."
+            + f"{duration['mediana_humano_s']:.0f} s en humanos, parecida."
         ),
         # Descriptivo y nada más. Los cortes de esta rúbrica no pasaron su validación a oído,
         # así que no hay contraste, ni tasas, ni intervalos: conteos con su denominador.
@@ -572,40 +514,45 @@ def build() -> dict:
                 "distingue del ruido."
             ),
         },
-        "palancas": [
+        "acciones": [
             {
-                "titulo": "Un piloto con asignación al azar.",
-                "detalle": (
-                    "Única forma de medir conversión sin que decida la cartera: "
-                    f"{pilot['10']} cuentas por grupo para detectar 10 pp (tasa base "
-                    f"{pct(round(100 * effects['mde_tasa_base']), 100)}, potencia "
-                    f"{pct(round(100 * effects['potencia_plan']), 100)}). Se decide a los 30 días "
-                    "con el recaudo de cada cuenta asignada, no con promesas verbales."
+                "plazo": "Esta semana, sin costo",
+                "que": "Editar tres frases del guion de la IA.",
+                "cifra": (
+                    f"{len(scripted)} de las 4 alertas de la IA son una sola oración repetida "
+                    "en el 83-100 % de sus casos."
                 ),
             },
             {
-                "titulo": "Un tercer grupo:",
-                "detalle": (
-                    "IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión "
-                    "en vez de suponerlo."
+                "plazo": "Esta semana, sin costo",
+                "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
+                "cifra": (
+                    f"La IA habla con el titular en {contact['k_ia']} de {contact['n_ia']} "
+                    f"llamadas y en {contact['indeterminado_ia']} no se sabe quién contesta."
                 ),
             },
             {
-                "titulo": "Lo que cuesta medirlo.",
-                "detalle": (
-                    f"{thousands(estereo)} USD al mes para "
-                    f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos "
-                    "—transcribir, anonimizar, anotar y el tablero, con agente y deudor en "
-                    "canales separados—, a precios de lista calculados en el repositorio. El "
-                    "control de calidad añade menos de dos horas de análisis al mes y no crece "
-                    "con el volumen."
+                "plazo": "Este trimestre",
+                "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
+                "cifra": (
+                    f"{credito_humano['positivos']} menciones en "
+                    f"{credito_humano['positivos'] - credito_humano['comparten_la_misma_frase']} "
+                    "formulaciones distintas: no es guion, es criterio."
                 ),
             },
             {
-                "titulo": "Un estándar común.",
-                "detalle": (
-                    "Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen "
-                    "beneficios crediticios que la entidad respalde."
+                "plazo": "90 días",
+                "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+                "cifra": (
+                    f"{pilot['10']} cuentas por grupo para ver 10 pp; se decide con el recaudo "
+                    "a 30 días, no con promesas verbales."
+                ),
+            },
+            {
+                "plazo": "90 días",
+                "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
+                "cifra": (
+                    "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
                 ),
             },
         ],
@@ -631,7 +578,7 @@ def main() -> None:
     results = _typeset(build())
     path = PUBLIC / "results.json"
     path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{path.relative_to(ROOT)} · {len(results['hallazgos'])} hallazgos")
+    print(f"{path.relative_to(ROOT)} · {len(results['acciones'])} acciones")
 
 
 if __name__ == "__main__":

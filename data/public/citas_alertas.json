@@ -1,0 +1,26 @@
+[
+  {
+    "variable": "legal_department_framing",
+    "brazo": "ia",
+    "cita": "Lo llamo del área de embargos, judicializaciones y alivios financieros",
+    "positivos": 43
+  },
+  {
+    "variable": "offer_expiry_claim",
+    "brazo": "ia",
+    "cita": "Es una propuesta por tiempo limitado que vencería hoy mismo",
+    "positivos": 27
+  },
+  {
+    "variable": "situational_legal_pressure",
+    "brazo": "ia",
+    "cita": "Y evitar así un proceso legal muy costoso en tiempo y plata para usted y nosotros",
+    "positivos": 21
+  },
+  {
+    "variable": "credit_benefit_promised",
+    "brazo": "humano",
+    "cita": "borrar su historial negativo ante centrales de riesgo",
+    "positivos": 22
+  }
+]
