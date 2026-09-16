@@ -1,27 +1,23 @@
 """Arma data/public/results.json: las cifras del análisis y la prosa que las rodea.
 
-Cada número del informe se lee aquí de effects.json, anchoring.json, agreement.json o del
-esquema de la rúbrica, y se inserta en una frase; ninguno se escribe a mano. La redacción,
-en cambio, es fija y descansa en supuestos sobre los datos: que el encuadre jurídico se
-sostiene entre gestiones nuevas y que el compromiso de pago no difiere, por ejemplo. Esos
+Cada número del informe se lee aquí de effects.json, anchoring.json, agreement.json,
+desenlace.json o citas_alertas.json, y se inserta en una frase; ninguno se escribe a mano.
+La redacción, en cambio, es fija y descansa en supuestos sobre los datos: que el encuadre
+jurídico se sostiene entre gestiones nuevas y que el compromiso de pago no difiere. Esos
 supuestos se comprueban antes de escribir. Si el análisis dejara de sostener una frase, el
 armado falla en vez de publicarla.
 """
 
 from __future__ import annotations
 
-import csv
 import json
 import re
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
-from src.charts import signed
-
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
 REFERENCE = ROOT / "data" / "reference"
-SCHEMA = ROOT / "src" / "schema.json"
 ALPHA = 0.05
 NBSP = " "
 
@@ -36,15 +32,6 @@ SHORT = {
     "qualified_payment_commitment": "Compromiso con fecha y monto",
     "quantified_proposal_stated": "Propuesta con cifras",
     "installment_or_partial_offer": "Ofrece cuotas o abono",
-}
-
-# Las hipótesis se registraron con símbolos; en el informe se leen en palabras.
-EXPECTED = {
-    "IA ≫ humano": "mucho más en IA",
-    "IA > humano": "más en IA",
-    "humano ≫ IA": "mucho más en humanos",
-    "humano > IA": "más en humanos",
-    "sin diferencia": "sin diferencia",
 }
 
 
@@ -75,31 +62,9 @@ def _typeset(value):
     return value
 
 
-def thousands(n: int) -> str:
-    """1042 → 1.042: separador de miles es-CO, igual que en los documentos."""
-    return f"{n:,}".replace(",", ".")
-
-
 def pct(k: int, n: int) -> str:
     """Porcentaje entero, redondeado con los empates hacia arriba."""
     return f"{int(Decimal(100 * k / n).quantize(Decimal('1'), rounding=ROUND_HALF_UP))} %"
-
-
-def interval(item: dict) -> str:
-    low, high = signed(item["ci_low_pp"]), signed(item["ci_high_pp"])
-    return f"{signed(item['diff_pp'])} [{low}, {high}]"
-
-
-def p_value(p: float) -> str:
-    """Formato es-CO a tres decimales, con suelo en < 0,001; un p que redondea a 1 se escribe 1."""
-    if p >= 0.9995:
-        return "1"
-    return "< 0,001" if p < 0.001 else f"{p:.3f}".replace(".", ",")
-
-
-def p_text(p: float) -> str:
-    formatted = p_value(p)
-    return f"p {formatted}" if formatted.startswith("<") else f"p = {formatted}"
 
 
 def tiers(item: dict, quantity: float) -> float:
@@ -155,23 +120,6 @@ def scale_costs(costos: dict) -> dict:
     }
 
 
-def on_titular() -> dict:
-    """Compromiso con fecha y monto sobre las llamadas en que contestó el titular.
-
-    Es el denominador que usa un banco para la promesa de pago (PTP): contactos con el
-    titular, no llamadas marcadas.
-    """
-    counts = {"ia": [0, 0], "humano": [0, 0]}
-    with (PUBLIC / "features.csv").open(encoding="utf-8") as fh:
-        for row in csv.DictReader(fh):
-            if row["effective_contact"] != "titular":
-                continue
-            bucket = counts[row["arm"]]
-            bucket[0] += int(row["qualified_payment_commitment"])
-            bucket[1] += 1
-    return {arm: {"k": k, "n": n} for arm, (k, n) in counts.items()}
-
-
 def significant(item: dict) -> bool:
     return item["p_ajustado"] is not None and item["p_ajustado"] < ALPHA
 
@@ -198,20 +146,6 @@ def label(item: dict) -> str:
     return SHORT[item["variable"]] + (" · tentativo" if tentative(item) else "")
 
 
-def status(item: dict) -> tuple[str, str]:
-    """Texto y clase de la etiqueta de resultado en la tabla de hipótesis.
-
-    Dice si se detectó la diferencia, no si se confirmó una predicción: el sentido esperado
-    se fijó después de explorar las mismas llamadas. "No detectada" vale tanto si se esperaba
-    nula como si no: con esta potencia no detectar es fácil aunque la diferencia exista.
-    """
-    if not significant(item):
-        return "no detectada", "neutral"
-    if tentative(item):
-        return "solo en el total", "warn"
-    return ("detectada", "ok") if matches(item) else ("en sentido contrario", "ko")
-
-
 def build() -> dict:
     effects = json.loads((PUBLIC / "effects.json").read_text(encoding="utf-8"))
     anchoring = json.loads((PUBLIC / "anchoring.json").read_text(encoding="utf-8"))
@@ -225,6 +159,7 @@ def build() -> dict:
     by_name = {item["variable"]: item for item in contrasts}
     context = {item["variable"]: item for item in effects["composicion"]}
     duration, pilot = effects["duracion"], effects["piloto_n_por_brazo"]
+    suelo = effects["mde_suelos_pp"]["suelto"]
 
     legal = by_name["legal_department_framing"]
     expiry = by_name["offer_expiry_claim"]
@@ -233,9 +168,6 @@ def build() -> dict:
     commitment = by_name["qualified_payment_commitment"]
     prior, contact = context["prior_agreement_followup"], context["effective_contact"]
     n = legal["n_ia"]
-
-    def rate(item: dict, arm: str) -> str:
-        return pct(item[f"k_{arm}"], item[f"n_{arm}"])
 
     nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
     any_tentative = any(tentative(i) for i in contrasts)
@@ -267,6 +199,7 @@ def build() -> dict:
     any_new = next(iter(new_alert.values()))
 
     credito_humano = guion["credit_benefit_promised"]["humano"]
+    credito = by_name["credit_benefit_promised"]
 
     def by_deadline(acciones: list[dict]) -> list[dict]:
         """Las acciones agrupadas por plazo, en el orden en que aparecen: un plan se lee en
@@ -399,24 +332,32 @@ def build() -> dict:
         {
             "plazo": "Esta semana, sin costo",
             "que": "Editar tres frases del guion de la IA.",
+            # El reparto de cada alerta se calcula: "36 de 43" dice más que un porcentaje
+            # y no obliga a redondear nada a mano.
             "cifra": (
-                f"{len(scripted)} de las 4 alertas de la IA son una sola oración repetida "
-                "en el 83-100 % de sus casos."
+                f"{len(scripted)} de las 4 alertas de la IA son una sola frase repetida: "
+                + ", ".join(
+                    f"{v['ia']['comparten_la_misma_frase']} de {v['ia']['positivos']}"
+                    for v in scripted
+                )
+                + "."
             ),
         },
         {
             "plazo": "Esta semana, sin costo",
             "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
             "cifra": (
-                f"La IA habla con el titular en {contact['k_ia']} de {contact['n_ia']} "
-                f"llamadas y en {contact['indeterminado_ia']} no se sabe quién contesta."
+                f"La IA habla con el titular en {counts(contact, 'ia')} llamadas y los humanos "
+                f"en {contact['k_humano']}; en {contact['indeterminado_ia']} de la IA no se sabe "
+                "quién contesta."
             ),
         },
         {
             "plazo": "Este trimestre",
             "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
             "cifra": (
-                f"{credito_humano['positivos']} menciones en "
+                f"{counts(credito, 'humano')} llamadas humanas lo ofrecen, frente a "
+                f"{credito['k_ia']} de la IA, en "
                 f"{credito_humano['positivos'] - credito_humano['comparten_la_misma_frase']} "
                 "formulaciones distintas: no es guion, es criterio."
             ),
@@ -425,15 +366,17 @@ def build() -> dict:
             "plazo": "90 días",
             "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
             "cifra": (
-                f"{pilot['10']} cuentas por grupo para ver 10 pp; se decide con el recaudo "
-                "a 30 días, no con promesas verbales."
+                f"Con {n} por canal solo se ven diferencias de {suelo:.0f} pp; con "
+                f"{pilot['10']} cuentas por grupo, de 10. Se decide con el recaudo a 30 días, "
+                "no con promesas."
             ),
         },
         {
             "plazo": "90 días",
             "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
             "cifra": (
-                "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
+                "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede "
+                "saber cuánto pesa cada uno."
             ),
         },
     ]
@@ -517,7 +460,8 @@ def build() -> dict:
             f"Las dos carteras no son la misma: {prior['k_humano']} de {prior['n_humano']} "
             "llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con "
             f"{n} llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de "
-            "esta página es un porcentaje: son llamadas, sobre la misma regla."
+            "esta página es un porcentaje: son llamadas, sobre la misma regla; en cada par, "
+            "el primer número es la IA."
         ),
         "recorrido": [
             {

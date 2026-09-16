@@ -59,14 +59,20 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
   fuera de la familia de 8, sin Westfall-Young, con IC de Newcombe y validación a oído.
   **Las 300 anotaciones están completas.** Resultado en `docs/decisiones.md` §18: «termina en
   positivo» da −28 pp en el total y −11 pp [−33, +8] entre gestiones nuevas, o sea que el
-  confundido de cartera reaparece con una rúbrica independiente. **Nada de esto entra al
-  informe**: la regla exige AC1 ≥ 0,6 y la escucha de 20 llamadas está sin hacer
-  (`data/interim/hoja_escucha_desenlace.csv`). La coherencia con la familia sí vale como
+  confundido de cartera reaparece con una rúbrica independiente. **Ninguna de esas diferencias
+  entra al informe**: la regla exige AC1 ≥ 0,6 y la escucha de 20 llamadas está sin hacer
+  (`data/interim/hoja_escucha_desenlace.csv`). Lo que sí entra, en la página 2, son las
+  **distribuciones descriptivas** de esta misma rúbrica —hasta dónde llega la llamada, cómo queda
+  quien contesta, qué hace el agente ante una negativa—, que el pre-registro autoriza como barras
+  sin test por categoría: la puerta del AC1 es para comparar, no para contar. La coherencia con la
+  familia sí vale como
   validación: 48/50 y 44/50, y los 9 compromisos de IA salen idénticos con las dos rúbricas.
-→ El informe habla en KPIs de banco y rotula las cuatro conductas de riesgo como **alerta para
-  revisión de cumplimiento**, nunca como infracción, y aplicada a los dos canales
-  (`data/reference/cumplimiento.json`). Los costos a escala salen de `data/reference/costos.json`
-  y los calcula `src/results.py`: ninguno se escribe a mano.
+→ El informe habla en el lenguaje del banco y rotula las cuatro conductas de riesgo como **alerta
+  para revisión de cumplimiento**, nunca como infracción, y aplicada a los dos canales
+  (`data/reference/cumplimiento.json`). El costo a escala se calcula desde
+  `data/reference/costos.json` (precios con su fuente) y **se dejó fuera del informe**: en dos
+  páginas para un banco pesa más lo que se midió que lo que costaría medirlo. Ver
+  `docs/decisiones.md` §16 y §19.
 
 ## Reglas de trabajo
 - Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.

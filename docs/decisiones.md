@@ -360,6 +360,14 @@ que nadie pidió.
 **Qué salió a cambio.** La tabla de las ocho hipótesis pasó a `docs/hipotesis.md`; el gráfico de
 efectos se quedó, más compacto. El límite de dos páginas no se negocia.
 
+**Y qué de esta sección no sobrevivió a las iteraciones siguientes.** El KPI sobre el titular (31 y
+46), la tabla «hoy / piloto / producción» y el costo a escala salieron del informe en `a00cd5b` y
+`ad89830`: eran tres bloques que hablaban de lo que *no* se midió o de lo que costaría medirlo, y ese
+espacio se lo lleva lo que sí se midió. El compromiso volvió al denominador de 50, que es el de todo
+el resto del informe, y el contacto con el titular se cuenta aparte, en la página 2. El código del
+costo y sus precios con fuente siguen en el repositorio (`scale_costs`, `data/reference/costos.json`):
+se calculó, y por eso se pudo decidir no publicarlo.
+
 ## 17. Escuchar las 14 celdas que el panel no resolvió
 
 El compromiso de pago es el KPI comercial del informe y hasta aquí descansaba en el acuerdo entre
@@ -407,7 +415,7 @@ aceptación sujeta a aprobación, una regla para la llamada que termina sin conf
 asentimiento que no cuenta.
 
 
-## 18. El desenlace, completo: qué dijo y por qué no entra al informe
+## 18. El desenlace, completo: qué se publica y qué no
 
 El panel de desenlace (`src/rubric_desenlace.md`, pre-registro en `docs/hipotesis.md` §7) ya está
 **completo: 300 anotaciones, 100 llamadas por los tres anotadores**. Antes de anotar se escribió
@@ -443,11 +451,17 @@ que dos rúbricas distintas, con paneles distintos, dan el mismo número en el b
 39/40 en desenlace, 34/34 y 45/45 en estado al cierre, 19/19 y 20/22 en respuesta a la dificultad.
 Unanimidad del panel: 72, 74 y 88 de 100 según el campo.
 
-**Por qué no entra al informe.** La regla de publicación se congeló antes de anotar y dice: *un corte
-entra solo si su AC1 de Gwet llega a 0,6 en los dos brazos*, y ese AC1 se calcula escuchando 20
-llamadas, 10 por brazo, los últimos 90 segundos, sin ver el voto del panel. **Esa escucha no se ha
-hecho**, así que ningún corte pasa la puerta y todo esto se queda aquí, que es lo que la propia regla
-manda. La hoja está generada y esperando en `data/interim/hoja_escucha_desenlace.csv`
+**Por qué no entran los cortes, y sí las distribuciones.** La regla de publicación se congeló antes
+de anotar y separa dos cosas. Un **corte** —una diferencia entre brazos con su intervalo— entra solo
+si su AC1 de Gwet llega a 0,6 en los dos brazos, y ese AC1 se calcula escuchando 20 llamadas, 10 por
+brazo, los últimos 90 segundos, sin ver el voto del panel. **Esa escucha no se ha hecho**, así que
+ningún corte pasa la puerta y la tabla de arriba se queda aquí, que es lo que la propia regla manda.
+
+Las **distribuciones completas** son otra cosa, y el mismo pre-registro las autoriza: «van como barras
+descriptivas, sin test por categoría», y la respuesta ante una dificultad «entra como conteo
+descriptivo» porque se valida por anclaje de citas. Eso es exactamente la página 2 del informe: tres
+bloques sobre una sola regla de 0 a 50, sin intervalos, sin p-valores y sin declarar ganador. La
+puerta del AC1 existe para comparar; contar lo que dijo cada llamada no la necesita. La hoja está generada y esperando en `data/interim/hoja_escucha_desenlace.csv`
 (`make disposition` con `--listening-sheet`); `--agreement <hoja llena>` calcula el acuerdo y el AC1.
 
 Se deja constancia de lo que habría sido fácil y es lo que la regla prohíbe: el corte «reconoce y

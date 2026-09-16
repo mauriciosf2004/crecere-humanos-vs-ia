@@ -29,7 +29,7 @@ flowchart TD
         P1["Panel de conducta · 8 variables<br/>3 agentes ciegos, voto 2 de 3<br/>workflows/panel-anotacion.js"]
         P2["Panel de desenlace · exploratorio<br/>rúbrica aparte, los mismos 3 roles<br/>make disposition"]
         Q{"Puerta de evidencia<br/>¿la cita literal existe<br/>en la transcripción?<br/>make anchoring"}
-        X["La etiqueta no entra"]
+        X["No cambia el voto · queda publicada"]
         C["Consenso<br/>una fila por llamada"]
         E["Escucha humana del audio"]
     end
@@ -72,8 +72,10 @@ flowchart TD
     style pub fill:none,stroke:#7a2c68
 ```
 
-Las tres cajas magenta son puertas que fallan y paran el trabajo. En este corpus, 258 de 259 citas
-quedaron ancladas; la que no, no entró. Desde un clon limpio corren `make report`, `make verify` y
+Las tres cajas magenta son puertas que fallan y paran el trabajo. En este corpus 258 de 259 citas
+existen literalmente en la transcripción; la que no queda publicada como tal en
+`data/public/anchoring.json` en vez de retirarse a mano, y ninguna cita sin anclar puede cambiar el
+voto del panel (`docs/decisiones.md` §14). Desde un clon limpio corren `make report`, `make verify` y
 `make check`; `make help` lista todo. El resto necesita los audios, `ffmpeg`, `whisper-cli`, el CLI
 de Claude Code, Chrome y `pdfinfo`.
 
@@ -112,7 +114,9 @@ repositorio:
 
 La disciplina que lo hace verificable es la misma en todas partes: **cada respuesta afirmativa
 obliga a citar una frase literal, y el código comprueba que esa frase exista en la
-transcripción**. 258 de 259 quedaron ancladas. Una etiqueta que no se puede anclar no entra.
+transcripción**. 258 de 259 quedaron ancladas, y la que no está publicada con nombre propio en
+`data/public/anchoring.json`: el anclaje se mide y se reporta, no se usa para limpiar el dato por
+detrás. Lo que sí bloquea es promover una celda: una cita que no existe no puede contradecir al panel.
 
 `src/results.py` cierra el círculo por el otro lado: la prosa del informe declara los supuestos
 de los que depende, y si el análisis deja de sostener una frase, el armado falla en vez de

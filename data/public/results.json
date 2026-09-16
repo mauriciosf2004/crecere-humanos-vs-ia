@@ -134,7 +134,7 @@
       }
     ]
   },
-  "recorrido_lead": "Las dos carteras no son la misma: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con 50 llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de esta página es un porcentaje: son llamadas, sobre la misma regla.",
+  "recorrido_lead": "Las dos carteras no son la misma: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con 50 llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de esta página es un porcentaje: son llamadas, sobre la misma regla; en cada par, el primer número es la IA.",
   "recorrido": [
     {
       "titulo": "1 · Hasta dónde llega la conversación",
@@ -240,13 +240,13 @@
         {
           "plazo": "Esta semana, sin costo",
           "que": "Editar tres frases del guion de la IA.",
-          "cifra": "3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos.",
+          "cifra": "3 de las 4 alertas de la IA son una sola frase repetida: 36 de 43, 27 de 27, 20 de 21.",
           "n": 1
         },
         {
           "plazo": "Esta semana, sin costo",
           "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
-          "cifra": "La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta.",
+          "cifra": "La IA habla con el titular en 31 de 50 llamadas y los humanos en 46; en 9 de la IA no se sabe quién contesta.",
           "n": 2
         }
       ]
@@ -257,7 +257,7 @@
         {
           "plazo": "Este trimestre",
           "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
-          "cifra": "22 menciones en 18 formulaciones distintas: no es guion, es criterio.",
+          "cifra": "22 de 50 llamadas humanas lo ofrecen, frente a 3 de la IA, en 18 formulaciones distintas: no es guion, es criterio.",
           "n": 3
         }
       ]
@@ -268,13 +268,13 @@
         {
           "plazo": "90 días",
           "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
-          "cifra": "356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales.",
+          "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas.",
           "n": 4
         },
         {
           "plazo": "90 días",
           "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
-          "cifra": "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo.",
+          "cifra": "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede saber cuánto pesa cada uno.",
           "n": 5
         }
       ]
@@ -284,27 +284,27 @@
     {
       "plazo": "Esta semana, sin costo",
       "que": "Editar tres frases del guion de la IA.",
-      "cifra": "3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos."
+      "cifra": "3 de las 4 alertas de la IA son una sola frase repetida: 36 de 43, 27 de 27, 20 de 21."
     },
     {
       "plazo": "Esta semana, sin costo",
       "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
-      "cifra": "La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta."
+      "cifra": "La IA habla con el titular en 31 de 50 llamadas y los humanos en 46; en 9 de la IA no se sabe quién contesta."
     },
     {
       "plazo": "Este trimestre",
       "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
-      "cifra": "22 menciones en 18 formulaciones distintas: no es guion, es criterio."
+      "cifra": "22 de 50 llamadas humanas lo ofrecen, frente a 3 de la IA, en 18 formulaciones distintas: no es guion, es criterio."
     },
     {
       "plazo": "90 días",
       "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
-      "cifra": "356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales."
+      "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas."
     },
     {
       "plazo": "90 días",
       "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
-      "cifra": "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
+      "cifra": "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede saber cuánto pesa cada uno."
     }
   ],
   "colofon": "Cada cifra sale de una frase textual de la llamada y se comprobó que exista: 258 de 259. Ninguna se escribió a mano; el método está en el repositorio."
