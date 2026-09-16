@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>{{ meta.titulo }}</title>
 <style>
+{{ fuentes|safe }}
   /* Geometría: A4 con 10 mm de margen. La caja útil es 190 x 277 mm; se trabaja
      sobre 255 mm de alto para dejar aire y que nada quede al filo del corte.
      El margen no es cosmético: con 12 mm la página 1 solo admitía 2 mm más de texto
@@ -11,15 +12,25 @@
      10 mm deja más de 8 mm de holgura y sigue lejos de la zona no imprimible (≤6,4 mm). */
   @page { size: A4; margin: 10mm; }
 
-  /* Sistema visual: ficha de riesgo de cartera. Serif para la voz del informe, sans
-     para la estructura y monoespaciada tabular para TODA cifra: eso alinea las columnas
-     al comparar canales y le da el aire de libro de cartera. Solo fuentes del sistema,
-     porque el archivo se abre sin conexión como adjunto de correo. */
+  /* Sistema visual: la identidad de Creceré AI, aplicada con una regla que lo gobierna todo.
+
+     **El rosa es identidad, no información.** Su rosa de marca (#f06ecf) tiene 2,67:1 de
+     contraste sobre blanco: no pasa ni el umbral de 3:1 para elementos gráficos, así que no
+     puede llevar texto, ni una serie, ni un filete que signifique algo. Va como firma y nada
+     más. Donde la familia rosa tiene que leerse se usa #7a2c68, que da 8,8:1.
+
+     Los colores de los datos no son de marca, son de legibilidad: el informe se fotocopia y
+     las dos series necesitan separarse en gris. Azul y ocre están a 21,8 de ΔL*; el magenta
+     secundario de la marca y el ocre están a 2,5, indistinguibles, así que ese no entra.
+
+     Poppins es la tipografía del sistema de Creceré y va embebida, pero solo en los títulos
+     y rótulos: en cuerpo pequeño sus contraformas circulares pierden legibilidad y ocupa más
+     ancho del que caben dos páginas. La identidad está donde se ve; la economía, donde se lee. */
   :root {
-    --ink:#14181f; --muted:#6a6f78; --rule:#dfdbd4; --paper:#fff; --wash:#f7f4ef;
+    --ink:#1f1f1f; --muted:#737373; --rule:#e6e6e6; --paper:#fff; --wash:#fafafa;
+    --marca:#f06ecf; --marca-tinta:#7a2c68;
     --ia:#1f3d7a; --humano:#a8631b; --null:#6f747c; --alerta:#8c2f23;
-    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman",
-             "Liberation Serif", serif;
+    --display: Poppins, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
             "Liberation Sans", sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -45,19 +56,20 @@
 
   /* ── Cabecera ─────────────────────────────────────────────────────────── */
   header { border-bottom:1.6px solid var(--ink); padding-bottom:2.2mm; margin-bottom:3.2mm; }
+  #p1 { border-top:1.1mm solid var(--marca); padding-top:2.2mm; }
   .eyebrow {
-    font-family:var(--mono); font-size:7.2pt; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--muted);
+    font-family:var(--display); font-size:7.2pt; font-weight:600; letter-spacing:.25em;
+    text-transform:uppercase; color:var(--marca-tinta);
   }
   h1 {
-    font-family:var(--serif); font-size:20.5pt; line-height:1.04; letter-spacing:-.012em;
-    font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
+    font-family:var(--display); font-size:18pt; line-height:1.08; letter-spacing:-.022em;
+    font-weight:600; margin:1.6mm 0 0; max-width:152mm; text-wrap:balance;
   }
   /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:1.6mm; }
+  h2.major { font-size:8pt; color:var(--ink); letter-spacing:.2em; margin-top:1.6mm; }
   h2 {
-    font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
-    font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
+    font-family:var(--display); font-size:7pt; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--marca-tinta); font-weight:600; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
   }
   p { margin:0 0 1.5mm; }
   p, li { orphans:2; widows:2; }
@@ -65,7 +77,7 @@
 
   /* Sin filete lateral, a propósito: con él tenía traje de cita, y una cita se salta.
      Los siete lectores del panel saltaron este párrafo. */
-  .verdict { font-family:var(--serif); font-size:11.6pt; line-height:1.3; margin:0 0 2.6mm;
+  .verdict { font-family:var(--sans); font-size:11.6pt; line-height:1.3; margin:0 0 2.6mm;
              text-wrap:pretty; }
   .verdict strong { font-weight:650; }
 
@@ -240,7 +252,7 @@
       </tbody>
     </table>
     <p class="note">{{ conducta.nota }}</p>
-    <p class="note">¿Eran comparables las llamadas? {{ comparabilidad }}</p>
+    <p class="note">¿Eran comparables? {{ comparabilidad }}</p>
   </section>
 
   <div class="grid2">

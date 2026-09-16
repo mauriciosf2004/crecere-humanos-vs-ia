@@ -1,0 +1,7 @@
+Poppins, de Indian Type Foundry y Jonny Pinhorn.
+SIL Open Font License 1.1 — https://openfontlicense.org
+Subconjunto latino de Fontsource (cdn.jsdelivr.net/fontsource), pesos 400, 600 y 700.
+
+Van embebidas en base64 dentro de report/index.html a propósito: el informe se abre como
+adjunto, sin conexión, y así se compone igual en cualquier máquina. Sin ellas, un Linux sin
+las fuentes del sistema cae en una cara más ancha y el informe se va a tres páginas.

@@ -61,6 +61,22 @@ transcripción**. 258 de 259 quedaron ancladas. Una etiqueta que no se puede anc
 de los que depende, y si el análisis deja de sostener una frase, el armado falla en vez de
 publicarla.
 
+## Sobre el diseño
+
+El informe usa la identidad de Creceré AI —su magenta y Poppins— con una regla que lo gobierna
+todo: **el rosa es identidad, no información**. El rosa de marca tiene 2,67:1 de contraste sobre
+blanco, así que no pasa ni el umbral para elementos gráficos: va como filete de firma y nada más.
+Donde la familia rosa tiene que leerse se usa `#7a2c68`, que da 8,80:1.
+
+Los colores de los datos no son de marca sino de legibilidad: el informe se fotocopia y las dos
+series se separan 21,8 de ΔL* en escala de grises. El magenta secundario de la marca queda a 2,5
+del ocre, indistinguible impreso, así que no entra.
+
+Poppins va **embebida en base64** dentro del HTML (24 KB, subconjunto latino, licencia SIL OFL;
+ver `report/fonts/LICENSE.txt`) y solo en títulos y rótulos. Embebida, el informe se compone
+igual en cualquier máquina: sin eso, un Linux sin las caras del sistema cae en una más ancha y se
+va a tres páginas, que es justo lo que CI detectó.
+
 ## Cómo está hecho
 
 | Paso | Comando | Qué hace | Necesita |

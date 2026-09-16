@@ -8,6 +8,7 @@ cambia en el informe sin que nadie la retipee.
 from __future__ import annotations
 
 import json
+from base64 import b64encode
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -18,6 +19,28 @@ ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "data" / "public" / "results.json"
 TEMPLATE_DIR = ROOT / "report"
 OUTPUT = ROOT / "report" / "index.html"
+
+
+FONTS = ROOT / "report" / "fonts"
+
+
+def embedded_fonts() -> str:
+    """Poppins en base64 dentro del propio HTML.
+
+    El informe viaja como adjunto y se abre sin conexión, así que no puede depender de un
+    archivo al lado ni de una fuente del sistema. Embebida, se compone igual en cualquier
+    máquina: sin esto, un Linux sin las caras del sistema cae en una más ancha y el informe
+    se va a tres páginas. Son 24 KB de subconjunto latino, licencia SIL OFL.
+    """
+    caras = []
+    for weight in (400, 600, 700):
+        data = b64encode((FONTS / f"poppins-{weight}.woff2").read_bytes()).decode()
+        caras.append(
+            "@font-face{font-family:Poppins;font-style:normal;font-weight:"
+            f"{weight};font-display:block;"
+            f"src:url(data:font/woff2;base64,{data}) format('woff2');}}"
+        )
+    return "\n".join(caras)
 
 
 def render() -> Path:
@@ -42,7 +65,7 @@ def render() -> Path:
         autoescape=True,
     )
     html = env.get_template("template.html.j2").render(
-        forest_svg=forest(rows, row_height=15), **results
+        forest_svg=forest(rows, row_height=15), fuentes=embedded_fonts(), **results
     )
     OUTPUT.write_text(html, encoding="utf-8")
     return OUTPUT

@@ -138,7 +138,7 @@
       "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
   ],
-  "comparabilidad": "No del todo, y por eso no se compara conversión. El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o el guion, y en los dos casos mide el contexto. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
+  "comparabilidad": "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que puede reflejar la cartera o el guion. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
   "conducta": {
     "titulo": "Cómo reacciona cada canal",
     "filas": [
@@ -202,7 +202,7 @@
       "piloto": "sí"
     }
   ],
-  "kpis_banco_nota": "En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres primeros; los otros cuatro necesitan datos que la grabación no trae.",
+  "kpis_banco_nota": "En producción, los siete. Hoy solo salen del audio los tres primeros: los otros cuatro necesitan datos que la grabación no trae.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
@@ -224,7 +224,7 @@
   "metodo": [
     "Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal y vale la mayoría: 1.042 de 1.100 respuestas fueron unánimes, y 258 de 259 afirmativas citan una frase textual que existe en la llamada.",
     "El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.",
-    "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor, y la regla de que «hoy» cuenta como fecha corrigió al panel en 9 llamadas de IA."
+    "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones. El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor, y la regla de que «hoy» cuenta como fecha corrigió al panel en 9 llamadas de IA."
   ],
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",

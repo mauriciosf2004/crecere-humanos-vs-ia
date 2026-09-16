@@ -385,9 +385,9 @@ def build() -> dict:
         # los cuatro sostenidos superan el umbral incluso sin suponer dirección.
         (
             f"Test global por permutación ({p_text(effects['p_global'])}) y corrección por las "
-            f"{len(contrasts)} comparaciones (Westfall-Young). El sentido esperado se fijó "
-            "mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de "
-            "efecto e intervalo, no por el p-valor."
+            f"{len(contrasts)} comparaciones. El sentido esperado se fijó mirando estas mismas "
+            "llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por "
+            "el p-valor."
         ),
     ]
     if literal_rule:
@@ -511,9 +511,8 @@ def build() -> dict:
             },
         ],
         "comparabilidad": (
-            "No del todo, y por eso no se compara conversión. El acuerdo previo se detecta por "
-            "lo dicho en la llamada: puede reflejar la cartera o el guion, y en los dos casos "
-            "mide el contexto."
+            "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que "
+            "puede reflejar la cartera o el guion."
             + f" En {contact['indeterminado_ia']} llamadas de IA no se sabe quién contesta "
             + f"({contact['indeterminado_humano']} "
             + ("humana)." if contact["indeterminado_humano"] == 1 else "humanas).")
@@ -599,8 +598,8 @@ def build() -> dict:
             },
         ],
         "kpis_banco_nota": (
-            "En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres "
-            "primeros; los otros cuatro necesitan datos que la grabación no trae."
+            "En producción, los siete. Hoy solo salen del audio los tres primeros: los otros "
+            "cuatro necesitan datos que la grabación no trae."
         ),
         # El precio que encabeza es el de la configuración que este informe declara necesaria
         # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
