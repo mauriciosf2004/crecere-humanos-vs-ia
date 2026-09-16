@@ -219,6 +219,7 @@ def build() -> dict:
     agreement = json.loads((PUBLIC / "agreement.json").read_text(encoding="utf-8"))
     questions = len(json.loads(SCHEMA.read_text(encoding="utf-8"))["properties"]) - 1
     norms = json.loads((REFERENCE / "cumplimiento.json").read_text(encoding="utf-8"))
+    disposition = json.loads((PUBLIC / "desenlace.json").read_text(encoding="utf-8"))
     scale = scale_costs(json.loads((REFERENCE / "costos.json").read_text(encoding="utf-8")))
     titular = on_titular()
     _require(effects["fuente"] == "consensus", "los datos son el consenso del panel")
@@ -304,6 +305,27 @@ def build() -> dict:
         f"{pct(credit_new['k_humano'], credit_new['n_humano'])}."
     )
 
+    # Conducta ante una dificultad y embudo de la llamada: conteos, nunca tasas ni
+    # contrastes. Los denominadores son pequeños —19 y 22— y el pre-registro reserva eso
+    # para conteos. Aquí no se afirma ninguna diferencia: se publica lo que se contó.
+    ACEPTA = ("acepta_total", "acepta_parcial", "acepta_vago", "acepta_alcance_indeterminado")
+    conducta = {}
+    for arm in ("ia", "humano"):
+        cierre = disposition["distribucion"]["final_disposition"][arm]
+        ante = disposition["distribucion"]["difficulty_response"][arm]
+        sin_propuesta = cierre.get("no_aplica", 0) + cierre.get("None", 0)
+        conducta[arm] = {
+            "llega": n - sin_propuesta,
+            "acepta": sum(cierre.get(k, 0) for k in ACEPTA),
+            "dificultad": sum(v for k, v in ante.items() if k not in ("no_aplica", "None")),
+            "reconoce": ante.get("reconoce_y_ofrece", 0),
+            "insiste": ante.get("insiste_o_presiona", 0),
+        }
+    _require(
+        all(c["dificultad"] >= 15 for c in conducta.values()),
+        "hay dificultades expresadas en los dos canales para contar",
+    )
+
     cells = agreement["resumen"]["celdas"]
     unanimous, total_cells = cells.get("3/3", 0), sum(cells.values())
     literal_rule = sum(agreement["resumen"].get("ajustes_regla_literal", {}).values())
@@ -311,9 +333,10 @@ def build() -> dict:
     single_pass = agreement["positivos_familia"]["qualified_payment_commitment"]
     extra_humano = single_pass["extraccion"]["humano"] - single_pass["consenso"]["humano"]
     extra_ia = single_pass["extraccion"]["ia"] - single_pass["consenso"]["ia"]
-    family_anchor, context_anchor = anchoring["total"], anchoring["total_contexto"]
-    undetermined = prior["indeterminado_ia"] + prior["indeterminado_humano"]
+    family_anchor = anchoring["total"]
 
+    # La red de seguridad del informe: si el análisis deja de sostener una de estas frases,
+    # el armado falla en vez de publicarla.
     _require(effects["p_global"] < ALPHA, "hay diferencias sustentables")
     for item in (legal, expiry, threat, credit):
         _require(
@@ -339,26 +362,15 @@ def build() -> dict:
     _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
     _require(contact["indeterminado_ia"] > 0, "en llamadas de IA no se sabe con quién se habla")
 
-    if undetermined == 1:
-        undetermined_note = " Una llamada sin determinar cuenta como gestión nueva."
-    elif undetermined:
-        undetermined_note = f" {undetermined} llamadas sin determinar cuentan como gestión nueva."
-    else:
-        undetermined_note = ""
-
     panel_models = ", ".join(model.capitalize() for model in agreement["panel"].values())
     literal_by_arm = agreement["resumen"].get("ajustes_regla_literal", {})
     methods = [
         (
-            "Dos transcripciones locales por llamada. Tres anotadores "
-            f"({panel_models}) respondieron {questions} preguntas sin saber el canal; vale la "
-            "mayoría."
-        ),
-        (
-            f"{thousands(unanimous)} de {thousands(total_cells)} respuestas unánimes; "
-            f"{family_anchor['anclados']} de {family_anchor['positivos']} afirmativas y "
-            f"{context_anchor['anclados']} de {context_anchor['positivos']} de contexto citan una "
-            "frase textual de la llamada."
+            f"Dos transcripciones locales por llamada. Tres anotadores ({panel_models}) "
+            f"respondieron {questions} preguntas sin saber el canal y vale la mayoría: "
+            f"{thousands(unanimous)} de {thousands(total_cells)} respuestas fueron unánimes, y "
+            f"{family_anchor['anclados']} de {family_anchor['positivos']} afirmativas citan una "
+            "frase textual que existe en la llamada."
         ),
         # Los dos brazos, no solo el humano: el conteo de compromisos depende del criterio de
         # anotación, y publicar cómo cambia uno solo se lee como haber elegido el que conviene.
@@ -380,9 +392,9 @@ def build() -> dict:
     ]
     if literal_rule:
         _require(not literal_by_arm.get("humano"), "la regla literal solo cambió llamadas de IA")
-        methods.append(
-            f"En {literal_rule} llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en "
-            "propuesta con cifras."
+        methods[2] = methods[2].rstrip(".") + (
+            f", y la regla de que «hoy» cuenta como fecha corrigió al panel en {literal_rule} "
+            "llamadas de IA."
         )
 
     return {
@@ -498,18 +510,10 @@ def build() -> dict:
                 "accion": "No comparar conversión entre canales sin asignar las cuentas al azar.",
             },
         ],
-        "composicion": [
-            {
-                "etiqueta": item["etiqueta"],
-                "ia": f"{item['k_ia']}/{item['n_ia']}",
-                "humano": f"{item['k_humano']}/{item['n_humano']}",
-            }
-            for item in effects["composicion"]
-        ],
-        "composicion_nota": (
-            "El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera "
-            "o la conducta."
-            + undetermined_note
+        "comparabilidad": (
+            "No del todo, y por eso no se compara conversión. El acuerdo previo se detecta por "
+            "lo dicho en la llamada: puede reflejar la cartera o el guion, y en los dos casos "
+            "mide el contexto."
             + f" En {contact['indeterminado_ia']} llamadas de IA no se sabe quién contesta "
             + f"({contact['indeterminado_humano']} "
             + ("humana)." if contact["indeterminado_humano"] == 1 else "humanas).")
@@ -517,10 +521,41 @@ def build() -> dict:
             + f"{duration['mediana_humano_s']:.0f} s en humanos, sin diferencia concluyente "
             + f"({p_text(duration['p_mann_whitney'])})."
         ),
-        # Matriz de marcas, no once celdas que dicen «sí». La tabla ocupaba el mejor tercio
-        # de la página 2 y a tamaño de vistazo producía una losa gris sin puerta de entrada;
-        # el patrón de marcas es lo único de esa hoja que se ve sin leer. Las cifras de «hoy»
-        # se quedan: son datos, no estados.
+        # Descriptivo y nada más. Los cortes de esta rúbrica no pasaron su validación a oído,
+        # así que no hay contraste, ni tasas, ni intervalos: conteos con su denominador.
+        "conducta": {
+            "titulo": "Cómo reacciona cada canal",
+            "filas": [
+                {
+                    "que": "Ante una dificultad para pagar, reconoce la situación y ofrece una "
+                    "alternativa",
+                    "ia": f"{conducta['ia']['reconoce']} de {conducta['ia']['dificultad']}",
+                    "humano": f"{conducta['humano']['reconoce']} de "
+                    f"{conducta['humano']['dificultad']}",
+                },
+                {
+                    "que": "Insiste o menciona consecuencias sin ofrecer alternativa",
+                    "ia": f"{conducta['ia']['insiste']} de {conducta['ia']['dificultad']}",
+                    "humano": f"{conducta['humano']['insiste']} de "
+                    f"{conducta['humano']['dificultad']}",
+                },
+                {
+                    "que": "Llega a una propuesta concreta",
+                    "ia": f"{conducta['ia']['llega']} de {n}",
+                    "humano": f"{conducta['humano']['llega']} de {n}",
+                },
+                {
+                    "que": "Termina en algún tipo de aceptación",
+                    "ia": f"{conducta['ia']['acepta']} de {n}",
+                    "humano": f"{conducta['humano']['acepta']} de {n}",
+                },
+            ],
+            "nota": (
+                "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. "
+                "Son conteos, no tasas: con estos denominadores una diferencia así no se "
+                "distingue del ruido."
+            ),
+        },
         "kpis_banco": [
             {
                 "kpi": "Contacto con el titular",
@@ -570,12 +605,6 @@ def build() -> dict:
         # El precio que encabeza es el de la configuración que este informe declara necesaria
         # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
         # decir en otra página que ese mínimo no sirve es precio de vitrina.
-        "escala": (
-            "Precios oficiales de lista, calculados en el repositorio; no incluye operar "
-            "ningún canal. Un solo canal de audio baja a "
-            f"{thousands(lote)} USD y la analítica de proveedor sube a "
-            f"{thousands(comprada)}-{thousands(estandar)}."
-        ),
         "palancas": [
             {
                 "titulo": "Un piloto con asignación al azar.",
@@ -598,16 +627,18 @@ def build() -> dict:
                 "titulo": "Lo que cuesta medirlo.",
                 "detalle": (
                     f"{thousands(estereo)} USD al mes para "
-                    f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos: "
-                    "transcribir, borrar los datos personales, anotar con la rúbrica y el "
-                    "tablero, con agente y deudor en canales separados."
+                    f"{thousands(scale['llamadas_mes'])} llamadas de {scale['minutos']} minutos "
+                    "—transcribir, anonimizar, anotar y el tablero, con agente y deudor en "
+                    "canales separados—, a precios de lista calculados en el repositorio. El "
+                    "control de calidad añade menos de dos horas de análisis al mes y no crece "
+                    "con el volumen."
                 ),
             },
             {
                 "titulo": "Un estándar común.",
                 "detalle": (
-                    "Ambos canales confirman con quién hablan antes de negociar; los gestores solo "
-                    "ofrecen beneficios crediticios que la entidad respalde."
+                    "Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen "
+                    "beneficios crediticios que la entidad respalde."
                 ),
             },
         ],

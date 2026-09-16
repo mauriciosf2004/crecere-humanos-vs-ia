@@ -54,7 +54,7 @@
     font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
   }
   /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:2.4mm; }
+  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:1.6mm; }
   h2 {
     font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
@@ -155,7 +155,7 @@
   ul.bullets li { margin-bottom:.7mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
-  .grid2 section { break-inside:avoid; margin-bottom:1.5mm; }
+  .grid2 section { break-inside:avoid; margin-bottom:0; }
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
@@ -229,16 +229,18 @@
   </section>
 
   <section>
-    <h2>¿Eran llamadas comparables?</h2>
-    <table class="compact">
-      <thead><tr><th>Contexto de la llamada</th><th class="num">IA</th><th class="num">Humanos</th></tr></thead>
+    <h2 class="major">{{ conducta.titulo }}</h2>
+    <table class="conduct">
+      <thead><tr><th>En las llamadas de cada canal</th><th class="num">IA</th>
+        <th class="num">Humanos</th></tr></thead>
       <tbody>
-      {% for c in composicion %}
-        <tr><td>{{ c.etiqueta }}</td><td class="num">{{ c.ia }}</td><td class="num">{{ c.humano }}</td></tr>
+      {% for f in conducta.filas %}
+        <tr><td>{{ f.que }}</td><td class="num">{{ f.ia }}</td><td class="num">{{ f.humano }}</td></tr>
       {% endfor %}
       </tbody>
     </table>
-    <p class="note">{{ composicion_nota }}</p>
+    <p class="note">{{ conducta.nota }}</p>
+    <p class="note">¿Eran comparables las llamadas? {{ comparabilidad }}</p>
   </section>
 
   <div class="grid2">
@@ -257,7 +259,6 @@
     <ul class="levers">
       {% for p in palancas %}<li><strong>{{ p.titulo }}</strong> {{ p.detalle }}</li>{% endfor %}
     </ul>
-    <p class="note">{{ escala }}</p>
   </section>
 
   <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>2 / 2</span></footer>

@@ -54,7 +54,7 @@
     font-weight:600; margin:1.4mm 0 0; max-width:152mm; text-wrap:balance;
   }
   /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:2.4mm; }
+  h2.major { font-size:9pt; color:var(--ink); letter-spacing:.1em; margin-top:1.6mm; }
   h2 {
     font-size:7.4pt; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
@@ -155,7 +155,7 @@
   ul.bullets li { margin-bottom:.7mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
-  .grid2 section { break-inside:avoid; margin-bottom:1.5mm; }
+  .grid2 section { break-inside:avoid; margin-bottom:0; }
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
     border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
@@ -293,24 +293,30 @@
   </section>
 
   <section>
-    <h2>¿Eran llamadas comparables?</h2>
-    <table class="compact">
-      <thead><tr><th>Contexto de la llamada</th><th class="num">IA</th><th class="num">Humanos</th></tr></thead>
+    <h2 class="major">Cómo reacciona cada canal</h2>
+    <table class="conduct">
+      <thead><tr><th>En las llamadas de cada canal</th><th class="num">IA</th>
+        <th class="num">Humanos</th></tr></thead>
       <tbody>
       
-        <tr><td>Retoma un acuerdo de pago previo</td><td class="num">0/50</td><td class="num">26/50</td></tr>
+        <tr><td>Ante una dificultad para pagar, reconoce la situación y ofrece una alternativa</td><td class="num">15 de 19</td><td class="num">9 de 22</td></tr>
       
-        <tr><td>Habla con el titular de la deuda</td><td class="num">31/50</td><td class="num">46/50</td></tr>
+        <tr><td>Insiste o menciona consecuencias sin ofrecer alternativa</td><td class="num">2 de 19</td><td class="num">4 de 22</td></tr>
+      
+        <tr><td>Llega a una propuesta concreta</td><td class="num">24 de 50</td><td class="num">40 de 50</td></tr>
+      
+        <tr><td>Termina en algún tipo de aceptación</td><td class="num">11 de 50</td><td class="num">28 de 50</td></tr>
       
       </tbody>
     </table>
-    <p class="note">El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o la conducta. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
+    <p class="note">Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. Son conteos, no tasas: con estos denominadores una diferencia así no se distingue del ruido.</p>
+    <p class="note">¿Eran comparables las llamadas? No del todo, y por eso no se compara conversión. El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o el guion, y en los dos casos mide el contexto. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).</p>
   </section>
 
   <div class="grid2">
     <section>
       <h2>Método</h2>
-      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal; vale la mayoría.</li><li>1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.</li><li>El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.</li><li>Test global por permutación (p &lt; 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor.</li><li>En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras.</li></ul>
+      <ul class="bullets"><li>Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal y vale la mayoría: 1.042 de 1.100 respuestas fueron unánimes, y 258 de 259 afirmativas citan una frase textual que existe en la llamada.</li><li>El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.</li><li>Test global por permutación (p &lt; 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor, y la regla de que «hoy» cuenta como fecha corrigió al panel en 9 llamadas de IA.</li></ul>
     </section>
     <section>
       <h2>Qué no se pudo medir</h2>
@@ -321,9 +327,8 @@
   <section>
     <h2 class="major">Siguiente paso</h2>
     <ul class="levers">
-      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales.</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Lo que cuesta medirlo.</strong> 2.700 USD al mes para 100.000 llamadas de 4 minutos: transcribir, borrar los datos personales, anotar con la rúbrica y el tablero, con agente y deudor en canales separados.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde.</li>
+      <li><strong>Un piloto con asignación al azar.</strong> Única forma de medir conversión sin que decida la cartera: 356 cuentas por grupo para detectar 10 pp (tasa base 30 %, potencia 80 %). Se decide a los 30 días con el recaudo de cada cuenta asignada, no con promesas verbales.</li><li><strong>Un tercer grupo:</strong> IA sin anuncio legal ni vencimiento, para medir su efecto en la conversión en vez de suponerlo.</li><li><strong>Lo que cuesta medirlo.</strong> 2.700 USD al mes para 100.000 llamadas de 4 minutos —transcribir, anonimizar, anotar y el tablero, con agente y deudor en canales separados—, a precios de lista calculados en el repositorio. El control de calidad añade menos de dos horas de análisis al mes y no crece con el volumen.</li><li><strong>Un estándar común.</strong> Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen beneficios crediticios que la entidad respalde.</li>
     </ul>
-    <p class="note">Precios oficiales de lista, calculados en el repositorio; no incluye operar ningún canal. Un solo canal de audio baja a 1.500 USD y la analítica de proveedor sube a 6.000-6.700.</p>
   </section>
 
   <footer><span>Mauricio Salas · <a href="https://github.com/mauriciosf2004/crecere-humanos-vs-ia">github.com/mauriciosf2004/crecere-humanos-vs-ia</a></span><span>2 / 2</span></footer>

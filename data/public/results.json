@@ -138,19 +138,33 @@
       "accion": "No comparar conversión entre canales sin asignar las cuentas al azar."
     }
   ],
-  "composicion": [
-    {
-      "etiqueta": "Retoma un acuerdo de pago previo",
-      "ia": "0/50",
-      "humano": "26/50"
-    },
-    {
-      "etiqueta": "Habla con el titular de la deuda",
-      "ia": "31/50",
-      "humano": "46/50"
-    }
-  ],
-  "composicion_nota": "El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o la conducta. Una llamada sin determinar cuenta como gestión nueva. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
+  "comparabilidad": "No del todo, y por eso no se compara conversión. El acuerdo previo se detecta por lo dicho en la llamada: puede reflejar la cartera o el guion, y en los dos casos mide el contexto. En 9 llamadas de IA no se sabe quién contesta (1 humana). Duración mediana: 149 s en IA y 171 s en humanos, sin diferencia concluyente (p = 0,319).",
+  "conducta": {
+    "titulo": "Cómo reacciona cada canal",
+    "filas": [
+      {
+        "que": "Ante una dificultad para pagar, reconoce la situación y ofrece una alternativa",
+        "ia": "15 de 19",
+        "humano": "9 de 22"
+      },
+      {
+        "que": "Insiste o menciona consecuencias sin ofrecer alternativa",
+        "ia": "2 de 19",
+        "humano": "4 de 22"
+      },
+      {
+        "que": "Llega a una propuesta concreta",
+        "ia": "24 de 50",
+        "humano": "40 de 50"
+      },
+      {
+        "que": "Termina en algún tipo de aceptación",
+        "ia": "11 de 50",
+        "humano": "28 de 50"
+      }
+    ],
+    "nota": "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. Son conteos, no tasas: con estos denominadores una diferencia así no se distingue del ruido."
+  },
   "kpis_banco": [
     {
       "kpi": "Contacto con el titular",
@@ -189,7 +203,6 @@
     }
   ],
   "kpis_banco_nota": "En producción, los siete y en todas las llamadas. Hoy solo salen del audio los tres primeros; los otros cuatro necesitan datos que la grabación no trae.",
-  "escala": "Precios oficiales de lista, calculados en el repositorio; no incluye operar ningún canal. Un solo canal de audio baja a 1.500 USD y la analítica de proveedor sube a 6.000-6.700.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",
@@ -201,19 +214,17 @@
     },
     {
       "titulo": "Lo que cuesta medirlo.",
-      "detalle": "2.700 USD al mes para 100.000 llamadas de 4 minutos: transcribir, borrar los datos personales, anotar con la rúbrica y el tablero, con agente y deudor en canales separados."
+      "detalle": "2.700 USD al mes para 100.000 llamadas de 4 minutos —transcribir, anonimizar, anotar y el tablero, con agente y deudor en canales separados—, a precios de lista calculados en el repositorio. El control de calidad añade menos de dos horas de análisis al mes y no crece con el volumen."
     },
     {
       "titulo": "Un estándar común.",
-      "detalle": "Ambos canales confirman con quién hablan antes de negociar; los gestores solo ofrecen beneficios crediticios que la entidad respalde."
+      "detalle": "Ambos canales confirman con quién hablan antes de negociar, y solo ofrecen beneficios crediticios que la entidad respalde."
     }
   ],
   "metodo": [
-    "Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal; vale la mayoría.",
-    "1.042 de 1.100 respuestas unánimes; 258 de 259 afirmativas y 103 de 103 de contexto citan una frase textual de la llamada.",
+    "Dos transcripciones locales por llamada. Tres anotadores (Sonnet, Opus, Opus) respondieron 11 preguntas sin saber el canal y vale la mayoría: 1.042 de 1.100 respuestas fueron unánimes, y 258 de 259 afirmativas citan una frase textual que existe en la llamada.",
     "El criterio de anotación mueve el conteo: un solo modelo aceptaba asentimientos vagos y contaba 8 compromisos humanos y 2 de IA más que el panel. Las 14 celdas sin unanimidad se escucharon una a una: manda lo oído.",
-    "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor.",
-    "En 9 llamadas de IA, la rúbrica («hoy» es fecha) corrigió al panel en propuesta con cifras."
+    "Test global por permutación (p < 0,001) y corrección por las 8 comparaciones (Westfall-Young). El sentido esperado se fijó mirando estas mismas llamadas: por eso los hallazgos se juzgan por tamaño de efecto e intervalo, no por el p-valor, y la regla de que «hoy» cuenta como fecha corrigió al panel en 9 llamadas de IA."
   ],
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",
