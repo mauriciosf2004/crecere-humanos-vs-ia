@@ -455,3 +455,22 @@ ofrece» dice que el agente de IA reconoce la dificultad y ofrece una alternativ
 frente a 9 de 22 de los humanos, y entre gestiones nuevas 15 de 19 frente a 2 de 9. Es la cifra más
 favorable a la IA de todo el trabajo, y **no se publica**: su denominador baja de 20, que el
 pre-registro reserva para conteos, y no tiene validación a oído.
+
+
+## 19. La maqueta, delegada con un brief y aceptada por una puerta
+
+La maqueta final la trabajó Claude Design a partir de `docs/brief-diseno.md`, que fija qué se toca
+(`report/template.html.j2` y las constantes de geometría de `src/charts.py`), qué no
+(`src/results.py`, las cifras, la paginación) y cómo se acepta un cambio: `make report`, `make
+verify` y `make check` en verde, y ningún marcador `{{ }}` sustituido por un número.
+
+Lo que volvió es oficio, no contenido: cabecera y pie iguales en las dos páginas (filete de marca,
+fecha a la derecha, folio), tres pesos de filete y ninguno más, la tabla de alertas con columna
+propia para el número y para la norma, la cita literal en tinta y cursiva al cuerpo de la tabla, y
+el plan de cierre como retícula de calendario. En `charts.py`, tres constantes de ritmo del recorrido.
+
+Cómo entró: no tocó `index.html` a mano sino la plantilla, y escribió una réplica en JS de
+`report.py` para previsualizar; `make report` con su plantilla reproduce su `index.html` byte a
+byte. En el cuerpo HTML no queda ningún dígito fuera de un marcador, salvo los folios. Dos páginas
+exactas, 35 tests, y la holgura pasó de 5 y 21 mm a **15 y 11 mm**: la tabla a seis columnas acortó
+las filas de la página 1 más de lo que los aires nuevos la alargaron.

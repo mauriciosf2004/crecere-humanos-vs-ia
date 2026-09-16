@@ -59,7 +59,7 @@ make check     # formato, lint y 35 tests
 ```
 
 Los tres en verde, o no entra. La puerta de las dos páginas no la decide nadie a ojo: la decide
-Chrome. Hoy la página 1 tiene **5 mm** de holgura y la página 2 **21 mm**. Un cambio de
+Chrome. Hoy la página 1 tiene **15 mm** de holgura y la página 2 **11 mm**. Un cambio de
 tipografía en el cuerpo se come esa holgura: los tamaños están donde están porque caben.
 
 ## El sistema visual, ya decidido y medido

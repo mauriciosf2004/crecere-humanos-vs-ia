@@ -146,7 +146,9 @@ def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: in
     plot_left = label_w + tag_w + pad
     plot_w = width - plot_left - count_w
     unit = plot_w / n
-    bar_h, gap_ch, gap_stage, title_h, legend_h, caption_h = 11.5, 2.5, 11, 20, 11, 12
+    # Dentro de un panel las etapas van más juntas (gap_stage) que los paneles entre sí
+    # (caption_h): así los tres se leen como capítulos del mismo objeto y no como una lista.
+    bar_h, gap_ch, gap_stage, title_h, legend_h, caption_h = 11.5, 2.5, 10, 21, 11, 14
     x = lambda calls: plot_left + calls * unit  # noqa: E731
 
     height = 30 + sum(

@@ -5,11 +5,10 @@
 <title>{{ meta.titulo }}</title>
 <style>
 {{ fuentes|safe }}
-  /* Geometría: A4 con 10 mm de margen. La caja útil es 190 x 277 mm; se trabaja
-     sobre 255 mm de alto para dejar aire y que nada quede al filo del corte.
-     El margen no es cosmético: con 12 mm la página 1 solo admitía 2 mm más de texto
-     antes de romperse en tres páginas, así que cualquier palabra tumbaba `make verify`.
-     10 mm deja más de 8 mm de holgura y sigue lejos de la zona no imprimible (≤6,4 mm). */
+  /* Geometría: A4 con 10 mm de margen. La caja útil es 190 x 277 mm; la página se trabaja
+     sobre 272 mm de alto para que nada quede al filo del corte. El margen no es cosmético:
+     con 12 mm la página 1 solo admitía 2 mm más de texto antes de romperse en tres páginas.
+     10 mm sigue lejos de la zona no imprimible (≤6,4 mm). */
   @page { size: A4; margin: 10mm; }
 
   /* Sistema visual: la identidad de Creceré AI, aplicada con una regla que lo gobierna todo.
@@ -34,6 +33,11 @@
     --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
             "Liberation Sans", sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    /* Tres pesos de filete y nada más: el fuerte abre bloque, el fino cierra tabla y separa
+       columnas, el de tinta a un píxel sostiene la cabecera y el pie. */
+    --filete-fuerte: .55mm solid var(--ink);
+    --filete-medio: .3mm solid var(--ink);
+    --filete-fino: 1px solid var(--rule);
   }
   * { box-sizing:border-box; }
   html { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-scheme:light; }
@@ -41,134 +45,129 @@
     margin:0; background:#e9e5de; color:var(--ink); font-family:var(--sans);
     font-size:9.4pt; line-height:1.4; font-variant-numeric: tabular-nums lining-nums;
   }
-  /* Sin overflow:hidden y con el pie en el flujo normal, a propósito: si el contenido
+  /* En pantalla se muestra la hoja entera (210 x 297) con sus 10 mm de margen, para que
+     cada línea parta donde va a partir impresa. La caja de contenido mide 272 mm en los dos
+     medios, así que el pie cae a la misma altura en el navegador y en el PDF.
+     Sin overflow:hidden y con el pie en el flujo normal, a propósito: si el contenido
      desborda, fluye a una tercera página y `make verify` lo caza, en vez de recortarse o
      de quedar tapado por un pie posicionado encima. */
   .page {
-    width:186mm; min-height:255mm; padding:0; margin:8mm auto; background:var(--paper);
-    display:flex; flex-direction:column;
+    width:210mm; min-height:297mm; padding:10mm 10mm 15mm; margin:8mm auto;
+    background:var(--paper); display:flex; flex-direction:column;
+    box-shadow:0 .5mm 2mm rgba(0,0,0,.14);
   }
   @media print {
     body { background:#fff; }
-    .page { margin:0; width:auto; min-height:272mm; break-after:page; }
+    .page { margin:0; width:auto; min-height:272mm; padding:0; box-shadow:none; break-after:page; }
     .page:last-child { break-after:auto; }
   }
 
-  /* ── Cabecera ─────────────────────────────────────────────────────────── */
-  header { border-bottom:1.6px solid var(--ink); padding-bottom:2.2mm; margin-bottom:3.2mm; }
-  #p1 { border-top:1.1mm solid var(--marca); padding-top:2.2mm; }
+  /* ── Cabecera: filete de marca, línea de identificación y título ──────────
+     Es la misma en las dos páginas —marca arriba, tinta abajo, fecha a la derecha—: lo que
+     convierte dos hojas sueltas en un documento es que compartan cabecera y pie. */
+  header { border-top:1.1mm solid var(--marca); border-bottom:var(--filete-medio);
+           padding:2.4mm 0 2.4mm; margin-bottom:0; }
+  #p2 header { margin-bottom:2.8mm; }
   .eyebrow {
+    display:flex; justify-content:space-between; gap:6mm;
     font-family:var(--display); font-size:7.2pt; font-weight:600; letter-spacing:.25em;
-    text-transform:uppercase; color:var(--marca-tinta);
+    text-transform:uppercase; color:var(--marca-tinta); line-height:1.3;
   }
+  .eyebrow span:last-child { color:var(--muted); }
   h1 {
-    font-family:var(--display); font-size:18pt; line-height:1.08; letter-spacing:-.022em;
-    font-weight:600; margin:1.6mm 0 0; max-width:152mm; text-wrap:balance;
+    font-family:var(--display); font-size:19.5pt; line-height:1.1; letter-spacing:-.02em;
+    font-weight:600; margin:2.6mm 0 .6mm; max-width:158mm; text-wrap:balance;
   }
-  /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
-  h2.major { font-size:8pt; color:var(--ink); letter-spacing:.2em; margin-top:1.6mm; }
   h2 {
     font-family:var(--display); font-size:7pt; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--marca-tinta); font-weight:600; margin:0 0 1.5mm; padding-bottom:.8mm; border-bottom:1px solid var(--rule);
+    color:var(--marca-tinta); font-weight:600; margin:0 0 1.6mm; padding-bottom:.9mm;
+    border-bottom:var(--filete-fino);
   }
+  /* Rótulo mayor: lo que el lector necesita y lo que tiene que hacer. */
+  h2.major { font-size:8pt; color:var(--ink); }
   p { margin:0 0 1.5mm; }
   p, li { orphans:2; widows:2; }
-  section { margin-bottom:2.2mm; }
 
-  /* Sin filete lateral, a propósito: con él tenía traje de cita, y una cita se salta.
-     Los siete lectores del panel saltaron este párrafo. */
-  .verdict { font-family:var(--sans); font-size:11.6pt; line-height:1.3; margin:0 0 2.6mm;
-             text-wrap:pretty; }
+  /* ── La decisión, en tres escalones ──────────────────────────────────────
+     Veredicto a 12,6 pt, recomendación a 10,8 pt en negrita, tabla a 8,3 pt: el ojo baja
+     por tamaño y peso, y el aire entre ellos es el que separa tres cosas distintas. Ninguno
+     lleva filete lateral: con él tenía traje de cita, y una cita se salta. */
+  .verdict {
+    font-size:12.6pt; line-height:1.32; margin:5.5mm 0 4mm; max-width:172mm; text-wrap:pretty;
+  }
   .verdict strong { font-weight:650; }
-
-  /* La única instrucción del documento. Antes vivía en la cuarta línea del párrafo de
-     arriba y nadie la encontraba; ahora tiene cuerpo, aire y una regla que la sostiene. */
+  /* La única instrucción del documento: cuelga de un filete propio y no la cierra ninguno,
+     para que el bloque de alertas de abajo no la encajone. */
   .ask {
-    font-size:10.6pt; font-weight:600; line-height:1.28; margin:0 0 3.4mm;
-    padding:2.2mm 0 2.4mm; border-top:1.6px solid var(--ink);
-    border-bottom:1px solid var(--rule); text-wrap:pretty;
+    font-size:10.8pt; font-weight:600; line-height:1.3; margin:0 0 6mm;
+    padding:2.4mm 18mm 0 0; border-top:var(--filete-medio); text-wrap:pretty;
   }
 
-  /* La pregunta que hizo el cliente, con el mismo peso que el bloque de riesgo: si solo
-     uno de los dos lleva filete y fondo, la página dice que el otro importa menos. */
-
-  /* ── Semáforo de cumplimiento: el bloque que el banco mira primero ────── */
-  .risk { border-top:2.2px solid var(--ink); padding:2mm 0 0; margin-bottom:3mm; }
-  .risk h2 { color:var(--alerta); }
+  /* ── Alertas de cumplimiento: el bloque que el banco mira primero ─────── */
+  .risk { border-top:var(--filete-fuerte); padding-top:2mm; margin-bottom:4.5mm; }
+  .risk h2 { color:var(--alerta); border-bottom:0; padding-bottom:0; margin-bottom:1mm; }
   /* La frase que protege a quien presenta el papel, pegada a la tabla y en cuerpo de
-     lectura. Al pie y en gris de 7 pt no la leía nadie, y lo que se fotografía y se
-     reenvía es la tabla, nunca el pie. */
-  .risk .caveat { font-size:8.4pt; margin:0 0 1.4mm; }
-  /* La cita literal debajo del rótulo: es la evidencia, y por eso el rótulo ya no puede
-     decir más de lo que ella sostiene. Cursiva y un punto menos, para que se lea como voz. */
-  .risk .conducta { font-weight:600; }
-  .risk .cita { display:block; font-style:italic; color:var(--muted); font-size:7.8pt;
-                margin-top:.3mm; }
-  .risk .arreglo { display:block; color:var(--ia); margin-top:.3mm; }
-  .risk .norma { display:block; font-family:var(--mono); font-size:6.9pt; color:var(--muted);
-                 margin-top:.4mm; }
-  .risk tbody { counter-reset:hallazgo; }
+     lectura: lo que se fotografía y se reenvía es la tabla, nunca el pie. */
+  .risk .caveat { font-size:8.4pt; margin:0 0 2mm; max-width:172mm; }
 
-  .risk tbody td:first-child::before {
-    counter-increment:hallazgo; content:counter(hallazgo) ". "; font-family:var(--mono);
-    font-weight:400; color:var(--muted);
-  }
-  .risk .note { margin:1mm 0 0; }
-
-  /* ── Tablas ───────────────────────────────────────────────────────────── */
-  table { width:100%; border-collapse:collapse; font-size:8.3pt; }
+  /* ── Tablas: filete fuerte abre, fino separa filas, medio cierra ────────── */
+  table { width:100%; border-collapse:collapse; font-size:8.3pt; line-height:1.34; }
   th {
-    text-align:left; font-weight:650; color:var(--muted); font-size:7pt; text-transform:uppercase;
-    letter-spacing:.08em; padding:.8mm 1.4mm; border-bottom:1px solid var(--ink);
+    text-align:left; font-family:var(--display); font-weight:600; color:var(--muted);
+    font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; line-height:1.2;
+    padding:0 1.6mm 1.1mm; border-bottom:var(--filete-medio); vertical-align:bottom;
   }
-  td { padding:.7mm 1.4mm; border-bottom:1px solid var(--rule); vertical-align:top;
+  td { padding:1.4mm 1.6mm 1.6mm; border-bottom:var(--filete-fino); vertical-align:top;
        hyphens:none; }
-  tr:last-child td { border-bottom:0; }
-  td.num { text-align:right; white-space:nowrap; font-family:var(--mono); }
-  th.num { text-align:right; white-space:nowrap; }
-  table.compact { width:78%; }
+  tbody tr:last-child td { border-bottom:var(--filete-medio); }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  td.num { font-family:var(--mono); }
+  /* El número de fila cuelga en una columna propia: rótulo y cita comparten borde izquierdo. */
+  td.n { font-family:var(--mono); color:var(--muted); font-size:7.4pt; padding-left:0;
+         padding-right:0; }
+  th:first-child, td:first-child { padding-left:0; }
+  th:last-child, td:last-child { padding-right:0; }
+
+  /* La cita literal es la evidencia: en tinta, cursiva y al cuerpo de la tabla, con la
+     comilla colgada al margen para que el texto quede a plomo con el rótulo que sostiene. */
+  .risk .conducta { display:block; font-weight:600; }
+  .risk .cita {
+    display:block; font-style:italic; font-size:8.2pt; line-height:1.34; color:var(--ink);
+    margin:.5mm 0 0 -1.7mm; padding-left:1.7mm; text-indent:-1.7mm; text-wrap:pretty;
+  }
+  .risk .accion { display:block; }
+  .risk .arreglo { display:block; color:var(--muted); margin-top:.5mm; }
+  /* La norma en el cuerpo, no en monoespaciada: es una referencia legal, no una cifra. */
+  .risk .norma { font-size:7.4pt; color:var(--muted); line-height:1.4; display:block;
+                 padding-top:.2mm; }
+  .risk .note { margin:1.6mm 0 0; }
 
   /* ── Forest plot: color y forma dicen lo mismo, para que sirva impreso ── */
-  svg.forest { width:100%; height:auto; }
+  svg.forest { width:100%; height:auto; display:block; margin-top:.5mm; }
   .forest .axis-zero { stroke:var(--ink); stroke-width:1.1; }
   .forest .axis-tick { stroke:var(--rule); stroke-width:1; }
-  .forest .axis-label { font-family:var(--mono); font-size:7.6px; fill:var(--muted); text-anchor:middle; }
-  .forest .axis-title { font-size:7.6px; fill:var(--muted); text-anchor:middle; }
+  .forest .axis-label { font-family:var(--mono); font-size:7.4px; fill:var(--muted); text-anchor:middle; }
+  .forest .axis-title { font-size:7.4px; fill:var(--muted); text-anchor:middle; }
   .forest .row-label { font-size:8.3px; fill:var(--ink); text-anchor:end; }
-  .forest .row-value { font-family:var(--mono); font-size:8.3px; font-weight:600; text-anchor:end;
-                       stroke:none; }
+  .forest .row-value { font-family:var(--mono); font-size:8.3px; font-weight:600; text-anchor:end; }
   .forest .ci { stroke-width:2; stroke-linecap:round; }
   .forest .ci.null { stroke-width:1.1; }  /* la conclusividad no puede ir solo en el tono */
   .forest .pos { stroke:var(--ia); fill:var(--ia); }
   .forest .neg { stroke:var(--humano); fill:var(--humano); }
   .forest .null { stroke:var(--null); fill:var(--null); }
   /* .pos/.neg/.null llevan stroke para las líneas y los puntos, y por cascada se lo imponían
-     también al texto: a 8,3 px el contorno cerraba los ojos del 8 y del 6. Va después y con
-     la misma especificidad de clase, porque `.forest text` la perdía contra `.forest .neg`. */
+     también al texto: a 8,3 px el contorno cerraba los ojos del 8 y del 6. */
   .forest .row-value, .forest .row-label { stroke:none; }
 
-  /* ── Hallazgos ────────────────────────────────────────────────────────── */
-  ol.findings { margin:0; padding:0; list-style:none; }
-  ol.findings li {
-    padding:1mm 0 1mm 5.4mm; border-bottom:1px solid var(--rule);
-    position:relative;
-  }
-  ol.findings li:last-child { border-bottom:0; }
-  ol.findings li::before {
-    content:""; position:absolute; left:0; top:2.1mm; width:3.4mm;
-    border-top:1.4px solid var(--ia);
-  }
-  ol.findings .claim { font-weight:620; }
-  ol.findings .why { color:var(--muted); }
-  ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
-
-  /* ── El recorrido: una regla de 0 a 50 y tres paneles medidos contra ella ─────── */
-  svg.recorrido { width:100%; height:auto; display:block; margin-top:1mm; }
-  .journey .lead { font-size:8.6pt; color:var(--ink); margin:0 0 1mm; text-wrap:pretty; }
+  /* ── El recorrido: una regla de 0 a 50 y tres paneles medidos contra ella ─
+     Los tres capítulos comparten rótulo (el mismo que las secciones), marco de 50 con borde,
+     y conteo al final en el color de su serie: lo que cambia es el dato, no el traje. */
+  svg.recorrido { width:100%; height:auto; display:block; margin-top:1.5mm; }
+  .journey .lead { font-size:8.6pt; color:var(--ink); margin:0 0 1mm; max-width:172mm; text-wrap:pretty; }
   .rc-rule { stroke:var(--ink); stroke-width:.9; }
   .rc-tick { font-family:var(--mono); font-size:7px; fill:var(--muted); }
-  .rc-frame { fill:#f2f2f2; }
-  .rc-tag { font-family:var(--mono); font-size:7px; font-weight:600; fill:var(--muted); }
+  .rc-frame { fill:#f2f2f2; stroke:#dedede; stroke-width:.4; }
+  .rc-tag { font-family:var(--mono); font-size:6.8px; font-weight:600; fill:var(--muted); }
   .rc-bar.ia.solid { fill:var(--ia); }
   .rc-bar.human.solid { fill:var(--humano); }
   .rc-bar.ia.hatch { fill:url(#rc-hatch-ia); }
@@ -180,58 +179,59 @@
   .rc-bar.dots { fill:#d9d9d9; }
   .rc-zero.ia { fill:var(--ia); }
   .rc-zero.human { fill:var(--humano); }
-  .rc-count { font-family:var(--mono); font-size:8.3px; font-weight:600; }
+  .rc-count { font-family:var(--mono); font-size:8.6px; font-weight:600; }
   .rc-count.ia { fill:var(--ia); }
   .rc-count.human { fill:var(--humano); }
   .rc-label { font-size:8.3px; fill:var(--ink); }
-  .rc-title { font-family:var(--display); font-size:7.2px; font-weight:600; letter-spacing:.16em;
+  .rc-title { font-family:var(--display); font-size:7.2px; font-weight:600; letter-spacing:.2em;
               text-transform:uppercase; fill:var(--marca-tinta); }
-  .rc-legend { font-size:7px; fill:var(--muted); }
+  .rc-legend { font-size:7px; fill:var(--ink); }
   .rc-swatch.solid { fill:var(--ink); }
   .rc-swatch.hatch { fill:#8a8a8a; }
   .rc-swatch.hollow { fill:#ffffff; stroke:var(--ink); stroke-width:.5; }
   .rc-swatch.dots { fill:#d9d9d9; }
   .rc-caption { font-size:7.2px; fill:var(--muted); }
 
-  /* ── El cierre como plan: tres columnas por plazo, el tiempo de izquierda a derecha ── */
-  .plan { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 5mm; margin-top:1mm; }
-  .plan .col { border-top:1.6px solid var(--ink); padding-top:1.4mm; }
+  /* ── El cierre como calendario: tres columnas por plazo, el tiempo de izquierda a derecha ─
+     Un filete fuerte encima de las tres, la fila de plazos cerrada por un fino que corre de
+     columna a columna y un fino vertical entre ellas: la retícula de una agenda, no tres listas. */
+  .plan { display:grid; grid-template-columns:1fr 1fr 1fr; border-top:var(--filete-fuerte);
+          margin-top:1.5mm; }
+  .plan .col { padding:1.6mm 3.2mm 0; }
+  .plan .col:first-child { padding-left:0; }
+  .plan .col:last-child { padding-right:0; }
+  .plan .col + .col { border-left:var(--filete-fino); }
   .plan .plazo { font-family:var(--display); font-size:6.8pt; font-weight:600; letter-spacing:.18em;
-                 text-transform:uppercase; color:var(--marca-tinta); margin-bottom:1.2mm; }
-  .plan .accion { position:relative; padding:0 0 1.6mm 7mm; }
-  .plan .num { position:absolute; left:0; top:-.4mm; font-family:var(--display); font-size:13pt;
+                 text-transform:uppercase; color:var(--marca-tinta); padding-bottom:1.1mm;
+                 margin-bottom:1.8mm; border-bottom:var(--filete-fino); }
+  .plan .accion { position:relative; padding:0 0 1.8mm 6.4mm; }
+  .plan .num { position:absolute; left:0; top:-.3mm; font-family:var(--display); font-size:12pt;
                font-weight:600; color:var(--ink); line-height:1; }
-  .plan .que { display:block; font-weight:600; font-size:9.2pt; line-height:1.25; }
-  .plan .cifra { display:block; color:var(--muted); font-size:8.2pt; line-height:1.3; margin-top:.4mm; }
+  .plan .que { display:block; font-weight:600; font-size:8.9pt; line-height:1.27; text-wrap:pretty; }
+  .plan .cifra { display:block; color:var(--muted); font-size:8pt; line-height:1.3; margin-top:.5mm;
+                 text-wrap:pretty; }
 
-  /* ── Listas, notas y pie ──────────────────────────────────────────────── */
-  ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
-  ul.levers li, ul.bullets li { position:relative; }
-  ul.levers li::before, ul.bullets li::before {
-    content:""; position:absolute; left:-2.6mm; top:1.5mm;
-    width:1mm; height:1mm; border-radius:50%; background:var(--muted);
-  }
-  ul.levers li { margin-bottom:.9mm; }
-  ul.bullets li { margin-bottom:.7mm; }
-  .colofon { margin-top:2mm; }
-  .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
-  .grid2 { display:block; columns:2; column-gap:5mm; }
-  .grid2 section { break-inside:avoid; margin-bottom:0; }
+  /* ── Notas y pie ──────────────────────────────────────────────────────── */
+  section { margin-bottom:2.6mm; }
+  .note { font-size:7.9pt; line-height:1.38; color:var(--muted); border-left:2px solid var(--rule);
+          padding-left:2.4mm; }
+  .colofon { margin-top:2.5mm; }
+  /* El pie cae a la misma altura en las dos páginas: el blanco que sobre queda arriba de él,
+     en un solo hueco, y no repartido en dos. */
   footer {
     margin-top:auto; font-family:var(--mono); font-size:7.2pt; color:var(--muted);
-    border-top:1px solid var(--rule); padding-top:1.4mm; display:flex; justify-content:space-between;
+    border-top:1px solid var(--ink); padding-top:1.6mm; display:flex; justify-content:space-between;
+    align-items:baseline;
   }
   footer a { color:inherit; text-decoration:none; }
-  /* En la página 2 empuja el colofón, no el pie: si empujan los dos, el blanco
-     se parte en dos huecos y la hoja parece que se quedó a medias. */
-  #p2 footer { margin-top:2mm; }
+  footer .folio { color:var(--ink); font-weight:600; }
 </style>
 </head>
 <body>
 
 <div class="page" id="p1">
   <header>
-    <div class="eyebrow">{{ meta.cliente }} · {{ meta.fecha }}</div>
+    <div class="eyebrow"><span>{{ meta.cliente }}</span><span>{{ meta.fecha }}</span></div>
     <h1>{{ meta.titulo }}</h1>
   </header>
 
@@ -243,13 +243,19 @@
     <h2>{{ cumplimiento.rotulo }}</h2>
     <p class="caveat">{{ cumplimiento.salvedad }}</p>
     <table>
-      <thead><tr><th>Lo que se dijo</th><th class="num">IA</th><th class="num">Humanos</th>
-        <th>Qué hacer</th></tr></thead>
+      <colgroup>
+        <col style="width:5mm"><col style="width:64mm"><col style="width:14mm">
+        <col style="width:17mm"><col style="width:58mm"><col>
+      </colgroup>
+      <thead><tr><th></th><th>Lo que se dijo</th><th class="num">IA</th><th class="num">Humanos</th>
+        <th>Qué hacer</th><th>Norma</th></tr></thead>
       <tbody>
       {% for a in cumplimiento.filas %}
-        <tr><td><span class="conducta">{{ a.conducta }}</span>{% if a.cita %}<span class="cita">«{{ a.cita }}»</span>{% endif %}</td>
+        <tr><td class="n">{{ loop.index }}</td>
+            <td><span class="conducta">{{ a.conducta }}</span>{% if a.cita %}<span class="cita">«{{ a.cita }}»</span>{% endif %}</td>
             <td class="num">{{ a.ia }}</td><td class="num">{{ a.humano }}</td>
-            <td>{{ a.accion }} <span class="arreglo">{{ a.arreglo }}</span><span class="norma">{{ a.norma }}</span></td></tr>
+            <td><span class="accion">{{ a.accion }}</span><span class="arreglo">{{ a.arreglo }}</span></td>
+            <td><span class="norma">{{ a.norma }}</span></td></tr>
       {% endfor %}
       </tbody>
     </table>
@@ -262,12 +268,12 @@
     <p class="note">{{ forest_nota }}</p>
   </section>
 
-  <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>1 / 2</span></footer>
+  <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span class="folio">1 / 2</span></footer>
 </div>
 
 <div class="page" id="p2">
   <header>
-    <div class="eyebrow">La llamada, de principio a fin</div>
+    <div class="eyebrow"><span>La llamada, de principio a fin</span><span>{{ meta.fecha }}</span></div>
   </header>
 
   <section class="journey">
@@ -296,7 +302,7 @@
 
   <p class="note colofon">{{ colofon }}</p>
 
-  <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span>2 / 2</span></footer>
+  <footer><span>{{ meta.autor }} · <a href="https://{{ meta.repositorio }}">{{ meta.repositorio }}</a></span><span class="folio">2 / 2</span></footer>
 </div>
 
 </body>
