@@ -157,6 +157,11 @@ ver `report/fonts/LICENSE.txt`) y solo en títulos y rótulos. Embebida, el info
 igual en cualquier máquina: sin eso, un Linux sin las caras del sistema cae en una más ancha y se
 va a tres páginas, que es justo lo que CI detectó.
 
+La maqueta final no se dibujó a mano: se encargó con un brief (`docs/brief-diseno.md`, que fija
+qué se toca, qué no y cómo se acepta un cambio) a una herramienta de diseño con acceso al
+repositorio, y entró por las mismas puertas que el código: `make report`, `make verify`,
+`make check` y ninguna cifra a mano (`docs/decisiones.md` §19).
+
 ## Qué hay en el repositorio y qué no
 
 ```
