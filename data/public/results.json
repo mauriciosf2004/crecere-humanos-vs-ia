@@ -161,48 +161,25 @@
         "que": "Termina en algún tipo de aceptación",
         "ia": "11 de 50",
         "humano": "28 de 50"
+      },
+      {
+        "que": "El interlocutor queda colaborando al cerrar",
+        "ia": "15 de 50",
+        "humano": "34 de 50"
+      },
+      {
+        "que": "Queda esquivo, molesto o angustiado",
+        "ia": "19 de 50",
+        "humano": "11 de 50"
+      },
+      {
+        "que": "No habla lo suficiente para saberlo",
+        "ia": "16 de 50",
+        "humano": "5 de 50"
       }
     ],
     "nota": "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. Son conteos, no tasas: con estos denominadores una diferencia así no se distingue del ruido."
   },
-  "kpis_banco": [
-    {
-      "kpi": "Contacto con el titular",
-      "hoy": "sí · IA 62-80 %, humanos 92-94 %",
-      "piloto": "con los intentos del marcador"
-    },
-    {
-      "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-      "hoy": "sí · IA 29 %, humanos 37 %",
-      "piloto": "sí"
-    },
-    {
-      "kpi": "Promesa cumplida y recaudo a 30 días",
-      "hoy": "no · exige datos de pago",
-      "piloto": "sí, KPI principal"
-    },
-    {
-      "kpi": "Cure rate por tramo de mora",
-      "hoy": "no · exige cartera",
-      "piloto": "a 90 días"
-    },
-    {
-      "kpi": "Costo por peso recuperado",
-      "hoy": "no · exige costos y recaudo",
-      "piloto": "sí"
-    },
-    {
-      "kpi": "Alertas de cumplimiento por canal",
-      "hoy": "sí · las cuatro de arriba",
-      "piloto": "sí"
-    },
-    {
-      "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-      "hoy": "no · exige los registros del marcador",
-      "piloto": "sí"
-    }
-  ],
-  "kpis_banco_nota": "En producción, los siete. Hoy solo salen del audio los tres primeros: los otros cuatro necesitan datos que la grabación no trae.",
   "palancas": [
     {
       "titulo": "Un piloto con asignación al azar.",

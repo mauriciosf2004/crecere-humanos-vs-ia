@@ -269,22 +269,9 @@ def build() -> dict:
         titular["ia"]["k"], titular["ia"]["n"], titular["humano"]["k"], titular["humano"]["n"]
     )
 
-    # Las llamadas sin identificar cuentan como «no titular», así que la tasa publicada es el
-    # piso; el techo es contarlas todas como titular. Se publican las dos puntas.
-    contact_range = {
-        arm: (
-            f"{pct(contact[f'k_{arm}'], contact[f'n_{arm}']).rstrip(' %')}-"
-            f"{pct(contact[f'k_{arm}'] + contact[f'indeterminado_{arm}'], contact[f'n_{arm}'])}"
-        )
-        for arm in ("ia", "humano")
-    }
     nulls = [i for i in contrasts if i["hipotesis"] == "sin diferencia"]
     any_tentative = any(tentative(i) for i in contrasts)
 
-    # Las cuatro alertas se muestran sobre 50 y 50, y los brazos no traen la misma cartera.
-    # La defensa se calcula aquí para que la tabla no quede como la comparación sucia: el
-    # crédito no baja al quitar las renegociaciones, sube, que es lo contrario de lo que
-    # supondría quien la ataque.
     new_alert = {
         alert["variable"]: next(
             s
@@ -336,6 +323,7 @@ def build() -> dict:
     for arm in ("ia", "humano"):
         cierre = disposition["distribucion"]["final_disposition"][arm]
         ante = disposition["distribucion"]["difficulty_response"][arm]
+        estado = disposition["distribucion"]["debtor_state_at_close"][arm]
         sin_propuesta = cierre.get("no_aplica", 0) + cierre.get("None", 0)
         conducta[arm] = {
             "llega": n - sin_propuesta,
@@ -343,10 +331,17 @@ def build() -> dict:
             "dificultad": sum(v for k, v in ante.items() if k not in ("no_aplica", "None")),
             "reconoce": ante.get("reconoce_y_ofrece", 0),
             "insiste": ante.get("insiste_o_presiona", 0),
+            "colabora": estado.get("cooperativo", 0),
+            "incomodo": sum(estado.get(k, 0) for k in ("evasivo", "molesto", "angustiado")),
+            "mudo": estado.get("None", 0),
         }
     _require(
         all(c["dificultad"] >= 15 for c in conducta.values()),
         "hay dificultades expresadas en los dos canales para contar",
+    )
+    _require(
+        all(c["colabora"] + c["incomodo"] + c["mudo"] == n for c in conducta.values()),
+        "el estado al cierre reparte las 50 llamadas de cada canal sin perder ninguna",
     )
 
     cells = agreement["resumen"]["celdas"]
@@ -578,6 +573,21 @@ def build() -> dict:
                     "ia": f"{conducta['ia']['acepta']} de {n}",
                     "humano": f"{conducta['humano']['acepta']} de {n}",
                 },
+                {
+                    "que": "El interlocutor queda colaborando al cerrar",
+                    "ia": f"{conducta['ia']['colabora']} de {n}",
+                    "humano": f"{conducta['humano']['colabora']} de {n}",
+                },
+                {
+                    "que": "Queda esquivo, molesto o angustiado",
+                    "ia": f"{conducta['ia']['incomodo']} de {n}",
+                    "humano": f"{conducta['humano']['incomodo']} de {n}",
+                },
+                {
+                    "que": "No habla lo suficiente para saberlo",
+                    "ia": f"{conducta['ia']['mudo']} de {n}",
+                    "humano": f"{conducta['humano']['mudo']} de {n}",
+                },
             ],
             "nota": (
                 "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. "
@@ -585,55 +595,6 @@ def build() -> dict:
                 "distingue del ruido."
             ),
         },
-        "kpis_banco": [
-            {
-                "kpi": "Contacto con el titular",
-                # Rango, no punto: las llamadas donde no se sabe quién contesta cuentan como
-                # «no titular», y son 9 en IA contra 1 en humanos. El punto solo es el piso.
-                "hoy": f"sí · IA {contact_range['ia']}, humanos {contact_range['humano']}",
-                "piloto": "con los intentos del marcador",
-            },
-            {
-                "kpi": "Compromiso con fecha y monto (PTP sobre titular)",
-                "hoy": (
-                    f"sí · IA {pct(titular['ia']['k'], titular['ia']['n'])}, humanos "
-                    f"{pct(titular['humano']['k'], titular['humano']['n'])}"
-                ),
-                "piloto": "sí",
-            },
-            {
-                "kpi": "Promesa cumplida y recaudo a 30 días",
-                "hoy": "no · exige datos de pago",
-                "piloto": "sí, KPI principal",
-            },
-            {
-                "kpi": "Cure rate por tramo de mora",
-                "hoy": "no · exige cartera",
-                "piloto": "a 90 días",
-            },
-            {
-                "kpi": "Costo por peso recuperado",
-                "hoy": "no · exige costos y recaudo",
-                "piloto": "sí",
-            },
-            {
-                "kpi": "Alertas de cumplimiento por canal",
-                "hoy": "sí · las cuatro de arriba",
-                "piloto": "sí",
-            },
-            {
-                "kpi": "Horario y frecuencia de contacto (Ley 2300)",
-                "hoy": "no · exige los registros del marcador",
-                "piloto": "sí",
-            },
-        ],
-        "kpis_banco_nota": (
-            "En producción, los siete. Hoy solo salen del audio los tres primeros: los otros "
-            "cuatro necesitan datos que la grabación no trae."
-        ),
-        # El precio que encabeza es el de la configuración que este informe declara necesaria
-        # —agente y deudor en canales separados—, no el más barato: anclar en el mínimo y luego
-        # decir en otra página que ese mínimo no sirve es precio de vitrina.
         "palancas": [
             {
                 "titulo": "Un piloto con asignación al azar.",

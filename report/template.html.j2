@@ -228,19 +228,6 @@
   </header>
 
   <section>
-    <h2 class="major">Lo que el banco necesita y cuándo lo tendrá</h2>
-    <table>
-      <thead><tr><th>Indicador</th><th>Hoy, desde la grabación</th><th>Con el piloto</th></tr></thead>
-      <tbody>
-      {% for k in kpis_banco %}
-        <tr><td>{{ k.kpi }}</td><td>{{ k.hoy }}</td><td>{{ k.piloto }}</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    <p class="note">{{ kpis_banco_nota }}</p>
-  </section>
-
-  <section>
     <h2 class="major">{{ conducta.titulo }}</h2>
     <table class="conduct">
       <thead><tr><th>En las llamadas de cada canal</th><th class="num">IA</th>
