@@ -15,10 +15,15 @@ import re
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
+from src.stats import audit_sample_size
+
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "data" / "public"
 REFERENCE = ROOT / "data" / "reference"
 ALPHA = 0.05
+# Supuestos de planificación del control a escala, los mismos que fijan tests/test_stats.py y
+# docs/control-de-calidad.md: acierto del instrumento al 85 % y precisión de ±10 pp.
+AUDIT_ACCURACY, AUDIT_HALF_WIDTH = 0.85, 0.10
 NBSP = " "
 
 # Etiquetas cortas para el gráfico y la tabla. Dicen lo que mide la rúbrica y nada más:
@@ -295,11 +300,16 @@ def build() -> dict:
     # desenlace, que ancla aparte: citar solo el anclaje de la familia avalaba la página
     # equivocada. Se publican las dos rúbricas sumadas, calculadas.
     anclaje_desenlace = disposition["anclaje"]
-    anclado = family_anchor["anclados"] + sum(
-        v[arm]["anclados"] for v in anclaje_desenlace.values() for arm in ("ia", "humano")
+    context_anchor = anchoring["total_contexto"]
+    anclado = (
+        family_anchor["anclados"]
+        + context_anchor["anclados"]
+        + sum(v[arm]["anclados"] for v in anclaje_desenlace.values() for arm in ("ia", "humano"))
     )
-    con_cita = family_anchor["positivos"] + sum(
-        v[arm]["con_valor"] for v in anclaje_desenlace.values() for arm in ("ia", "humano")
+    con_cita = (
+        family_anchor["positivos"]
+        + context_anchor["positivos"]
+        + sum(v[arm]["con_valor"] for v in anclaje_desenlace.values() for arm in ("ia", "humano"))
     )
     misma_familia = [r for r, modelo in agreement["panel"].items() if modelo == "opus"]
     _require(
@@ -333,6 +343,12 @@ def build() -> dict:
     _require(not any(significant(i) for i in nulls), "no se detectó diferencia en las nulas")
     _require(duration["p_mann_whitney"] >= ALPHA, "la diferencia de duración no es concluyente")
     _require(contact["indeterminado_ia"] > 0, "en llamadas de IA no se sabe con quién se habla")
+
+    audit = {
+        pop: audit_sample_size(AUDIT_ACCURACY, AUDIT_HALF_WIDTH, population=pop)
+        for pop in (1_000, 100_000, 10_000_000)
+    }
+    _require(audit[100_000] == audit[10_000_000], "el control no crece con el volumen")
 
     colofon = (
         "Cada respuesta anotada cita una frase textual de la llamada, y se comprobó que exista: "
@@ -373,6 +389,19 @@ def build() -> dict:
                 f"{credito['k_ia']} de la IA, en "
                 f"{credito_humano['positivos'] - credito_humano['comparten_la_misma_frase']} "
                 "formulaciones distintas: no es guion, es criterio."
+            ),
+        },
+        {
+            # La única línea del cierre que sobrevive al mandato del lector: corregido el guion
+            # en septiembre, esto es lo que le dice en marzo si volvió. El número es el acierto
+            # del instrumento con precisión dada, y casi no depende del volumen.
+            "plazo": "Este trimestre",
+            # Cabe en cinco líneas para que esta columna no supere a la de 90 días: si la
+            # supera, la retícula crece y el informe se va a tres páginas.
+            "que": f"Auditar {audit[100_000]} llamadas por periodo.",
+            "cifra": (
+                f"{audit[1_000]} con 1.000 llamadas al mes, {audit[100_000]} con 100.000: "
+                f"±{AUDIT_HALF_WIDTH * 100:.0f} pp sobre el acierto, a cualquier volumen."
             ),
         },
         {
@@ -476,8 +505,8 @@ def build() -> dict:
             f"Las dos carteras no son la misma: {prior['k_humano']} de {prior['n_humano']} "
             "llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con "
             f"{n} llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de "
-            "esta página es un porcentaje: son llamadas, sobre la misma regla; en cada par, "
-            "el primer número es la IA."
+            "este recorrido es un porcentaje: son llamadas, sobre la misma regla; en cada par "
+            "de las leyendas, el primer número es la IA."
         ),
         "recorrido": [
             {

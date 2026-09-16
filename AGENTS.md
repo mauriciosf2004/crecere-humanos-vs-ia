@@ -38,7 +38,7 @@ que no entre nada de `data/raw`, `data/interim` ni `data/processed`.
 
 ## Realidad estadística (calculada, no estimada)
 n=50/50 con Fisher exacto, α=0,05: **MDE ≈ 29 pp**. Potencia 30→40 % = **13 %**; 30→50 % = **46 %**.
-Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
+Si el denominador es el contacto con el titular (31 y 46), **MDE ≈ 33 pp**.
 → Los titulares se apoyan en **tamaños de efecto con IC**, no en p-valores.
 → Inferencia en dos niveles: test global por permutación como compuerta, y Westfall-Young
   step-down sobre la familia de 8, que controla el FWER por sí solo. Lo que queda fuera de la
@@ -62,11 +62,11 @@ Si el denominador es RPC (n≈31/brazo), **MDE ≈ 37 pp**.
   confundido de cartera reaparece con una rúbrica independiente. **Ninguna de esas diferencias
   entra al informe**: la regla exige AC1 ≥ 0,6 y la escucha de 20 llamadas está sin hacer
   (`data/interim/hoja_escucha_desenlace.csv`). Lo que sí entra, en la página 2, son las
-  **distribuciones descriptivas** de esta misma rúbrica —hasta dónde llega la llamada, cómo queda
+  **distribuciones descriptivas** —casi todas de esta rúbrica: hasta dónde llega la llamada, cómo queda
   quien contesta, qué hace el agente ante una negativa—, que el pre-registro autoriza como barras
   sin test por categoría: la puerta del AC1 es para comparar, no para contar. La coherencia con la
   familia sí vale como
-  validación: 48/50 y 44/50, y los 9 compromisos de IA salen idénticos con las dos rúbricas.
+  validación: 48/50 y 44/50; en IA las dos rúbricas cuentan 9, con 8 llamadas en común.
 → El informe habla en el lenguaje del banco y rotula las cuatro conductas de riesgo como **alerta
   para revisión de cumplimiento**, nunca como infracción, y aplicada a los dos canales
   (`data/reference/cumplimiento.json`). El costo a escala se calcula desde

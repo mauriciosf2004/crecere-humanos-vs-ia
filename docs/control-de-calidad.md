@@ -68,7 +68,7 @@ Dos rúbricas distintas, congeladas por separado y anotadas por paneles que no s
 hechos relacionados. Deben coincidir; donde no coinciden, hay algo que revisar.
 
 Medido: el desenlace positivo frente al compromiso calificado coincide en **48 de 50** llamadas
-de IA y **44 de 50** humanas, y las dos rúbricas cuentan **los mismos 9 compromisos de IA**
+de IA y **44 de 50** humanas, y en IA las dos rúbricas cuentan **9**, con 8 llamadas en común
 (`docs/decisiones.md` §18). Ninguna persona intervino en esa comprobación.
 
 Es la capa más barata de añadir y la más ignorada: dos instrumentos que ya existen se validan
@@ -86,7 +86,7 @@ dudoso, el voto de tres modelos no basta.
 
 Cómo se opera sin que crezca:
 
-- **Tamaño fijo por período**, no fracción. Con 50 llamadas al mes se conoce el acierto con
+- **Tamaño fijo por período**, no fracción. Con 49 llamadas al mes se conoce el acierto con
   ±10 pp, con cualquier volumen.
 - **Muestreo estratificado, no aleatorio simple.** Escuchar al azar gasta la mayoría de los
   minutos en llamadas donde los tres anotadores coincidieron y no había nada que aprender. La
@@ -122,7 +122,7 @@ La segunda rúbrica —desenlace y reacción del interlocutor— tiene sus 300 a
 la regla de publicación, escrita antes de anotar, la parte en dos. Un **corte** —una diferencia
 entre brazos con su intervalo— exige un AC1 de Gwet de al menos 0,6 en los dos brazos, que sale de
 la capa 4; esa escucha no se hizo, así que ninguno entra. Las **distribuciones** entran «como
-barras descriptivas, sin test por categoría», y eso es la página 2 del informe.
+barras descriptivas, sin test por categoría», y eso es casi toda la página 2 del informe.
 
 Que la regla no se dobla se ve en que corta en las dos direcciones sobre el mismo dato: el más
 favorable al agente de IA de todo el trabajo. Ante una dificultad, la IA reconoce y ofrece una
@@ -135,7 +135,8 @@ Una regla de calidad que solo se aplica cuando el resultado no gusta no es una r
 
 ## Lo que el anclaje no puede ver
 
-El anclaje de citas comprueba que cada afirmativa exista en la transcripción: 258 de 259. Esa
+El anclaje de citas comprueba que cada afirmativa exista en la transcripción: 258 de 259 en la
+familia de 8, 543 de 548 con el contexto y el desenlace. Esa
 cifra es **precisión, y no tiene contraparte de recall**. El mecanismo solo puede verificar lo
 que el panel marcó; por construcción no puede ver lo que el panel *no* marcó.
 

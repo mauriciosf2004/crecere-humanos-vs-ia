@@ -59,8 +59,10 @@ make check     # formato, lint y 35 tests
 ```
 
 Los tres en verde, o no entra. La puerta de las dos páginas no la decide nadie a ojo: la decide
-Chrome. Hoy la página 1 tiene **15 mm** de holgura y la página 2 **11 mm**. Un cambio de
-tipografía en el cuerpo se come esa holgura: los tamaños están donde están porque caben.
+Chrome. Hoy la página 1 tiene **15 mm** de holgura sobre el pie y la página 2 **4 mm**. Un cambio
+de tipografía en el cuerpo se come esa holgura: los tamaños están donde están porque caben. En la
+página 2 el alto lo fija la columna más alta del plan («90 días»); una tarjeta que la supere manda
+el informe a tres páginas.
 
 ## El sistema visual, ya decidido y medido
 

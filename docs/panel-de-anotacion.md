@@ -91,5 +91,5 @@ y la siguiente se lanza con `args.jobs = [[brazo, uuid, rol], ...]`, solo con lo
 lotes se arman **por llamada, no por rol**: así cada lote terminado deja llamadas con sus tres
 votos, que ya dan consenso, en vez de tres brazos a medias que no dan ninguno. El panel de
 desenlace se completó así, en cuatro tandas: 300 anotaciones sobre las 100 llamadas. Su resultado
-—y por qué no entra al informe— está en `docs/decisiones.md` §18.
+—qué se publica de él y qué no— está en `docs/decisiones.md` §18.
 

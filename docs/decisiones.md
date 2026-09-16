@@ -441,8 +441,8 @@ humanos no cierran mejor, arrancan de otra parte.
 
 **Coherencia con la familia (validación pre-registrada).** El positivo principal frente al compromiso
 calificado, llamada a llamada: coinciden en **48 de 50** en IA y **44 de 50** en humanos. La rúbrica
-independiente cuenta **9 desenlaces positivos en IA, exactamente los 9 compromisos** que publica el
-informe. En humanos encuentra 23 donde la familia cuenta 17: las 6 de diferencia terminan en acuerdo
+independiente cuenta **9 desenlaces positivos en IA, el mismo número que los 9 compromisos** que
+publica el informe, con 8 llamadas en común y una discrepancia en cada sentido. En humanos encuentra 23 donde la familia cuenta 17: las 6 de diferencia terminan en acuerdo
 sin fecha o sin monto, que es justo lo que el nivel 2 exige y ellas no tienen. Es decir: la objeción
 de que el conteo de compromisos depende del criterio de anotación tiene respuesta, y la respuesta es
 que dos rúbricas distintas, con paneles distintos, dan el mismo número en el brazo de IA.
@@ -459,7 +459,7 @@ ningún corte pasa la puerta y la tabla de arriba se queda aquí, que es lo que 
 
 Las **distribuciones completas** son otra cosa, y el mismo pre-registro las autoriza: «van como barras
 descriptivas, sin test por categoría», y la respuesta ante una dificultad «entra como conteo
-descriptivo» porque se valida por anclaje de citas. Eso es exactamente la página 2 del informe: tres
+descriptivo» porque se valida por anclaje de citas. Eso es casi toda la página 2 del informe: tres
 bloques sobre una sola regla de 0 a 50, sin intervalos, sin p-valores y sin declarar ganador. La
 puerta del AC1 existe para comparar; contar lo que dijo cada llamada no la necesita. La hoja está generada y esperando en `data/interim/hoja_escucha_desenlace.csv`
 (`make disposition` con `--listening-sheet`); `--agreement <hoja llena>` calcula el acuerdo y el AC1.
@@ -488,5 +488,5 @@ el plan de cierre como retícula de calendario. En `charts.py`, tres constantes 
 Cómo entró: no tocó `index.html` a mano sino la plantilla, y escribió una réplica en JS de
 `report.py` para previsualizar; `make report` con su plantilla reproduce su `index.html` byte a
 byte. En el cuerpo HTML no queda ningún dígito fuera de un marcador, salvo los folios. Dos páginas
-exactas, 35 tests, y la holgura pasó de 5 y 21 mm a **15 y 11 mm**: la tabla a seis columnas acortó
+exactas, 35 tests, y la holgura pasó de 5 y 21 mm a **15 y 11 mm** en ese momento: la tabla a seis columnas acortó
 las filas de la página 1 más de lo que los aires nuevos la alargaron.

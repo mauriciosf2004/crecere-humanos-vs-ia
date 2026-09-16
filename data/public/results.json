@@ -134,7 +134,7 @@
       }
     ]
   },
-  "recorrido_lead": "Las dos carteras no son la misma: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con 50 llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de esta página es un porcentaje: son llamadas, sobre la misma regla; en cada par, el primer número es la IA.",
+  "recorrido_lead": "Las dos carteras no son la misma: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con 50 llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de este recorrido es un porcentaje: son llamadas, sobre la misma regla; en cada par de las leyendas, el primer número es la IA.",
   "recorrido": [
     {
       "titulo": "1 · Hasta dónde llega la conversación",
@@ -259,6 +259,12 @@
           "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
           "cifra": "22 de 50 llamadas humanas lo ofrecen, frente a 3 de la IA, en 18 formulaciones distintas: no es guion, es criterio.",
           "n": 3
+        },
+        {
+          "plazo": "Este trimestre",
+          "que": "Auditar 49 llamadas por periodo.",
+          "cifra": "47 con 1.000 llamadas al mes, 49 con 100.000: ±10 pp sobre el acierto, a cualquier volumen.",
+          "n": 4
         }
       ]
     },
@@ -269,13 +275,13 @@
           "plazo": "90 días",
           "que": "Medir la conversión con un piloto de cuentas asignadas al azar dentro de cada tipo de gestión.",
           "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas.",
-          "n": 4
+          "n": 5
         },
         {
           "plazo": "90 días",
           "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
           "cifra": "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede saber cuánto pesa cada uno.",
-          "n": 5
+          "n": 6
         }
       ]
     }
@@ -297,6 +303,11 @@
       "cifra": "22 de 50 llamadas humanas lo ofrecen, frente a 3 de la IA, en 18 formulaciones distintas: no es guion, es criterio."
     },
     {
+      "plazo": "Este trimestre",
+      "que": "Auditar 49 llamadas por periodo.",
+      "cifra": "47 con 1.000 llamadas al mes, 49 con 100.000: ±10 pp sobre el acierto, a cualquier volumen."
+    },
+    {
       "plazo": "90 días",
       "que": "Medir la conversión con un piloto de cuentas asignadas al azar dentro de cada tipo de gestión.",
       "cifra": "Con 50 por canal solo se ven diferencias de 29 pp; con 356 cuentas por grupo, de 10. Se decide con el recaudo a 30 días, no con promesas."
@@ -307,5 +318,5 @@
       "cifra": "Hoy el anuncio legal y el vencimiento viajan en el mismo guion: no se puede saber cuánto pesa cada uno."
     }
   ],
-  "colofon": "Cada respuesta anotada cita una frase textual de la llamada, y se comprobó que exista: 440 de 445. Ninguna cifra se escribió a mano; el método está en el repositorio."
+  "colofon": "Cada respuesta anotada cita una frase textual de la llamada, y se comprobó que exista: 543 de 548. Ninguna cifra se escribió a mano; el método está en el repositorio."
 }

@@ -73,7 +73,7 @@ flowchart TD
 ```
 
 Las tres cajas magenta son puertas que fallan y paran el trabajo. En este corpus 258 de 259 citas
-existen literalmente en la transcripción; la que no queda publicada como tal en
+de la familia de 8 existen literalmente en la transcripción; la que no queda publicada como tal en
 `data/public/anchoring.json` en vez de retirarse a mano, y ninguna cita sin anclar puede cambiar el
 voto del panel (`docs/decisiones.md` §14). Desde un clon limpio corren `make report`, `make verify` y
 `make check`; `make help` lista todo. El resto necesita los audios, `ffmpeg`, `whisper-cli`, el CLI
@@ -85,8 +85,8 @@ de Claude Code, Chrome y `pdfinfo`.
 |---|---|---|
 | Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, veredicto |
 | Explicación: ¿qué explica las diferencias? | El guion (encuadre de embargos, vencimiento, el pago como forma de evitar un proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
-| Conducta: ¿qué hace mejor cada uno? | La IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas donde el deudor dice que no puede pagar, frente a 9 de 22 de los humanos; los humanos leen mejor el caso, pero ofrecen salir de centrales de riesgo en 22 de 50 | informe, página 2 |
-| Mejora: ¿qué cambiar? | Un piloto con asignación al azar, una variante de la IA sin anuncio legal ni vencimiento y un estándar común para los dos canales | informe, «Qué hacer, en orden» |
+| Conducta: ¿qué hace mejor cada uno? | La IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas donde el deudor dice que no puede pagar, frente a 9 de 22 de los humanos, rotulado como conteo; los humanos ofrecen salir de centrales de riesgo en 22 de 50, rotulado como alerta | informe, página 2 |
+| Mejora: ¿qué cambiar? | Tres frases del guion de la IA, un estándar común para los dos canales, 49 llamadas auditadas por periodo, y un piloto con asignación al azar que incluya una IA sin anuncio legal ni vencimiento | informe, «Los hallazgos y qué hacer con cada uno» |
 
 ## Por dónde empezar
 
@@ -114,7 +114,8 @@ repositorio:
 
 La disciplina que lo hace verificable es la misma en todas partes: **cada respuesta afirmativa
 obliga a citar una frase literal, y el código comprueba que esa frase exista en la
-transcripción**. 258 de 259 quedaron ancladas, y la que no está publicada con nombre propio en
+transcripción**. En la familia de 8 quedaron ancladas 258 de 259, y en el desenlace 182 de 186;
+las que no están publicadas con nombre propio en
 `data/public/anchoring.json`: el anclaje se mide y se reporta, no se usa para limpiar el dato por
 detrás. Lo que sí bloquea es promover una celda: una cita que no existe no puede contradecir al panel.
 
