@@ -105,3 +105,144 @@ def forest(rows: list[EffectRow], width: int = 520, row_height: int = 19) -> str
 
     out.append("</svg>")
     return "\n".join(out)
+
+
+@dataclass(frozen=True)
+class Stage:
+    """Una etapa del recorrido: cuántas llamadas de cada canal llegan hasta aquí.
+
+    Si lleva `parts`, la barra se subdivide y las partes tienen que sumar el total: así el
+    residuo que una tabla deja que el lector sume mal (7 + 2 no son 11) queda dibujado con su
+    propio relleno y su propio número.
+    """
+
+    label: str
+    ia: int
+    human: int
+    parts_ia: tuple[int, ...] = ()
+    parts_human: tuple[int, ...] = ()
+    part_labels: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        for total, parts in ((self.ia, self.parts_ia), (self.human, self.parts_human)):
+            if parts and sum(parts) != total:
+                raise ValueError(f"{self.label}: las partes {parts} no suman {total}")
+
+
+def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: int = 520) -> str:
+    """Tres paneles sobre una sola regla de 0 a `n` llamadas, dibujada una vez arriba.
+
+    La regla resuelve los denominadores sin nota al pie, porque elimina la operación que
+    permite mentir: no hay ningún eje al que reescalar. Un subgrupo se dibuja con su propio
+    largo —quince unidades dentro de una barra de diecinueve, sobre una regla de cincuenta— y
+    detrás de cada barra va el marco completo de `n` en gris, para que una barra corta nunca
+    se lea como una barra llena. Cada barra lleva el canal escrito al lado y su conteo al
+    final: nada depende de una leyenda de color, que fue lo que invirtió la banda anterior.
+
+    Los rellenos son tres y redundantes con el color: sólido, trama a 45° y contorno vacío.
+    Una fotocopia mala funde dos grises en una mancha, pero nunca una trama con un plano.
+    """
+    label_w, tag_w, count_w, pad = 118, 24, 44, 8
+    plot_left = label_w + tag_w + pad
+    plot_w = width - plot_left - count_w
+    unit = plot_w / n
+    bar_h, gap_ch, gap_stage, title_h, legend_h, caption_h = 11.5, 2.5, 10, 16, 11, 11
+    x = lambda calls: plot_left + calls * unit  # noqa: E731
+
+    height = 30 + sum(
+        title_h
+        + sum(2 * bar_h + gap_ch + gap_stage + (legend_h if s.parts_ia else 0) for s in stages)
+        + (caption_h if caption else 4)
+        for _, stages, caption in panels
+    )
+    out = [
+        f'<svg class="recorrido" viewBox="0 0 {width} {height:.0f}" role="img">',
+        "<defs>"
+        '<pattern id="rc-hatch-ia" patternUnits="userSpaceOnUse" width="5" height="5" '
+        'patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="rc-hatch ia"/>'
+        "</pattern>"
+        '<pattern id="rc-hatch-human" patternUnits="userSpaceOnUse" width="5" height="5" '
+        'patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="rc-hatch human"/>'
+        "</pattern>"
+        "</defs>",
+    ]
+
+    # La regla, una vez, arriba: 0, mitad y n. Todo lo de abajo se mide contra ella.
+    y = 10
+    out.append(f'<line class="rc-rule" x1="{x(0):.1f}" y1="{y}" x2="{x(n):.1f}" y2="{y}"/>')
+    for calls in (0, n // 2, n):
+        out.append(
+            f'<line class="rc-rule" x1="{x(calls):.1f}" y1="{y - 3}" '
+            f'x2="{x(calls):.1f}" y2="{y + 3}"/>'
+        )
+        text = f"{calls} llamadas por canal" if calls == n else str(calls)
+        anchor = "end" if calls == n else "middle"
+        out.append(
+            f'<text class="rc-tick" x="{x(calls):.1f}" y="{y - 5}" '
+            f'text-anchor="{anchor}">{text}</text>'
+        )
+    y += 20
+
+    def bar(y0: float, arm: str, total: int, parts: tuple[int, ...], tag: str) -> None:
+        out.append(
+            f'<rect class="rc-frame" x="{x(0):.1f}" y="{y0:.1f}" '
+            f'width="{plot_w:.1f}" height="{bar_h}"/>'
+        )
+        out.append(
+            f'<text class="rc-tag" x="{plot_left - pad:.1f}" y="{y0 + bar_h * 0.78:.1f}" '
+            f'text-anchor="end">{tag}</text>'
+        )
+        if not parts:
+            parts = (total,)
+        start = 0
+        for index, part in enumerate(parts):
+            if part <= 0:
+                continue
+            fill = ("solid", "hatch", "hollow", "dots")[min(index, 3)]
+            out.append(
+                f'<rect class="rc-bar {arm} {fill}" x="{x(start):.1f}" y="{y0:.1f}" '
+                f'width="{part * unit:.1f}" height="{bar_h}"/>'
+            )
+            start += part
+        if total == 0:
+            out.append(
+                f'<circle class="rc-zero {arm}" cx="{x(0):.1f}" cy="{y0 + bar_h / 2:.1f}" r="2"/>'
+            )
+        out.append(
+            f'<text class="rc-count {arm}" x="{x(n) + 6:.1f}" '
+            f'y="{y0 + bar_h * 0.78:.1f}">{total}</text>'
+        )
+
+    for title, stages, caption in panels:
+        out.append(f'<text class="rc-title" x="0" y="{y + 6:.1f}">{title}</text>')
+        y += title_h
+        for stage in stages:
+            lines = stage.label.split("\n")
+            for k, line in enumerate(lines):
+                out.append(f'<text class="rc-label" x="0" y="{y + 8 + k * 9.5:.1f}">{line}</text>')
+            bar(y, "ia", stage.ia, stage.parts_ia, "IA")
+            bar(y + bar_h + gap_ch, "human", stage.human, stage.parts_human, "HUM")
+            y += 2 * bar_h + gap_ch
+            if stage.parts_ia:
+                bits = []
+                for k, name in enumerate(stage.part_labels):
+                    fill = ("solid", "hatch", "hollow", "dots")[min(k, 3)]
+                    bits.append(
+                        f'<tspan class="rc-swatch {fill}">■</tspan> {name} '
+                        f"{stage.parts_ia[k]}·{stage.parts_human[k]}"
+                    )
+                out.append(
+                    f'<text class="rc-legend" x="{plot_left:.1f}" y="{y + 8:.1f}">'
+                    + "   ".join(bits)
+                    + "</text>"
+                )
+                y += legend_h
+            y += gap_stage
+        if caption:
+            out.append(f'<text class="rc-caption" x="0" y="{y + 2:.1f}">{caption}</text>')
+            y += caption_h
+        else:
+            y += 4
+
+    out.append("</svg>")
+    return "\n".join(out)

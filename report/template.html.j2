@@ -162,6 +162,37 @@
   ol.findings .why { color:var(--muted); }
   ol.findings .action { display:block; margin-top:.5mm; font-size:8.6pt; color:var(--ia); }
 
+  /* ── El recorrido: una regla de 0 a 50 y tres paneles medidos contra ella ─────── */
+  svg.recorrido { width:100%; height:auto; display:block; margin-top:1mm; }
+  .journey .lead { font-size:8.6pt; color:var(--ink); margin:0 0 1mm; text-wrap:pretty; }
+  .rc-rule { stroke:var(--ink); stroke-width:.9; }
+  .rc-tick { font-family:var(--mono); font-size:7px; fill:var(--muted); }
+  .rc-frame { fill:#f2f2f2; }
+  .rc-tag { font-family:var(--mono); font-size:7px; font-weight:600; fill:var(--muted); }
+  .rc-bar.ia.solid { fill:var(--ia); }
+  .rc-bar.human.solid { fill:var(--humano); }
+  .rc-bar.ia.hatch { fill:url(#rc-hatch-ia); }
+  .rc-bar.human.hatch { fill:url(#rc-hatch-human); }
+  .rc-hatch.ia { stroke:var(--ia); stroke-width:1.6; }
+  .rc-hatch.human { stroke:var(--humano); stroke-width:1.6; }
+  .rc-bar.ia.hollow { fill:var(--paper); stroke:var(--ia); stroke-width:.9; }
+  .rc-bar.human.hollow { fill:var(--paper); stroke:var(--humano); stroke-width:.9; }
+  .rc-bar.dots { fill:#d9d9d9; }
+  .rc-zero.ia { fill:var(--ia); }
+  .rc-zero.human { fill:var(--humano); }
+  .rc-count { font-family:var(--mono); font-size:8.3px; font-weight:600; }
+  .rc-count.ia { fill:var(--ia); }
+  .rc-count.human { fill:var(--humano); }
+  .rc-label { font-size:8.3px; fill:var(--ink); }
+  .rc-title { font-family:var(--display); font-size:7.2px; font-weight:600; letter-spacing:.16em;
+              text-transform:uppercase; fill:var(--marca-tinta); }
+  .rc-legend { font-size:7px; fill:var(--muted); }
+  .rc-swatch.solid { fill:var(--ink); }
+  .rc-swatch.hatch { fill:#8a8a8a; }
+  .rc-swatch.hollow { fill:#ffffff; stroke:var(--ink); stroke-width:.5; }
+  .rc-swatch.dots { fill:#d9d9d9; }
+  .rc-caption { font-size:7.2px; fill:var(--muted); }
+
   /* ── El cierre: cinco acciones, el número grande, el plazo como etiqueta ────── */
   ol.actions { margin:0; padding:0; list-style:none; counter-reset:a; }
   ol.actions li { counter-increment:a; position:relative; padding:1.2mm 0 1.2mm 9mm;
@@ -183,7 +214,7 @@
   }
   ul.levers li { margin-bottom:.9mm; }
   ul.bullets li { margin-bottom:.7mm; }
-  .colofon { margin-top:3mm; }
+  .colofon { margin-top:2mm; }
   .note { font-size:7.9pt; color:var(--muted); border-left:2px solid var(--rule); padding-left:2.4mm; }
   .grid2 { display:block; columns:2; column-gap:5mm; }
   .grid2 section { break-inside:avoid; margin-bottom:0; }
@@ -240,24 +271,10 @@
     <div class="eyebrow">La llamada, de principio a fin</div>
   </header>
 
-  <section>
-    <h2 class="major">{{ conducta.titulo }}</h2>
-    <table class="conduct">
-      <thead><tr><th>En las llamadas de cada canal</th><th class="num">IA</th>
-        <th class="num">Humanos</th></tr></thead>
-      <tbody>
-      {% for f in conducta.filas %}
-        <tr><td>{{ f.que }}</td><td class="num">{{ f.ia }}</td><td class="num">{{ f.humano }}</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    <p class="note">{{ conducta.nota }}</p>
-    <p class="note">¿Eran comparables? {{ comparabilidad }}</p>
-  </section>
-
-  <section>
-    <h2>Qué no se puede concluir con estas llamadas</h2>
-    <ul class="bullets">{% for l in limitaciones %}<li>{{ l }}</li>{% endfor %}</ul>
+  <section class="journey">
+    <h2 class="major">Hasta dónde llega la llamada y cómo queda quien contesta</h2>
+    <p class="lead">{{ recorrido_lead }}</p>
+    {{ recorrido_svg|safe }}
   </section>
 
   <section class="close">

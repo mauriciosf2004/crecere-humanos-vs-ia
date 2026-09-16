@@ -312,6 +312,10 @@ def build() -> dict:
             "dificultad": sum(v for k, v in ante.items() if k not in ("no_aplica", "None")),
             "reconoce": ante.get("reconoce_y_ofrece", 0),
             "insiste": ante.get("insiste_o_presiona", 0),
+            "ofrece_sin": ante.get("ofrece_sin_reconocer", 0),
+            "otra": ante.get("reconoce_sin_ofrecer", 0),
+            "indefinido": cierre.get("acepta_vago", 0)
+            + cierre.get("acepta_alcance_indeterminado", 0),
             "colabora": estado.get("cooperativo", 0),
             "incomodo": sum(estado.get(k, 0) for k in ("evasivo", "molesto", "angustiado")),
             "mudo": estado.get("None", 0),
@@ -323,6 +327,19 @@ def build() -> dict:
     _require(
         all(c["colabora"] + c["incomodo"] + c["mudo"] == n for c in conducta.values()),
         "el estado al cierre reparte las 50 llamadas de cada canal sin perder ninguna",
+    )
+    _require(
+        all(
+            c["salda"] + c["abono"] + c["indefinido"] == c["acepta"]
+            and c["reconoce"] + c["ofrece_sin"] + c["insiste"] + c["otra"] == c["dificultad"]
+            for c in conducta.values()
+        ),
+        "las partes de cada barra del recorrido suman su total",
+    )
+    _require(
+        commitment["k_ia"] <= conducta["ia"]["acepta"]
+        and commitment["k_humano"] <= conducta["humano"]["acepta"],
+        "todo compromiso con fecha y monto es también una aceptación en la otra rúbrica",
     )
 
     heard = agreement["resumen"].get("celdas_escuchadas", 0)
@@ -362,10 +379,9 @@ def build() -> dict:
     _require(contact["indeterminado_ia"] > 0, "en llamadas de IA no se sabe con quién se habla")
 
     colofon = (
-        f"Cada cifra sale de una frase textual de la llamada, y se comprobó que esa frase "
-        f"exista: {family_anchor['anclados']} de {family_anchor['positivos']}. Ninguna se "
-        "escribió a mano: el informe se regenera solo desde los datos. El método, las "
-        "decisiones y los datos derivados están en el repositorio."
+        "Cada cifra sale de una frase textual de la llamada y se comprobó que exista: "
+        f"{family_anchor['anclados']} de {family_anchor['positivos']}. Ninguna se escribió a "
+        "mano; el método está en el repositorio."
     )
 
     return {
@@ -443,77 +459,120 @@ def build() -> dict:
         # Numerados 1 y 2: la pregunta que el cliente hizo va primero, y las alertas de
         # cumplimiento siguen en 3-6. Antes la lista empezaba en «5» y el lector buscaba la
         # página que faltaba.
-        "comparabilidad": (
-            "No del todo. El acuerdo previo se detecta por lo dicho en la llamada, así que "
-            "puede reflejar la cartera o el guion."
-            + f" En {contact['indeterminado_ia']} llamadas de IA no se sabe quién contesta "
-            + f"({contact['indeterminado_humano']} "
-            + ("humana)." if contact["indeterminado_humano"] == 1 else "humanas).")
-            + f" Duración mediana: {duration['mediana_ia_s']:.0f} s en IA y "
-            + f"{duration['mediana_humano_s']:.0f} s en humanos, parecida."
+        "recorrido_lead": (
+            f"Las dos carteras no son la misma: {prior['k_humano']} de {prior['n_humano']} "
+            "llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con "
+            f"{n} llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de "
+            "esta página es un porcentaje: son llamadas, sobre la misma regla."
         ),
-        # Descriptivo y nada más. Los cortes de esta rúbrica no pasaron su validación a oído,
-        # así que no hay contraste, ni tasas, ni intervalos: conteos con su denominador.
-        "conducta": {
-            "titulo": "Cómo reacciona cada canal",
-            "filas": [
-                {
-                    "que": "Ante una dificultad para pagar, reconoce la situación y ofrece una "
-                    "alternativa",
-                    "ia": f"{conducta['ia']['reconoce']} de {conducta['ia']['dificultad']}",
-                    "humano": f"{conducta['humano']['reconoce']} de "
-                    f"{conducta['humano']['dificultad']}",
-                },
-                {
-                    "que": "Insiste o menciona consecuencias sin ofrecer alternativa",
-                    "ia": f"{conducta['ia']['insiste']} de {conducta['ia']['dificultad']}",
-                    "humano": f"{conducta['humano']['insiste']} de "
-                    f"{conducta['humano']['dificultad']}",
-                },
-                {
-                    "que": "Llega a una propuesta concreta",
-                    "ia": f"{conducta['ia']['llega']} de {n}",
-                    "humano": f"{conducta['humano']['llega']} de {n}",
-                },
-                {
-                    "que": "Termina en algún tipo de aceptación",
-                    "ia": f"{conducta['ia']['acepta']} de {n}",
-                    "humano": f"{conducta['humano']['acepta']} de {n}",
-                },
-                {
-                    # La distinción que motivó la segunda rúbrica, y la que importa para
-                    # planear caja: no es lo mismo saldar que abonar.
-                    "que": "De esas, el acuerdo salda lo que se discutió",
-                    "ia": f"{conducta['ia']['salda']} de {n}",
-                    "humano": f"{conducta['humano']['salda']} de {n}",
-                },
-                {
-                    "que": "De esas, es un abono o un acuerdo parcial",
-                    "ia": f"{conducta['ia']['abono']} de {n}",
-                    "humano": f"{conducta['humano']['abono']} de {n}",
-                },
-                {
-                    "que": "El interlocutor queda colaborando al cerrar",
-                    "ia": f"{conducta['ia']['colabora']} de {n}",
-                    "humano": f"{conducta['humano']['colabora']} de {n}",
-                },
-                {
-                    "que": "Queda esquivo, molesto o angustiado",
-                    "ia": f"{conducta['ia']['incomodo']} de {n}",
-                    "humano": f"{conducta['humano']['incomodo']} de {n}",
-                },
-                {
-                    "que": "No habla lo suficiente para saberlo",
-                    "ia": f"{conducta['ia']['mudo']} de {n}",
-                    "humano": f"{conducta['humano']['mudo']} de {n}",
-                },
-            ],
-            "nota": (
-                "Segunda rúbrica, el mismo panel de tres y la misma exigencia de cita textual. "
-                "Son conteos, no tasas: con estos denominadores una diferencia así no se "
-                "distingue del ruido."
-            ),
-        },
+        "recorrido": [
+            {
+                "titulo": "1 · Hasta dónde llega la conversación",
+                "etapas": [
+                    {
+                        "label": "Contesta\nel titular",
+                        "ia": contact["k_ia"],
+                        "human": contact["k_humano"],
+                    },
+                    {
+                        "label": "Llega a una\npropuesta",
+                        "ia": conducta["ia"]["llega"],
+                        "human": conducta["humano"]["llega"],
+                    },
+                    {
+                        "label": "Termina en\naceptación",
+                        "ia": conducta["ia"]["acepta"],
+                        "human": conducta["humano"]["acepta"],
+                        "parts_ia": [
+                            conducta["ia"]["salda"],
+                            conducta["ia"]["abono"],
+                            conducta["ia"]["indefinido"],
+                        ],
+                        "parts_human": [
+                            conducta["humano"]["salda"],
+                            conducta["humano"]["abono"],
+                            conducta["humano"]["indefinido"],
+                        ],
+                        "part_labels": [
+                            "salda lo discutido",
+                            "abono o parcial",
+                            "alcance no definido",
+                        ],
+                    },
+                    {
+                        "label": "Compromiso con\nfecha y monto",
+                        "ia": commitment["k_ia"],
+                        "human": commitment["k_humano"],
+                    },
+                ],
+                "pie": (
+                    "Aceptación es lo que se dijo en la llamada, no plata recaudada: no hay datos "
+                    "de pago."
+                ),
+            },
+            {
+                "titulo": "2 · Cómo queda el interlocutor al cerrar",
+                "etapas": [
+                    {
+                        "label": "Al colgar",
+                        "ia": n,
+                        "human": n,
+                        "parts_ia": [
+                            conducta["ia"]["colabora"],
+                            conducta["ia"]["incomodo"],
+                            conducta["ia"]["mudo"],
+                        ],
+                        "parts_human": [
+                            conducta["humano"]["colabora"],
+                            conducta["humano"]["incomodo"],
+                            conducta["humano"]["mudo"],
+                        ],
+                        "part_labels": [
+                            "colabora",
+                            "esquivo, molesto o angustiado",
+                            "no habla lo suficiente para saberlo",
+                        ],
+                    }
+                ],
+                "pie": (
+                    f"En {conducta['ia']['mudo']} de las {n} llamadas de la IA el interlocutor no "
+                    f"habla lo suficiente para saber cómo queda; en humanos, en "
+                    f"{conducta['humano']['mudo']}."
+                ),
+            },
+            {
+                "titulo": "3 · Cuando el deudor dice que no puede pagar",
+                "etapas": [
+                    {
+                        "label": "Respuesta\ndel agente",
+                        "ia": conducta["ia"]["dificultad"],
+                        "human": conducta["humano"]["dificultad"],
+                        "parts_ia": [
+                            conducta["ia"]["reconoce"],
+                            conducta["ia"]["ofrece_sin"],
+                            conducta["ia"]["insiste"],
+                            conducta["ia"]["otra"],
+                        ],
+                        "parts_human": [
+                            conducta["humano"]["reconoce"],
+                            conducta["humano"]["ofrece_sin"],
+                            conducta["humano"]["insiste"],
+                            conducta["humano"]["otra"],
+                        ],
+                        "part_labels": [
+                            "reconoce y ofrece alternativa",
+                            "ofrece sin reconocer",
+                            "insiste o presiona",
+                            "otra",
+                        ],
+                    }
+                ],
+                "pie": (
+                    "Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma "
+                    "regla, su largo ya dice cuántas son."
+                ),
+            },
+        ],
         "acciones": [
             {
                 "plazo": "Esta semana, sin costo",
@@ -555,20 +614,6 @@ def build() -> dict:
                     "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
                 ),
             },
-        ],
-        "limitaciones": [
-            (
-                "Cuál canal recupera más plata: no hay datos de pago, y un compromiso hablado "
-                "no es un recaudo."
-            ),
-            (
-                "Cuánto pesan la claridad o el manejo de objeciones: eso exige separar las voces "
-                "de la grabación, y ese error favorecería a la IA."
-            ),
-            (
-                f"Diferencias pequeñas: con {n} llamadas por canal solo se ven las grandes, y "
-                "las menores no se distinguen del azar."
-            ),
         ],
         "colofon": colofon,
     }

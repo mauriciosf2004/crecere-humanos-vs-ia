@@ -13,7 +13,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from src.charts import EffectRow, forest
+from src.charts import EffectRow, Stage, forest, recorrido
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "data" / "public" / "results.json"
@@ -64,8 +64,31 @@ def render() -> Path:
         undefined=StrictUndefined,  # una variable que falte rompe el build, no sale en blanco
         autoescape=True,
     )
+    # El recorrido de la llamada se dibuja aquí desde los conteos publicados: la escala, el
+    # marco de 50 y las longitudes se calculan, nunca se escriben.
+    panels = [
+        (
+            panel["titulo"],
+            [
+                Stage(
+                    label=s["label"],
+                    ia=s["ia"],
+                    human=s["human"],
+                    parts_ia=tuple(s.get("parts_ia", ())),
+                    parts_human=tuple(s.get("parts_human", ())),
+                    part_labels=tuple(s.get("part_labels", ())),
+                )
+                for s in panel["etapas"]
+            ],
+            panel["pie"],
+        )
+        for panel in results["recorrido"]
+    ]
     html = env.get_template("template.html.j2").render(
-        forest_svg=forest(rows, row_height=15), fuentes=embedded_fonts(), **results
+        forest_svg=forest(rows, row_height=15),
+        recorrido_svg=recorrido(panels),
+        fuentes=embedded_fonts(),
+        **results,
     )
     OUTPUT.write_text(html, encoding="utf-8")
     return OUTPUT
