@@ -60,6 +60,7 @@ flowchart TD
         S["Contraste de la familia<br/>test global, luego Westfall-Young<br/>make analyze"]
         D["Desenlace y reacción<br/>conteos, fuera de la familia"]
         R["results.json<br/>toda cifra del informe, calculada"]
+        T["report/template.html.j2<br/>la maqueta: solo huecos, cero cifras<br/>encargada con docs/brief-diseno.md"]
         H["report/index.html<br/>2 páginas, para el banco<br/>make report"]
     end
 
@@ -80,13 +81,16 @@ flowchart TD
     S --> R
     D --> R
     R --> H
+    T --> H
     H --> V
 
     classDef puerta fill:#7a2c68,stroke:#59203f,color:#ffffff
     classDef entrega fill:#1f3d7a,stroke:#16294f,color:#ffffff
     classDef descarte fill:none,stroke:#8b949e,color:#8b949e,stroke-dasharray:4 4
+    classDef spec fill:none,stroke:#7a2c68,color:#7a2c68
     class Q,PII,V puerta
     class H entrega
+    class T spec
     class X descarte
     style priv fill:none,stroke:#8b949e,stroke-dasharray:6 4
     style pub fill:none,stroke:#7a2c68
@@ -117,18 +121,21 @@ con una cifra escrita a mano.
 
 `docs/variables-descartadas.md` lista las 39 candidatas que no entraron en la familia y por qué.
 
-## Anotar con agentes, especificado
+## Trabajar con agentes, especificado
 
-El trabajo de anotación está especificado, no improvisado, y esa especificación es parte del
-repositorio:
+Aquí los agentes hicieron tres trabajos —anotar, maquetar y criticar— y ninguno se pidió de viva
+voz: cada uno tiene su especificación escrita antes, y esa especificación es parte del repositorio.
+Es lo que hace que el resultado se pueda auditar y repetir.
 
 | Pieza | Qué gobierna |
 |---|---|
 | `AGENTS.md` (`CLAUDE.md` es un enlace a él) | El contrato del proyecto: qué se versiona y qué no, la regla de PII, la prohibición de escribir una cifra a mano, y la definición de «hecho» |
 | `src/rubric.md`, `src/rubric_desenlace.md` | Las dos rúbricas, congeladas antes de anotar; su huella entra en la caché, así que editarlas invalida las anotaciones |
 | `src/schema.json`, `src/schema_desenlace.json` | La salida válida: conjuntos cerrados, sin texto libre |
-| `workflows/panel-anotacion.js` | La orquestación: tres roles, dos modelos, reanudable por lotes |
+| `workflows/panel-anotacion.js` | La orquestación del panel: tres roles, dos modelos, reanudable por lotes |
 | `docs/hipotesis.md` | El pre-registro: hipótesis, cortes y regla de publicación, con fecha y commit |
+| `docs/brief-diseno.md` | El encargo de la maqueta: qué se puede tocar, qué no, la paleta medida y cómo se acepta un cambio |
+| `.claude/agents/critico-reporte.md` | El revisor: lee el informe como un directivo de banca con noventa segundos y sin contexto, y se corre antes de dar el trabajo por terminado |
 
 La disciplina que lo hace verificable es la misma en todas partes: **cada respuesta afirmativa
 obliga a citar una frase literal, y el código comprueba que esa frase exista en la
@@ -157,10 +164,11 @@ ver `report/fonts/LICENSE.txt`) y solo en títulos y rótulos. Embebida, el info
 igual en cualquier máquina: sin eso, un Linux sin las caras del sistema cae en una más ancha y se
 va a tres páginas, que es justo lo que CI detectó.
 
-La maqueta final no se dibujó a mano: se encargó con un brief (`docs/brief-diseno.md`, que fija
-qué se toca, qué no y cómo se acepta un cambio) a una herramienta de diseño con acceso al
-repositorio, y entró por las mismas puertas que el código: `make report`, `make verify`,
-`make check` y ninguna cifra a mano (`docs/decisiones.md` §19).
+La maqueta no se dibujó a mano ni se pidió «a ver qué sale»: se escribió primero la
+especificación —`docs/brief-diseno.md`, que fija qué se puede tocar, qué no, la paleta ya medida
+y cómo se acepta un cambio— y se encargó a una herramienta de diseño con acceso al repositorio.
+Lo que volvió entró por las mismas puertas que el código: `make report`, `make verify`,
+`make check` y ninguna cifra a mano. Cómo se decidió, en `docs/decisiones.md` §19.
 
 ## Qué hay en el repositorio y qué no
 
