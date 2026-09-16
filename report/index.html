@@ -195,17 +195,16 @@
   .rc-swatch.dots { fill:#d9d9d9; }
   .rc-caption { font-size:7.2px; fill:var(--muted); }
 
-  /* ── El cierre: cinco acciones, el número grande, el plazo como etiqueta ────── */
-  ol.actions { margin:0; padding:0; list-style:none; counter-reset:a; }
-  ol.actions li { counter-increment:a; position:relative; padding:1.2mm 0 1.2mm 9mm;
-                  border-bottom:1px solid var(--rule); }
-  ol.actions li:last-child { border-bottom:0; }
-  ol.actions li::before { content:counter(a); position:absolute; left:0; top:1.4mm;
-    font-family:var(--display); font-size:13pt; font-weight:600; color:var(--ink); line-height:1; }
-  ol.actions .plazo { display:block; font-family:var(--display); font-size:6.8pt; font-weight:600;
-    letter-spacing:.18em; text-transform:uppercase; color:var(--marca-tinta); }
-  ol.actions .que { display:block; font-weight:600; font-size:9.6pt; margin-top:.3mm; }
-  ol.actions .cifra { display:block; color:var(--muted); font-size:8.6pt; margin-top:.3mm; }
+  /* ── El cierre como plan: tres columnas por plazo, el tiempo de izquierda a derecha ── */
+  .plan { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 5mm; margin-top:1mm; }
+  .plan .col { border-top:1.6px solid var(--ink); padding-top:1.4mm; }
+  .plan .plazo { font-family:var(--display); font-size:6.8pt; font-weight:600; letter-spacing:.18em;
+                 text-transform:uppercase; color:var(--marca-tinta); margin-bottom:1.2mm; }
+  .plan .accion { position:relative; padding:0 0 1.6mm 7mm; }
+  .plan .num { position:absolute; left:0; top:-.4mm; font-family:var(--display); font-size:13pt;
+               font-weight:600; color:var(--ink); line-height:1; }
+  .plan .que { display:block; font-weight:600; font-size:9.2pt; line-height:1.25; }
+  .plan .cifra { display:block; color:var(--muted); font-size:8.2pt; line-height:1.3; margin-top:.4mm; }
 
   /* ── Listas, notas y pie ──────────────────────────────────────────────── */
   ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
@@ -238,7 +237,7 @@
     <h1>Cobranza con agentes humanos y de IA: qué cambia en la gestión</h1>
   </header>
 
-  <p class="verdict"><strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA, así que esto describe cómo habla cada uno.</p>
+  <p class="verdict"><strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA.</p>
 
   <p class="ask">Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.</p>
 
@@ -328,7 +327,7 @@
   <section class="journey">
     <h2 class="major">Hasta dónde llega la llamada y cómo queda quien contesta</h2>
     <p class="lead">Las dos carteras no son la misma: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA. Con 50 llamadas por canal solo se ven las diferencias grandes, y ninguna cifra de esta página es un porcentaje: son llamadas, sobre la misma regla.</p>
-    <svg class="recorrido" viewBox="0 0 520 357" role="img">
+    <svg class="recorrido" viewBox="0 0 520 396" role="img">
 <defs><pattern id="rc-hatch-ia" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="rc-hatch ia"/></pattern><pattern id="rc-hatch-human" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="rc-hatch human"/></pattern></defs>
 <line class="rc-rule" x1="150.0" y1="10" x2="476.0" y2="10"/>
 <line class="rc-rule" x1="150.0" y1="7" x2="150.0" y2="13"/>
@@ -338,109 +337,139 @@
 <line class="rc-rule" x1="476.0" y1="7" x2="476.0" y2="13"/>
 <text class="rc-tick" x="476.0" y="5" text-anchor="end">50 llamadas por canal</text>
 <text class="rc-title" x="0" y="36.0">1 · Hasta dónde llega la conversación</text>
-<text class="rc-label" x="0" y="54.0">Contesta</text>
-<text class="rc-label" x="0" y="63.5">el titular</text>
-<rect class="rc-frame" x="150.0" y="46.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="55.0" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="46.0" width="202.1" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="55.0">31</text>
-<rect class="rc-frame" x="150.0" y="60.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="69.0" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="60.0" width="299.9" height="11.5"/>
-<text class="rc-count human" x="482.0" y="69.0">46</text>
-<text class="rc-label" x="0" y="89.5">Llega a una</text>
-<text class="rc-label" x="0" y="99.0">propuesta</text>
-<rect class="rc-frame" x="150.0" y="81.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="90.5" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="81.5" width="156.5" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="90.5">24</text>
-<rect class="rc-frame" x="150.0" y="95.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="104.5" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="95.5" width="260.8" height="11.5"/>
-<text class="rc-count human" x="482.0" y="104.5">40</text>
-<text class="rc-label" x="0" y="125.0">Termina en</text>
-<text class="rc-label" x="0" y="134.5">aceptación</text>
-<rect class="rc-frame" x="150.0" y="117.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="126.0" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="117.0" width="45.6" height="11.5"/>
-<rect class="rc-bar ia hatch" x="195.6" y="117.0" width="13.0" height="11.5"/>
-<rect class="rc-bar ia hollow" x="208.7" y="117.0" width="13.0" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="126.0">11</text>
-<rect class="rc-frame" x="150.0" y="131.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="140.0" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="131.0" width="84.8" height="11.5"/>
-<rect class="rc-bar human hatch" x="234.8" y="131.0" width="32.6" height="11.5"/>
-<rect class="rc-bar human hollow" x="267.4" y="131.0" width="65.2" height="11.5"/>
-<text class="rc-count human" x="482.0" y="140.0">28</text>
-<text class="rc-legend" x="150.0" y="150.5"><tspan class="rc-swatch solid">■</tspan> salda lo discutido 7·13   <tspan class="rc-swatch hatch">■</tspan> abono o parcial 2·5   <tspan class="rc-swatch hollow">■</tspan> alcance no definido 2·10</text>
-<text class="rc-label" x="0" y="171.5">Compromiso con</text>
-<text class="rc-label" x="0" y="181.0">fecha y monto</text>
-<rect class="rc-frame" x="150.0" y="163.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="172.5" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="163.5" width="58.7" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="172.5">9</text>
-<rect class="rc-frame" x="150.0" y="177.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="186.5" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="177.5" width="110.8" height="11.5"/>
-<text class="rc-count human" x="482.0" y="186.5">17</text>
-<text class="rc-caption" x="0" y="201.0">Aceptación es lo que se dijo en la llamada, no plata recaudada: no hay datos de pago.</text>
-<text class="rc-title" x="0" y="216.0">2 · Cómo queda el interlocutor al cerrar</text>
-<text class="rc-label" x="0" y="234.0">Al colgar</text>
-<rect class="rc-frame" x="150.0" y="226.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="235.0" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="226.0" width="97.8" height="11.5"/>
-<rect class="rc-bar ia hatch" x="247.8" y="226.0" width="123.9" height="11.5"/>
-<rect class="rc-bar ia hollow" x="371.7" y="226.0" width="104.3" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="235.0">50</text>
-<rect class="rc-frame" x="150.0" y="240.0" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="249.0" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="240.0" width="221.7" height="11.5"/>
-<rect class="rc-bar human hatch" x="371.7" y="240.0" width="71.7" height="11.5"/>
-<rect class="rc-bar human hollow" x="443.4" y="240.0" width="32.6" height="11.5"/>
-<text class="rc-count human" x="482.0" y="249.0">50</text>
-<text class="rc-legend" x="150.0" y="259.5"><tspan class="rc-swatch solid">■</tspan> colabora 15·34   <tspan class="rc-swatch hatch">■</tspan> esquivo, molesto o angustiado 19·11   <tspan class="rc-swatch hollow">■</tspan> no habla lo suficiente para saberlo 16·5</text>
-<text class="rc-caption" x="0" y="274.5">En 16 de las 50 llamadas de la IA el interlocutor no habla lo suficiente para saber cómo queda; en humanos, en 5.</text>
-<text class="rc-title" x="0" y="289.5">3 · Cuando el deudor dice que no puede pagar</text>
-<text class="rc-label" x="0" y="307.5">Respuesta</text>
-<text class="rc-label" x="0" y="317.0">del agente</text>
-<rect class="rc-frame" x="150.0" y="299.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="308.5" text-anchor="end">IA</text>
-<rect class="rc-bar ia solid" x="150.0" y="299.5" width="97.8" height="11.5"/>
-<rect class="rc-bar ia hatch" x="247.8" y="299.5" width="13.0" height="11.5"/>
-<rect class="rc-bar ia hollow" x="260.8" y="299.5" width="13.0" height="11.5"/>
-<text class="rc-count ia" x="482.0" y="308.5">19</text>
-<rect class="rc-frame" x="150.0" y="313.5" width="326.0" height="11.5"/>
-<text class="rc-tag" x="142.0" y="322.5" text-anchor="end">HUM</text>
-<rect class="rc-bar human solid" x="150.0" y="313.5" width="58.7" height="11.5"/>
-<rect class="rc-bar human hatch" x="208.7" y="313.5" width="52.2" height="11.5"/>
-<rect class="rc-bar human hollow" x="260.8" y="313.5" width="26.1" height="11.5"/>
-<rect class="rc-bar human dots" x="286.9" y="313.5" width="6.5" height="11.5"/>
-<text class="rc-count human" x="482.0" y="322.5">22</text>
-<text class="rc-legend" x="150.0" y="333.0"><tspan class="rc-swatch solid">■</tspan> reconoce y ofrece alternativa 15·9   <tspan class="rc-swatch hatch">■</tspan> ofrece sin reconocer 2·8   <tspan class="rc-swatch hollow">■</tspan> insiste o presiona 2·4   <tspan class="rc-swatch dots">■</tspan> otra 0·1</text>
-<text class="rc-caption" x="0" y="348.0">Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma regla, su largo ya dice cuántas son.</text>
+<text class="rc-label" x="0" y="58.0">Contesta</text>
+<text class="rc-label" x="0" y="67.5">el titular</text>
+<rect class="rc-frame" x="150.0" y="50.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="59.0" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="50.0" width="202.1" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="59.0">31</text>
+<rect class="rc-frame" x="150.0" y="64.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="73.0" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="64.0" width="299.9" height="11.5"/>
+<text class="rc-count human" x="482.0" y="73.0">46</text>
+<text class="rc-label" x="0" y="94.5">Llega a una</text>
+<text class="rc-label" x="0" y="104.0">propuesta</text>
+<rect class="rc-frame" x="150.0" y="86.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="95.5" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="86.5" width="156.5" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="95.5">24</text>
+<rect class="rc-frame" x="150.0" y="100.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="109.5" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="100.5" width="260.8" height="11.5"/>
+<text class="rc-count human" x="482.0" y="109.5">40</text>
+<text class="rc-label" x="0" y="131.0">Termina en</text>
+<text class="rc-label" x="0" y="140.5">aceptación</text>
+<rect class="rc-frame" x="150.0" y="123.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="132.0" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="123.0" width="45.6" height="11.5"/>
+<rect class="rc-bar ia hatch" x="195.6" y="123.0" width="13.0" height="11.5"/>
+<rect class="rc-bar ia hollow" x="208.7" y="123.0" width="13.0" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="132.0">11</text>
+<rect class="rc-frame" x="150.0" y="137.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="146.0" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="137.0" width="84.8" height="11.5"/>
+<rect class="rc-bar human hatch" x="234.8" y="137.0" width="32.6" height="11.5"/>
+<rect class="rc-bar human hollow" x="267.4" y="137.0" width="65.2" height="11.5"/>
+<text class="rc-count human" x="482.0" y="146.0">28</text>
+<text class="rc-legend" x="150.0" y="156.5"><tspan class="rc-swatch solid">■</tspan> salda lo discutido 7·13   <tspan class="rc-swatch hatch">■</tspan> abono o parcial 2·5   <tspan class="rc-swatch hollow">■</tspan> alcance no definido 2·10</text>
+<text class="rc-label" x="0" y="178.5">Compromiso con</text>
+<text class="rc-label" x="0" y="188.0">fecha y monto</text>
+<rect class="rc-frame" x="150.0" y="170.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="179.5" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="170.5" width="58.7" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="179.5">9</text>
+<rect class="rc-frame" x="150.0" y="184.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="193.5" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="184.5" width="110.8" height="11.5"/>
+<text class="rc-count human" x="482.0" y="193.5">17</text>
+<text class="rc-caption" x="0" y="209.0">Aceptación es lo que se dijo en la llamada, no plata recaudada: no hay datos de pago.</text>
+<text class="rc-title" x="0" y="231.0">2 · Cómo queda el interlocutor al cerrar</text>
+<text class="rc-label" x="0" y="253.0">Al colgar</text>
+<rect class="rc-frame" x="150.0" y="245.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="254.0" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="245.0" width="97.8" height="11.5"/>
+<rect class="rc-bar ia hatch" x="247.8" y="245.0" width="123.9" height="11.5"/>
+<rect class="rc-bar ia hollow" x="371.7" y="245.0" width="104.3" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="254.0">50</text>
+<rect class="rc-frame" x="150.0" y="259.0" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="268.0" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="259.0" width="221.7" height="11.5"/>
+<rect class="rc-bar human hatch" x="371.7" y="259.0" width="71.7" height="11.5"/>
+<rect class="rc-bar human hollow" x="443.4" y="259.0" width="32.6" height="11.5"/>
+<text class="rc-count human" x="482.0" y="268.0">50</text>
+<text class="rc-legend" x="150.0" y="278.5"><tspan class="rc-swatch solid">■</tspan> colabora 15·34   <tspan class="rc-swatch hatch">■</tspan> esquivo, molesto o angustiado 19·11   <tspan class="rc-swatch hollow">■</tspan> no habla lo suficiente para saberlo 16·5</text>
+<text class="rc-caption" x="0" y="294.5">En 16 de las 50 llamadas de la IA el interlocutor no habla lo suficiente para saber cómo queda; en humanos, en 5.</text>
+<text class="rc-title" x="0" y="316.5">3 · Cuando el deudor dice que no puede pagar</text>
+<text class="rc-label" x="0" y="338.5">Respuesta</text>
+<text class="rc-label" x="0" y="348.0">del agente</text>
+<rect class="rc-frame" x="150.0" y="330.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="339.5" text-anchor="end">IA</text>
+<rect class="rc-bar ia solid" x="150.0" y="330.5" width="97.8" height="11.5"/>
+<rect class="rc-bar ia hatch" x="247.8" y="330.5" width="13.0" height="11.5"/>
+<rect class="rc-bar ia hollow" x="260.8" y="330.5" width="13.0" height="11.5"/>
+<text class="rc-count ia" x="482.0" y="339.5">19</text>
+<rect class="rc-frame" x="150.0" y="344.5" width="326.0" height="11.5"/>
+<text class="rc-tag" x="142.0" y="353.5" text-anchor="end">HUM</text>
+<rect class="rc-bar human solid" x="150.0" y="344.5" width="58.7" height="11.5"/>
+<rect class="rc-bar human hatch" x="208.7" y="344.5" width="52.2" height="11.5"/>
+<rect class="rc-bar human hollow" x="260.8" y="344.5" width="26.1" height="11.5"/>
+<rect class="rc-bar human dots" x="286.9" y="344.5" width="6.5" height="11.5"/>
+<text class="rc-count human" x="482.0" y="353.5">22</text>
+<text class="rc-legend" x="150.0" y="364.0"><tspan class="rc-swatch solid">■</tspan> reconoce y ofrece alternativa 15·9   <tspan class="rc-swatch hatch">■</tspan> ofrece sin reconocer 2·8   <tspan class="rc-swatch hollow">■</tspan> insiste o presiona 2·4   <tspan class="rc-swatch dots">■</tspan> otra 0·1</text>
+<text class="rc-caption" x="0" y="380.0">Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma regla, su largo ya dice cuántas son.</text>
 </svg>
   </section>
 
   <section class="close">
     <h2 class="major">Qué hacer, en orden</h2>
-    <ol class="actions">
+    <div class="plan">
       
-      <li><span class="plazo">Esta semana, sin costo</span><span class="que">Editar tres frases del guion de la IA.</span>
-        <span class="cifra">3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos.</span></li>
+      <div class="col">
+        <div class="plazo">Esta semana, sin costo</div>
+        
+        <div class="accion">
+          <span class="num">1</span>
+          <span class="que">Editar tres frases del guion de la IA.</span>
+          <span class="cifra">3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos.</span>
+        </div>
+        
+        <div class="accion">
+          <span class="num">2</span>
+          <span class="que">Confirmar con quién se habla antes de negociar, en los dos canales.</span>
+          <span class="cifra">La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta.</span>
+        </div>
+        
+      </div>
       
-      <li><span class="plazo">Esta semana, sin costo</span><span class="que">Confirmar con quién se habla antes de negociar, en los dos canales.</span>
-        <span class="cifra">La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta.</span></li>
+      <div class="col">
+        <div class="plazo">Este trimestre</div>
+        
+        <div class="accion">
+          <span class="num">3</span>
+          <span class="que">Formar al equipo humano en qué se puede prometer sobre el reporte.</span>
+          <span class="cifra">22 menciones en 18 formulaciones distintas: no es guion, es criterio.</span>
+        </div>
+        
+      </div>
       
-      <li><span class="plazo">Este trimestre</span><span class="que">Formar al equipo humano en qué se puede prometer sobre el reporte.</span>
-        <span class="cifra">22 menciones en 18 formulaciones distintas: no es guion, es criterio.</span></li>
+      <div class="col">
+        <div class="plazo">90 días</div>
+        
+        <div class="accion">
+          <span class="num">4</span>
+          <span class="que">Medir la conversión con un piloto de cuentas asignadas al azar.</span>
+          <span class="cifra">356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales.</span>
+        </div>
+        
+        <div class="accion">
+          <span class="num">5</span>
+          <span class="que">Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.</span>
+          <span class="cifra">Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo.</span>
+        </div>
+        
+      </div>
       
-      <li><span class="plazo">90 días</span><span class="que">Medir la conversión con un piloto de cuentas asignadas al azar.</span>
-        <span class="cifra">356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales.</span></li>
-      
-      <li><span class="plazo">90 días</span><span class="que">Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.</span>
-        <span class="cifra">Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo.</span></li>
-      
-    </ol>
+    </div>
   </section>
 
   <p class="note colofon">Cada cifra sale de una frase textual de la llamada y se comprobó que exista: 258 de 259. Ninguna se escribió a mano; el método está en el repositorio.</p>

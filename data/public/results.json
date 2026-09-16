@@ -6,7 +6,7 @@
     "autor": "Mauricio Salas",
     "repositorio": "github.com/mauriciosf2004/crecere-humanos-vs-ia"
   },
-  "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA, así que esto describe cómo habla cada uno.",
+  "veredicto": "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál cobra mejor.</strong> Los dos canales no atendieron la misma cartera: 26 de 50 llamadas humanas retoman un acuerdo previo y ninguna de la IA.",
   "recomendacion": "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.",
   "efectos": [
     {
@@ -231,6 +231,53 @@
         }
       ],
       "pie": "Único bloque con otro denominador: son 19 y 22 de las 50. Sobre la misma regla, su largo ya dice cuántas son."
+    }
+  ],
+  "cierre": [
+    {
+      "plazo": "Esta semana, sin costo",
+      "acciones": [
+        {
+          "plazo": "Esta semana, sin costo",
+          "que": "Editar tres frases del guion de la IA.",
+          "cifra": "3 de las 4 alertas de la IA son una sola oración repetida en el 83-100 % de sus casos.",
+          "n": 1
+        },
+        {
+          "plazo": "Esta semana, sin costo",
+          "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
+          "cifra": "La IA habla con el titular en 31 de 50 llamadas y en 9 no se sabe quién contesta.",
+          "n": 2
+        }
+      ]
+    },
+    {
+      "plazo": "Este trimestre",
+      "acciones": [
+        {
+          "plazo": "Este trimestre",
+          "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
+          "cifra": "22 menciones en 18 formulaciones distintas: no es guion, es criterio.",
+          "n": 3
+        }
+      ]
+    },
+    {
+      "plazo": "90 días",
+      "acciones": [
+        {
+          "plazo": "90 días",
+          "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+          "cifra": "356 cuentas por grupo para ver 10 pp; se decide con el recaudo a 30 días, no con promesas verbales.",
+          "n": 4
+        },
+        {
+          "plazo": "90 días",
+          "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
+          "cifra": "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo.",
+          "n": 5
+        }
+      ]
     }
   ],
   "acciones": [

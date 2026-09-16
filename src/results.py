@@ -268,6 +268,17 @@ def build() -> dict:
 
     credito_humano = guion["credit_benefit_promised"]["humano"]
 
+    def by_deadline(acciones: list[dict]) -> list[dict]:
+        """Las acciones agrupadas por plazo, en el orden en que aparecen: un plan se lee en
+        el tiempo, de izquierda a derecha, no como una lista."""
+        grupos: list[dict] = []
+        for n_accion, a in enumerate(acciones, start=1):
+            a = {**a, "n": n_accion}
+            if not grupos or grupos[-1]["plazo"] != a["plazo"]:
+                grupos.append({"plazo": a["plazo"], "acciones": []})
+            grupos[-1]["acciones"].append(a)
+        return grupos
+
     def counts(item: dict, arm: str) -> str:
         """«43 de 50»: el mismo denominador que todo lo demás del informe, a la vista."""
         return f"{item[f'k_{arm}']} de {item[f'n_{arm}']}"
@@ -384,6 +395,49 @@ def build() -> dict:
         "mano; el método está en el repositorio."
     )
 
+    acciones = [
+        {
+            "plazo": "Esta semana, sin costo",
+            "que": "Editar tres frases del guion de la IA.",
+            "cifra": (
+                f"{len(scripted)} de las 4 alertas de la IA son una sola oración repetida "
+                "en el 83-100 % de sus casos."
+            ),
+        },
+        {
+            "plazo": "Esta semana, sin costo",
+            "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
+            "cifra": (
+                f"La IA habla con el titular en {contact['k_ia']} de {contact['n_ia']} "
+                f"llamadas y en {contact['indeterminado_ia']} no se sabe quién contesta."
+            ),
+        },
+        {
+            "plazo": "Este trimestre",
+            "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
+            "cifra": (
+                f"{credito_humano['positivos']} menciones en "
+                f"{credito_humano['positivos'] - credito_humano['comparten_la_misma_frase']} "
+                "formulaciones distintas: no es guion, es criterio."
+            ),
+        },
+        {
+            "plazo": "90 días",
+            "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
+            "cifra": (
+                f"{pilot['10']} cuentas por grupo para ver 10 pp; se decide con el recaudo "
+                "a 30 días, no con promesas verbales."
+            ),
+        },
+        {
+            "plazo": "90 días",
+            "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
+            "cifra": (
+                "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
+            ),
+        },
+    ]
+
     return {
         "meta": {
             "titulo": "Cobranza con agentes humanos y de IA: qué cambia en la gestión",
@@ -398,9 +452,9 @@ def build() -> dict:
         # la auditoría: se apoyaba en la única fila que el propio gráfico marca como no sostenida.
         "veredicto": (
             "<strong>Sí hay diferencias sustentables, pero dicen cómo cobra cada canal, no cuál "
-            "cobra mejor.</strong> Y los dos canales no atendieron la misma cartera: "
+            "cobra mejor.</strong> Los dos canales no atendieron la misma cartera: "
             f"{prior['k_humano']} de {prior['n_humano']} llamadas humanas retoman un acuerdo "
-            "previo y ninguna de la IA, así que esto describe cómo habla cada uno."
+            "previo y ninguna de la IA."
         ),
         # Una línea, con peso y aire propio. Lleva las dos acciones y su precio, porque una
         # recomendación sin costo es una opinión.
@@ -573,48 +627,8 @@ def build() -> dict:
                 ),
             },
         ],
-        "acciones": [
-            {
-                "plazo": "Esta semana, sin costo",
-                "que": "Editar tres frases del guion de la IA.",
-                "cifra": (
-                    f"{len(scripted)} de las 4 alertas de la IA son una sola oración repetida "
-                    "en el 83-100 % de sus casos."
-                ),
-            },
-            {
-                "plazo": "Esta semana, sin costo",
-                "que": "Confirmar con quién se habla antes de negociar, en los dos canales.",
-                "cifra": (
-                    f"La IA habla con el titular en {contact['k_ia']} de {contact['n_ia']} "
-                    f"llamadas y en {contact['indeterminado_ia']} no se sabe quién contesta."
-                ),
-            },
-            {
-                "plazo": "Este trimestre",
-                "que": "Formar al equipo humano en qué se puede prometer sobre el reporte.",
-                "cifra": (
-                    f"{credito_humano['positivos']} menciones en "
-                    f"{credito_humano['positivos'] - credito_humano['comparten_la_misma_frase']} "
-                    "formulaciones distintas: no es guion, es criterio."
-                ),
-            },
-            {
-                "plazo": "90 días",
-                "que": "Medir la conversión con un piloto de cuentas asignadas al azar.",
-                "cifra": (
-                    f"{pilot['10']} cuentas por grupo para ver 10 pp; se decide con el recaudo "
-                    "a 30 días, no con promesas verbales."
-                ),
-            },
-            {
-                "plazo": "90 días",
-                "que": "Incluir un tercer grupo: IA sin anuncio legal ni vencimiento.",
-                "cifra": (
-                    "Para medir cuánto de la conversión depende del encuadre, en vez de suponerlo."
-                ),
-            },
-        ],
+        "cierre": by_deadline(acciones),
+        "acciones": acciones,
         "colofon": colofon,
     }
 

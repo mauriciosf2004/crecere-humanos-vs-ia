@@ -193,17 +193,16 @@
   .rc-swatch.dots { fill:#d9d9d9; }
   .rc-caption { font-size:7.2px; fill:var(--muted); }
 
-  /* ── El cierre: cinco acciones, el número grande, el plazo como etiqueta ────── */
-  ol.actions { margin:0; padding:0; list-style:none; counter-reset:a; }
-  ol.actions li { counter-increment:a; position:relative; padding:1.2mm 0 1.2mm 9mm;
-                  border-bottom:1px solid var(--rule); }
-  ol.actions li:last-child { border-bottom:0; }
-  ol.actions li::before { content:counter(a); position:absolute; left:0; top:1.4mm;
-    font-family:var(--display); font-size:13pt; font-weight:600; color:var(--ink); line-height:1; }
-  ol.actions .plazo { display:block; font-family:var(--display); font-size:6.8pt; font-weight:600;
-    letter-spacing:.18em; text-transform:uppercase; color:var(--marca-tinta); }
-  ol.actions .que { display:block; font-weight:600; font-size:9.6pt; margin-top:.3mm; }
-  ol.actions .cifra { display:block; color:var(--muted); font-size:8.6pt; margin-top:.3mm; }
+  /* ── El cierre como plan: tres columnas por plazo, el tiempo de izquierda a derecha ── */
+  .plan { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 5mm; margin-top:1mm; }
+  .plan .col { border-top:1.6px solid var(--ink); padding-top:1.4mm; }
+  .plan .plazo { font-family:var(--display); font-size:6.8pt; font-weight:600; letter-spacing:.18em;
+                 text-transform:uppercase; color:var(--marca-tinta); margin-bottom:1.2mm; }
+  .plan .accion { position:relative; padding:0 0 1.6mm 7mm; }
+  .plan .num { position:absolute; left:0; top:-.4mm; font-family:var(--display); font-size:13pt;
+               font-weight:600; color:var(--ink); line-height:1; }
+  .plan .que { display:block; font-weight:600; font-size:9.2pt; line-height:1.25; }
+  .plan .cifra { display:block; color:var(--muted); font-size:8.2pt; line-height:1.3; margin-top:.4mm; }
 
   /* ── Listas, notas y pie ──────────────────────────────────────────────── */
   ul.levers, ul.bullets { margin:0; padding-left:3.6mm; list-style:none; }
@@ -279,12 +278,20 @@
 
   <section class="close">
     <h2 class="major">Qué hacer, en orden</h2>
-    <ol class="actions">
-      {% for a in acciones %}
-      <li><span class="plazo">{{ a.plazo }}</span><span class="que">{{ a.que }}</span>
-        <span class="cifra">{{ a.cifra }}</span></li>
+    <div class="plan">
+      {% for g in cierre %}
+      <div class="col">
+        <div class="plazo">{{ g.plazo }}</div>
+        {% for a in g.acciones %}
+        <div class="accion">
+          <span class="num">{{ a.n }}</span>
+          <span class="que">{{ a.que }}</span>
+          <span class="cifra">{{ a.cifra }}</span>
+        </div>
+        {% endfor %}
+      </div>
       {% endfor %}
-    </ol>
+    </div>
   </section>
 
   <p class="note colofon">{{ colofon }}</p>

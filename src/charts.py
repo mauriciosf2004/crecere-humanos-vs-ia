@@ -146,13 +146,14 @@ def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: in
     plot_left = label_w + tag_w + pad
     plot_w = width - plot_left - count_w
     unit = plot_w / n
-    bar_h, gap_ch, gap_stage, title_h, legend_h, caption_h = 11.5, 2.5, 10, 16, 11, 11
+    bar_h, gap_ch, gap_stage, title_h, legend_h, caption_h = 11.5, 2.5, 11, 20, 11, 12
     x = lambda calls: plot_left + calls * unit  # noqa: E731
 
     height = 30 + sum(
         title_h
         + sum(2 * bar_h + gap_ch + gap_stage + (legend_h if s.parts_ia else 0) for s in stages)
         + (caption_h if caption else 4)
+        + 6
         for _, stages, caption in panels
     )
     out = [
@@ -243,6 +244,7 @@ def recorrido(panels: list[tuple[str, list[Stage], str]], n: int = 50, width: in
             y += caption_h
         else:
             y += 4
+        y += 6
 
     out.append("</svg>")
     return "\n".join(out)
