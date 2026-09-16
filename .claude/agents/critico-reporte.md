@@ -27,7 +27,7 @@ No revisas el código. Revisas si el documento se sostiene solo.
    `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless --print-to-pdf=/tmp/r.pdf --no-pdf-header-footer report/index.html`
    y cuenta las páginas del PDF resultante.
 7. **Autonomía.** ¿Hay alguna URL externa, fuente web o recurso que falle sin conexión? Ábrelo
-   como lo abriría el evaluador: sin red.
+   como lo abriría quien lo recibe por correo: sin red.
 8. **El cierre.** ¿Termina en una decisión que alguien pueda tomar el lunes, o en "se requiere más
    investigación"? Lo segundo es un fracaso.
 

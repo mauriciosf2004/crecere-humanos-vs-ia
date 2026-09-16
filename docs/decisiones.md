@@ -340,7 +340,8 @@ sostienen ese bloque:
   existe, de si el proceso está previsto y de las condiciones reales de la oferta, y nada de eso se
   puede saber desde la grabación.
 - **Se aplica a los dos canales.** Los humanos ofrecen salir de centrales en el 44 % de sus
-  llamadas. Un semáforo que solo mirara a la IA sería un sesgo, y el evaluador es su proveedor.
+  llamadas. Una revisión de cumplimiento que apunte a un solo canal no mide el riesgo del banco:
+  mide el canal que se eligió mirar. Aquí la misma rúbrica cae sobre los dos.
 - **Cada norma se verificó en su texto**, y el archivo `data/reference/cumplimiento.json` guarda la
   fuente y el nivel de verificación de cada una. El informe no cita leyes que el repositorio no
   respalde.

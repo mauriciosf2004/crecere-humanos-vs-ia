@@ -2,7 +2,7 @@
 
 Van inline en el HTML, así que heredan el CSS del documento: el gráfico y la
 página son literalmente el mismo sistema visual, y no hay ningún recurso externo
-que falle cuando el evaluador abra el adjunto sin conexión.
+que falle al abrir el adjunto sin conexión.
 
 Una sola forma, porque solo una se gana su espacio: el forest plot muestra magnitud e
 incertidumbre a la vez, que es lo que un p-valor esconde. No usa el color como único

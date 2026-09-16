@@ -7,9 +7,8 @@ está aquí, está enlazado.
 ## Qué es esto
 
 Un informe de **dos páginas A4** que compara 50 llamadas de cobranza hechas por gestores humanos
-con 50 hechas por el agente de voz de Creceré AI. Es la entrega de una prueba técnica: la
-califica Creceré, y el lector para el que está escrito es **el presidente de un banco**, que le
-va a dar noventa segundos.
+con 50 hechas por el agente de voz de Creceré AI. El lector para el que está escrito es
+**el presidente de un banco**, que le va a dar noventa segundos.
 
 El encargo, con sus palabras: «muy visual, pocas palabras, bullets cortos, métricas visibles,
 gráficos solo cuando aporten», «mostrable al presidente de un banco», y «no premiamos
@@ -34,7 +33,7 @@ la acción y la norma. Al pie, el gráfico de efectos de las ocho conductas con 
 **Página 2 — la evidencia.** Una regla única de 0 a 50 llamadas y tres paneles medidos contra
 ella: hasta dónde llega la conversación (embudo), cómo queda quien contesta (partición de 50) y
 qué hace el agente cuando el deudor dice que no puede pagar (barras de 19 y 22 sobre la misma
-regla). Cierra con un plan de cinco acciones en tres columnas por plazo, y una línea de
+regla). Cierra con los hallazgos y su acción, en tres columnas por plazo, y una línea de
 procedencia.
 
 ## Lo que se puede tocar y lo que no

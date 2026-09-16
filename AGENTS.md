@@ -75,7 +75,7 @@ Si el denominador es el contacto con el titular (31 y 46), **MDE ≈ 33 pp**.
   `docs/decisiones.md` §16 y §19.
 
 ## Reglas de trabajo
-- Español (es-CO) en todo lo que ve el evaluador. Código e identificadores en inglés.
+- Español (es-CO) en todo lo entregable. Código e identificadores en inglés.
 - **Prohibido inventar o redondear cifras a ojo.** Todo número del reporte sale de `results.json`.
 - Ningún número se escribe a mano en el HTML.
 - Escala: 100 filas. CSV, no parquet. Sin capas que no cambien el resultado.
