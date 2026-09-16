@@ -19,6 +19,26 @@ de la IA son una sola frase de guion repetida, así que se corrigen editándola.
 Desde un clon limpio, `make report` regenera `report/index.html` y `git status` queda vacío:
 ningún número del informe está escrito a mano.
 
+## Cómo se estructuró el problema
+
+- **Qué se quería entender.** Si los dos canales gestionan distinto, en qué, y si la diferencia se
+  puede atribuir al agente o a la cartera que le tocó.
+- **Qué variables se construyeron.** Ocho conductas del agente, cada una definida por la presencia de
+  una frase concreta: presentarse desde un área de embargos, anunciar que la oferta vence, presentar
+  el pago como salida de un proceso legal, ofrecer salir de centrales de riesgo, una compuerta de
+  confidencialidad o identidad, proponer cifras, ofrecer cuotas, y obtener un compromiso con fecha y
+  monto. Más dos de contexto: contacto efectivo con el titular y acuerdo previo. Ninguna por
+  ausencia, ninguna por prosodia: son las que sobreviven a un audio mono de 8 kHz (`src/rubric.md`;
+  las 39 descartadas y su motivo, en `docs/variables-descartadas.md`).
+- **Qué hipótesis se contrastaron.** Ocho, con dirección declarada y fecha antes de medir; dos
+  predecían que no habría diferencia (`docs/hipotesis.md`).
+- **Cómo se probaron.** El dato lo produce un panel de tres anotadores ciegos con voto 2 de 3, y
+  cada respuesta afirmativa tiene que citar una frase que exista en la transcripción. Cada diferencia
+  lleva Fisher exacto e intervalo de Newcombe; un test global por permutación y Westfall-Young
+  controlan la familia de ocho. Con 50 llamadas por canal solo se ven diferencias de 29 puntos o
+  más, así que los titulares son tamaños de efecto con intervalo, no p-valores (`src/analyze.py`,
+  `src/stats.py`).
+
 ## De una llamada al informe
 
 ```mermaid
@@ -72,12 +92,10 @@ flowchart TD
     style pub fill:none,stroke:#7a2c68
 ```
 
-Las tres cajas magenta son puertas que fallan y paran el trabajo. En este corpus 258 de 259 citas
-de la familia de 8 existen literalmente en la transcripción; la que no queda publicada como tal en
-`data/public/anchoring.json` en vez de retirarse a mano, y ninguna cita sin anclar puede cambiar el
-voto del panel (`docs/decisiones.md` §14). Desde un clon limpio corren `make report`, `make verify` y
-`make check`; `make help` lista todo. El resto necesita los audios, `ffmpeg`, `whisper-cli`, el CLI
-de Claude Code, Chrome y `pdfinfo`.
+Las tres cajas magenta son puertas que fallan y paran el trabajo: la de evidencia no deja que una
+cita que no existe en la transcripción cambie el voto del panel; la de PII no deja salir del disco
+una fila con texto de llamada; la del entregable no deja publicar un informe de tres páginas ni uno
+con una cifra escrita a mano.
 
 ## Las cuatro preguntas del encargo
 
@@ -85,7 +103,7 @@ de Claude Code, Chrome y `pdfinfo`.
 |---|---|---|
 | Desempeño: ¿quién es más efectivo? | En compromisos de pago no hay ganador demostrable | informe, veredicto |
 | Explicación: ¿qué explica las diferencias? | El guion (encuadre de embargos, vencimiento, el pago como forma de evitar un proceso legal) y la cartera (acuerdos previos) | `docs/decisiones.md` §10 y §13 |
-| Conducta: ¿qué hace mejor cada uno? | La IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas donde el deudor dice que no puede pagar, frente a 9 de 22 de los humanos, rotulado como conteo; los humanos ofrecen salir de centrales de riesgo en 22 de 50, rotulado como alerta | informe, página 2 |
+| Conducta: ¿qué hace mejor cada uno? | Cuando el deudor dice que no puede pagar, la IA reconoce la dificultad y ofrece una alternativa en 15 de 19 llamadas, los humanos en 9 de 22 (conteo, no diferencia medida). Los humanos ofrecen salir de centrales de riesgo en 22 de 50: es una alerta, no una ventaja | informe, página 2 |
 | Mejora: ¿qué cambiar? | Tres frases del guion de la IA, un estándar común para los dos canales, 49 llamadas auditadas por periodo, y un piloto con asignación al azar que incluya una IA sin anuncio legal ni vencimiento | informe, «Los hallazgos y qué hacer con cada uno» |
 
 ## Por dónde empezar
@@ -106,7 +124,7 @@ repositorio:
 
 | Pieza | Qué gobierna |
 |---|---|
-| `CLAUDE.md` | El contrato del proyecto: qué se versiona y qué no, la regla de PII, la prohibición de escribir una cifra a mano, y la definición de «hecho» |
+| `AGENTS.md` (`CLAUDE.md` es un enlace a él) | El contrato del proyecto: qué se versiona y qué no, la regla de PII, la prohibición de escribir una cifra a mano, y la definición de «hecho» |
 | `src/rubric.md`, `src/rubric_desenlace.md` | Las dos rúbricas, congeladas antes de anotar; su huella entra en la caché, así que editarlas invalida las anotaciones |
 | `src/schema.json`, `src/schema_desenlace.json` | La salida válida: conjuntos cerrados, sin texto libre |
 | `workflows/panel-anotacion.js` | La orquestación: tres roles, dos modelos, reanudable por lotes |
@@ -158,9 +176,10 @@ La tabla analítica completa, una fila por llamada, es `data/public/features.csv
 
 ## Requisitos
 
-Python 3.11 o superior con [uv](https://docs.astral.sh/uv/). Para el pipeline completo, además:
-`ffmpeg`, `whisper-cli` (paquete `whisper-cpp` de Homebrew), el CLI de Claude Code, Google Chrome
-y `pdfinfo` (poppler).
+Python 3.11 o superior con [uv](https://docs.astral.sh/uv/). Con eso corren `make report`,
+`make check` y, si hay Google Chrome y `pdfinfo` (poppler), `make verify`; `make help` lista todo.
+El pipeline completo necesita además los audios, `ffmpeg`, `whisper-cli` (paquete `whisper-cpp` de
+Homebrew) y el CLI de Claude Code.
 
 Antes de tocar nada: `git config core.hooksPath hooks`. Activa el hook que bloquea cualquier push
 con datos de llamadas —es la única comprobación del proyecto que no se puede deshacer, y CI llega
