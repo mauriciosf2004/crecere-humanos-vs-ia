@@ -22,6 +22,66 @@
       "ia": 3
     }
   },
+  "acuerdo_por_pares": {
+    "celdas": 1100,
+    "disputadas": 58,
+    "pares": {
+      "clasificador|auditor": {
+        "acuerdo_total": 1051,
+        "acuerdo_en_disputadas": 9
+      },
+      "clasificador|reauditor": {
+        "acuerdo_total": 1048,
+        "acuerdo_en_disputadas": 6
+      },
+      "auditor|reauditor": {
+        "acuerdo_total": 1082,
+        "acuerdo_en_disputadas": 40
+      }
+    }
+  },
+  "concentracion_guion": {
+    "legal_department_framing": {
+      "ia": {
+        "positivos": 43,
+        "comparten_la_misma_frase": 36
+      },
+      "humano": {
+        "positivos": 1,
+        "comparten_la_misma_frase": 1
+      }
+    },
+    "offer_expiry_claim": {
+      "ia": {
+        "positivos": 27,
+        "comparten_la_misma_frase": 27
+      },
+      "humano": {
+        "positivos": 1,
+        "comparten_la_misma_frase": 1
+      }
+    },
+    "situational_legal_pressure": {
+      "ia": {
+        "positivos": 21,
+        "comparten_la_misma_frase": 20
+      },
+      "humano": {
+        "positivos": 2,
+        "comparten_la_misma_frase": 1
+      }
+    },
+    "credit_benefit_promised": {
+      "ia": {
+        "positivos": 3,
+        "comparten_la_misma_frase": 2
+      },
+      "humano": {
+        "positivos": 22,
+        "comparten_la_misma_frase": 4
+      }
+    }
+  },
   "extraccion_vs_consenso": {
     "effective_contact": {
       "coinciden": 88,

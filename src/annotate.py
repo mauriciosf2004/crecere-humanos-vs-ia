@@ -26,6 +26,7 @@ import argparse
 import json
 import re
 from collections import Counter
+from itertools import combinations
 from pathlib import Path
 
 from src.anchoring import is_anchored, transcripts_seen
@@ -38,6 +39,14 @@ SECOND = INTERIM / "transcripts_large-v3"
 PANEL_INPUT = INTERIM / "panel_input"
 ANNOTATIONS = INTERIM / "annotations"
 CONSENSUS = INTERIM / "consensus"
+
+# Las cuatro conductas que el informe rotula como alertas de cumplimiento.
+ALERTAS = (
+    "legal_department_framing",
+    "offer_expiry_claim",
+    "situational_legal_pressure",
+    "credit_benefit_promised",
+)
 LISTENING = INTERIM / "escucha_compromisos.json"
 EXTRACTIONS = INTERIM / "extractions"
 PUBLIC = ROOT / "data" / "public"
@@ -213,6 +222,74 @@ def apply_listening(consensus: dict, arm: str, stem: str, heard: dict) -> bool:
     return before != item["valor"]
 
 
+def pair_agreement() -> dict:
+    """Cuánta independencia tiene de verdad un panel de tres, medida y no supuesta.
+
+    «Vale la mayoría» suena a tres opiniones. Dos de los tres anotadores son de la misma
+    familia de modelos, y la literatura de paneles de jueces dice que los errores entre
+    modelos están correlacionados —más cuanto mejores son—, así que el voto puede valer
+    menos de lo que su número sugiere.
+
+    Lo que se puede medir sin etiquetas de oro es el acuerdo por pares. El número que
+    importa no es el global —con una tasa base tan baja, todos coinciden en los «no»— sino
+    **el acuerdo dentro de las celdas donde el panel se partió**: ahí se ve quién decide.
+    """
+    names = fields()
+    votes: dict[tuple, dict[str, str]] = {}
+    for rol in PANEL:
+        for path in (ANNOTATIONS / rol).glob("*/*.json"):
+            row = json.loads(path.read_text(encoding="utf-8"))
+            for name in names:
+                cell = votes.setdefault((path.parent.name, path.stem, name), {})
+                cell[rol] = json.dumps(_value(row.get(name)), sort_keys=True)
+    split = [v for v in votes.values() if len(set(v.values())) > 1]
+    pares = {}
+    for a, b in combinations(PANEL, 2):
+        juntos = sum(1 for v in split if v.get(a) == v.get(b))
+        pares[f"{a}|{b}"] = {
+            "acuerdo_total": sum(1 for v in votes.values() if v.get(a) == v.get(b)),
+            "acuerdo_en_disputadas": juntos,
+        }
+    return {"celdas": len(votes), "disputadas": len(split), "pares": pares}
+
+
+def script_concentration() -> dict:
+    """Cuánto de cada conducta marcada es una sola frase de guion repetida.
+
+    Cambia lo que se puede recomendar. Si los 21 positivos de una conducta comparten la misma
+    oración, no hay un problema de comportamiento: hay una línea de guion, y se corrige
+    editándola. Si son veintidós formulaciones distintas, es formación y supervisión, que es
+    otro presupuesto y otro plazo.
+
+    Se mide sobre el fragmento de seis palabras más repetido entre las citas ancladas. Se
+    publica solo la proporción, nunca el texto: el archivo es público y esto se calcula sobre
+    transcripciones que no salen de `data/interim/`.
+    """
+    out: dict[str, dict[str, dict[str, int]]] = {}
+    for name in ALERTAS:
+        for arm in ("ia", "humano"):
+            quotes = []
+            for path in (CONSENSUS / arm).glob("*.json"):
+                row = json.loads(path.read_text(encoding="utf-8"))
+                cell = row.get(name) or {}
+                if not (isinstance(cell, dict) and _value(cell)):
+                    continue
+                text = " ".join(str(v) for k, v in cell.items() if k.startswith("quote") and v)
+                quotes.append(re.sub(r"[^a-záéíóúñü ]", "", text.lower()).split())
+            if not quotes:
+                continue
+            counts: Counter = Counter()
+            for words in quotes:
+                for i in range(max(1, len(words) - 5)):
+                    counts[" ".join(words[i : i + 6])] += 1
+            comparten = counts.most_common(1)[0][1] if counts else 0
+            out.setdefault(name, {})[arm] = {
+                "positivos": len(quotes),
+                "comparten_la_misma_frase": min(comparten, len(quotes)),
+            }
+    return out
+
+
 def consolidate() -> dict:
     """Vota cada llamada con las anotaciones disponibles y escribe su consenso."""
     names = fields()
@@ -331,6 +408,8 @@ def main() -> None:
             {
                 "panel": PANEL,
                 "resumen": summary,
+                "acuerdo_por_pares": pair_agreement(),
+                "concentracion_guion": script_concentration(),
                 "extraccion_vs_consenso": agreement,
                 "positivos_familia": family_positives(),
             },

@@ -1,0 +1,31 @@
+#!/bin/sh
+# Son deudores reales. Esta es la única comprobación del proyecto que no se puede deshacer:
+# una vez que un objeto sube a GitHub, sigue ahí aunque se reescriba el historial.
+#
+# La misma comprobación existe en CI, pero ahí llega tarde: GitHub Actions corre DESPUÉS del
+# push. Esto corre antes, que es cuando todavía sirve de algo. CI se queda como red por si
+# alguien empuja desde un clon sin los hooks configurados.
+#
+# Se activa con:  git config core.hooksPath hooks
+set -e
+
+sucio=$(git ls-files | grep -E '^data/(raw|interim|processed)/' || true)
+if [ -n "$sucio" ]; then
+  echo "PUSH BLOQUEADO: hay archivos con datos de llamadas versionados." >&2
+  echo "$sucio" | head -20 >&2
+  exit 1
+fi
+
+# También en lo que este push va a mandar, no solo en el árbol actual: un commit viejo de la
+# rama puede traer lo que el árbol de hoy ya no tiene.
+rango=$(git rev-list --max-count=400 @{u}..HEAD 2>/dev/null || git rev-list --max-count=400 HEAD)
+for commit in $rango; do
+  malo=$(git ls-tree -r --name-only "$commit" | grep -E '^data/(raw|interim|processed)/' || true)
+  if [ -n "$malo" ]; then
+    echo "PUSH BLOQUEADO: el commit $commit versiona datos de llamadas." >&2
+    echo "$malo" | head -10 >&2
+    exit 1
+  fi
+done
+
+echo "Sin datos de llamadas en lo que se va a empujar."

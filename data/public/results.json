@@ -10,7 +10,7 @@
   "recomendacion": "Corregir el guion de los dos canales antes de escalar —hoy, sin costo— y medir la conversión con un piloto aleatorizado.",
   "efectos": [
     {
-      "etiqueta": "Se presenta como área jurídica",
+      "etiqueta": "Se presenta como área de embargos",
       "tentativo": false,
       "significativo": true,
       "diff_pp": 84.0,
@@ -30,7 +30,7 @@
       "n_humano": "1/50"
     },
     {
-      "etiqueta": "Plantea un proceso legal",
+      "etiqueta": "Pagar evita un proceso legal",
       "tentativo": false,
       "significativo": true,
       "diff_pp": 38.0,
@@ -40,7 +40,7 @@
       "n_humano": "2/50"
     },
     {
-      "etiqueta": "Promete beneficio crediticio",
+      "etiqueta": "Ofrece salir de centrales de riesgo",
       "tentativo": false,
       "significativo": true,
       "diff_pp": -38.0,
@@ -94,10 +94,10 @@
   "cumplimiento": {
     "rotulo": "Alertas para revisión de cumplimiento",
     "salvedad": "No es un juicio legal. Se aplica a los dos canales y depende de si el área existe, de si el proceso está previsto y de las condiciones reales de la oferta.",
-    "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %.",
+    "advertencia": "Las cuatro se mantienen entre gestiones nuevas (IA 50, humanos 24), donde el beneficio crediticio en humanos sube a 54 %. En la IA, 3 de las 4 son una sola frase de guion repetida (83-100 % de sus positivos comparten la oración): se corrigen editando el guion. En humanos, las 22 menciones del beneficio crediticio son 18 formulaciones distintas: eso es formación, no guion.",
     "filas": [
       {
-        "conducta": "Se presenta como área jurídica",
+        "conducta": "Se presenta como área de embargos",
         "ia": "86 %",
         "humano": "2 %",
         "norma": "SFC CE 048/2008; Ley 1328 art. 3 c",
@@ -111,14 +111,14 @@
         "accion": "Contrastar la caducidad con la matriz de condonaciones vigente."
       },
       {
-        "conducta": "Plantea un proceso legal",
+        "conducta": "Pagar evita un proceso legal",
         "ia": "42 %",
         "humano": "4 %",
         "norma": "CGP art. 599; Ley 1328 art. 3 c",
         "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion."
       },
       {
-        "conducta": "Promete beneficio crediticio",
+        "conducta": "Ofrece salir de centrales de riesgo",
         "ia": "6 %",
         "humano": "44 %",
         "norma": "Ley 1266 arts. 13 y 18 (mod. Ley 2157)",
@@ -229,7 +229,8 @@
   "limitaciones": [
     "Contactabilidad y resultado final: no hay intentos ni datos de CRM; el compromiso es verbal, no un pago.",
     "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
-    "Sin identificador de gestor ni criterio conocido para elegir las 100 llamadas.",
+    "Dos de los tres anotadores comparten familia de modelo, y en 40 de las 58 celdas sin unanimidad fueron ellos quienes formaron la mayoría: el voto vale menos de lo que su número sugiere.",
+    "Sin identificador de gestor: no se pueden comparar gestores humanos entre sí.",
     "Con 50 llamadas por canal no se detectan diferencias menores a 29 pp; 33 pp sobre los contactos con titular y 37 pp al corregir por las 8 comparaciones."
   ]
 }

@@ -5,7 +5,7 @@
   "alertas": [
     {
       "variable": "legal_department_framing",
-      "conducta": "Se presenta como área jurídica",
+      "conducta": "Se presenta como área de embargos",
       "norma_corta": "SFC CE 048/2008; Ley 1328 art. 3 c",
       "por_que": "Si el área no existe o no lleva esa cartera, la presentación podría no identificar debidamente.",
       "accion": "Confirmar con el banco que el área existe y gestiona esa cartera.",
@@ -17,7 +17,7 @@
     },
     {
       "variable": "situational_legal_pressure",
-      "conducta": "Plantea un proceso legal",
+      "conducta": "Pagar evita un proceso legal",
       "norma_corta": "CGP art. 599; Ley 1328 art. 3 c",
       "por_que": "Anunciar un proceso legal no previsto podría no ser información cierta; el embargo se solicita desde la demanda.",
       "accion": "Verificar que el proceso esté previsto antes de anunciarlo en el guion.",
@@ -40,7 +40,7 @@
     },
     {
       "variable": "credit_benefit_promised",
-      "conducta": "Promete beneficio crediticio",
+      "conducta": "Ofrece salir de centrales de riesgo",
       "norma_corta": "Ley 1266 arts. 13 y 18 (mod. Ley 2157)",
       "por_que": "La ley fija cuánto permanece el dato negativo; prometer un retiro anticipado podría no corresponder a la norma.",
       "accion": "Alinear el guion con los plazos de permanencia del reporte.",

@@ -29,10 +29,10 @@ NBSP = " "
 # Etiquetas cortas para el gráfico y la tabla. Dicen lo que mide la rúbrica y nada más:
 # una versión más vistosa, como "promete limpiar el historial", afirmaría algo no medido.
 SHORT = {
-    "legal_department_framing": "Se presenta como área jurídica",
+    "legal_department_framing": "Se presenta como área de embargos",
     "offer_expiry_claim": "Dice que la oferta vence hoy",
-    "situational_legal_pressure": "Plantea un proceso legal",
-    "credit_benefit_promised": "Promete beneficio crediticio",
+    "situational_legal_pressure": "Pagar evita un proceso legal",
+    "credit_benefit_promised": "Ofrece salir de centrales de riesgo",
     "confidentiality_gate": "Confidencialidad o identidad",
     "qualified_payment_commitment": "Compromiso con fecha y monto",
     "quantified_proposal_stated": "Propuesta con cifras",
@@ -297,8 +297,31 @@ def build() -> dict:
         all(by_name[v]["p_ajustado_nuevas"] < ALPHA for v in new_alert),
         "las cuatro alertas se mantienen entre gestiones nuevas",
     )
+    guion = agreement["concentracion_guion"]
+    scripted = [
+        v
+        for name, v in guion.items()
+        if name != "credit_benefit_promised"
+        and v["ia"]["comparten_la_misma_frase"] / v["ia"]["positivos"] >= 0.8
+    ]
+    humano_credito = guion["credit_benefit_promised"]["humano"]
+    minimo_guion = min(
+        int(100 * v["ia"]["comparten_la_misma_frase"] / v["ia"]["positivos"]) for v in scripted
+    )
+    _require(
+        len(scripted) == 3,
+        "las tres conductas de la IA son una misma frase de guion repetida",
+    )
     credit_new = new_alert["credit_benefit_promised"]
     any_new = next(iter(new_alert.values()))
+    guion_nota = (
+        f"En la IA, {len(scripted)} de las 4 son una sola frase de guion repetida "
+        f"({minimo_guion}-100 % de sus positivos comparten la oración): se corrigen editando "
+        "el guion. En "
+        f"humanos, las {humano_credito['positivos']} menciones del beneficio crediticio son "
+        f"{humano_credito['positivos'] - humano_credito['comparten_la_misma_frase']} "
+        "formulaciones distintas: eso es formación, no guion."
+    )
     alerts_hold = (
         f"Las cuatro se mantienen entre gestiones nuevas (IA {any_new['n_ia']}, humanos "
         f"{any_new['n_humano']}), donde el beneficio crediticio en humanos sube a "
@@ -334,6 +357,13 @@ def build() -> dict:
     extra_humano = single_pass["extraccion"]["humano"] - single_pass["consenso"]["humano"]
     extra_ia = single_pass["extraccion"]["ia"] - single_pass["consenso"]["ia"]
     family_anchor = anchoring["total"]
+    pares = agreement["acuerdo_por_pares"]
+    misma_familia = [r for r, modelo in agreement["panel"].items() if modelo == "opus"]
+    juntos_en_disputa = pares["pares"]["|".join(sorted(misma_familia))]["acuerdo_en_disputadas"]
+    _require(
+        len(misma_familia) == 2,
+        "dos de los tres anotadores comparten familia de modelo",
+    )
 
     # La red de seguridad del informe: si el análisis deja de sostener una de estas frases,
     # el armado falla en vez de publicarla.
@@ -455,7 +485,7 @@ def build() -> dict:
             # línea, la comparación que el banco ve primero es la sucia. La defensa es más fuerte
             # que la salvedad: al restringir a gestiones nuevas, la promesa de beneficio
             # crediticio en humanos no baja, sube.
-            "advertencia": alerts_hold,
+            "advertencia": alerts_hold + " " + guion_nota,
             "filas": [
                 {
                     "conducta": alert["conducta"],
@@ -648,7 +678,12 @@ def build() -> dict:
                 "compromiso es verbal, no un pago."
             ),
             "Objeciones y claridad exigen separar hablantes, y ese error favorece a la IA.",
-            f"Sin identificador de gestor ni criterio conocido para elegir las {2 * n} llamadas.",
+            (
+                f"Dos de los tres anotadores comparten familia de modelo, y en {juntos_en_disputa} "
+                f"de las {pares['disputadas']} celdas sin unanimidad fueron ellos quienes formaron "
+                "la mayoría: el voto vale menos de lo que su número sugiere."
+            ),
+            "Sin identificador de gestor: no se pueden comparar gestores humanos entre sí.",
             # El suelo de sensibilidad depende del denominador y de la corrección: publicar solo
             # el del contraste suelto es publicar el más optimista de los tres. El paréntesis
             # anterior mezclaba este umbral con una cota de intervalo, y así leído insinuaba más
